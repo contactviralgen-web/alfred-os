@@ -5,13 +5,13 @@ import { Suspense } from "react"
 import { AuthCard } from "@/components/auth/auth-card"
 import { SignupForm } from "@/components/auth/signup-form"
 
-export const metadata: Metadata = { title: "Créer un compte — Alfred OS" }
+export const metadata: Metadata = { title: "Créer un compte — Business Pilot" }
 
 export default function InscriptionPage() {
   return (
     <AuthCard
       titre="Créez votre compte"
-      description="Démarrez avec Alfred OS en quelques secondes"
+      description="Démarrez avec Business Pilot en quelques secondes"
       pied={
         <>
           Déjà un compte ?{" "}

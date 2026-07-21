@@ -59,7 +59,7 @@ export function CommandPalette({
         open={ouvert}
         onOpenChange={setOuvert}
         title="Recherche rapide"
-        description="Naviguer dans Alfred OS"
+        description="Naviguer dans Business Pilot"
       >
       <CommandInput placeholder="Rechercher une page, une action..." />
       <CommandList>

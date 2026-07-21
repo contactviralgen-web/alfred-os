@@ -72,7 +72,7 @@ export function RolesPermissionsMatrix({
                     {roles.map((role) => (
                       <td key={role.id} className="px-3 py-2 text-center">
                         {aPermission(role.id, permission.id) ? (
-                          <Check className="mx-auto size-4 text-indigo-400" />
+                          <Check className="mx-auto size-4 text-indigo-600 dark:text-indigo-400" />
                         ) : (
                           <span className="text-muted-foreground/30">—</span>
                         )}

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { getUtilisateurConnecte } from "@/lib/auth/session"
 import { obtenirApercuInvitation } from "@/modules/core/services/invitations.service"
 
-export const metadata: Metadata = { title: "Invitation — Alfred OS" }
+export const metadata: Metadata = { title: "Invitation — Business Pilot" }
 
 export default async function InvitationPage({
   params,

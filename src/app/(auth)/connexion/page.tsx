@@ -5,13 +5,13 @@ import { Suspense } from "react"
 import { AuthCard } from "@/components/auth/auth-card"
 import { LoginForm } from "@/components/auth/login-form"
 
-export const metadata: Metadata = { title: "Connexion — Alfred OS" }
+export const metadata: Metadata = { title: "Connexion — Business Pilot" }
 
 export default function ConnexionPage() {
   return (
     <AuthCard
       titre="Content de vous revoir"
-      description="Connectez-vous à votre espace Alfred OS"
+      description="Connectez-vous à votre espace Business Pilot"
       pied={
         <>
           Pas encore de compte ?{" "}

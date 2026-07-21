@@ -5,7 +5,7 @@ import { WorkspaceList } from "@/components/settings/workspace-list"
 import { exigerContexteOrganisation } from "@/lib/auth/guards"
 import { listerWorkspaces } from "@/modules/core/services/workspaces.service"
 
-export const metadata: Metadata = { title: "Workspaces — Alfred OS" }
+export const metadata: Metadata = { title: "Workspaces — Business Pilot" }
 
 export default async function ParametresWorkspacesPage({
   params,

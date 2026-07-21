@@ -1,4 +1,4 @@
--- Données de démonstration réalistes pour Alfred OS.
+-- Données de démonstration réalistes pour Business Pilot.
 --
 -- Ce script n'est PAS une migration : il ne s'exécute pas automatiquement sur
 -- Supabase Cloud (contrairement à `supabase db reset` en local). Il cible une
@@ -203,7 +203,7 @@ begin
       (v_org_id, v_user_id, 'equipe', 'Nouveau membre', 'Un nouveau membre a rejoint l''organisation.', '/atlas-distribution/general/parametres/membres', false, now() - interval '1 day'),
       (v_org_id, v_user_id, 'ventes', 'Bonne performance', 'Le chiffre d''affaires du jour dépasse la moyenne de 15%.', '/atlas-distribution/general/tableau-de-bord', true, now() - interval '1 day'),
       (v_org_id, v_user_id, 'stock', 'Stock bas', '3 produits atteignent leur seuil d''alerte.', '/atlas-distribution/general/tableau-de-bord', true, now() - interval '2 days'),
-      (v_org_id, v_user_id, 'systeme', 'Bienvenue sur Alfred OS', 'Votre organisation a été créée avec succès.', '/atlas-distribution/general/tableau-de-bord', true, now() - interval '3 days');
+      (v_org_id, v_user_id, 'systeme', 'Bienvenue sur Business Pilot', 'Votre organisation a été créée avec succès.', '/atlas-distribution/general/tableau-de-bord', true, now() - interval '3 days');
   end if;
 
   raise notice 'Seed terminé pour l''organisation % (workspace %)', v_org_id, v_workspace_id;

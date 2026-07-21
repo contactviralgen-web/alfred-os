@@ -5,6 +5,7 @@ import {
   type NotificationApercu,
 } from "@/components/layout/topbar/topbar-notifications"
 import { TopbarUserMenu } from "@/components/layout/topbar/topbar-user-menu"
+import { ThemeToggleButton } from "@/components/shared/theme-toggle"
 
 export function Topbar({
   orgSlug,
@@ -26,6 +27,7 @@ export function Topbar({
         <CommandPalette orgSlug={orgSlug} workspaceSlug={workspaceSlug} />
       </div>
       <div className="flex items-center gap-2">
+        <ThemeToggleButton />
         <TopbarNotifications
           notifications={notifications}
           orgSlug={orgSlug}

@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 
 import { ThemeProvider } from "@/components/shared/theme-provider"
-import { Toaster } from "sonner"
+import { AppToaster } from "@/components/shared/app-toaster"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Alfred OS — Le système d'exploitation intelligent des entreprises",
+  title: "Business Pilot — Le système d'exploitation intelligent des entreprises",
   description:
-    "Alfred OS unifie CRM, gestion des stocks, Amazon, automatisations et agents IA dans un seul cockpit de pilotage.",
+    "Business Pilot unifie CRM, gestion des stocks, Amazon, automatisations et agents IA dans un seul cockpit de pilotage.",
 }
 
 export default function RootLayout({
@@ -35,12 +35,12 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem={false}
           disableTransitionOnChange
         >
           {children}
-          <Toaster richColors position="top-right" theme="dark" />
+          <AppToaster />
         </ThemeProvider>
       </body>
     </html>

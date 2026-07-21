@@ -24,7 +24,7 @@ export type ConfigurationModule = {
   nav: ElementNavigation[]
 }
 
-// Registre central des modules d'Alfred OS. Un futur module (CRM, Amazon, Stock,
+// Registre central des modules d'Business Pilot. Un futur module (CRM, Amazon, Stock,
 // Automatisation, Agents) s'ajoute ici sans modifier le shell applicatif — voir
 // src/modules/<module>/README.md pour le contrat d'interface attendu de chacun.
 export const REGISTRE_MODULES: ConfigurationModule[] = [

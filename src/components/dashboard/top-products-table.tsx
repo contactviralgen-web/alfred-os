@@ -31,7 +31,7 @@ export function TopProductsTable({ produits }: { produits: TopProduitLigne[] }) 
                     {produit.categorie} · {produit.quantite_vendue} vendus
                   </span>
                 </div>
-                <span className="font-medium text-emerald-400">
+                <span className="font-medium text-emerald-600 dark:text-emerald-400">
                   +{(produit.marge_totale ?? 0).toLocaleString("fr-FR", {
                     style: "currency",
                     currency: "EUR",

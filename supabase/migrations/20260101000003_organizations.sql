@@ -1,4 +1,4 @@
--- Les organisations représentent les entreprises clientes d'Alfred OS (tenants).
+-- Les organisations représentent les entreprises clientes d'Business Pilot (tenants).
 create type public.plan_organisation as enum ('essai', 'starter', 'pro', 'entreprise');
 
 create table public.organizations (

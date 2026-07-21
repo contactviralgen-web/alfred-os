@@ -8,7 +8,7 @@ export function Logo({ className }: { className?: string }) {
       <span className="flex size-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.08)]">
         <Sparkle className="size-4" strokeWidth={2.5} />
       </span>
-      <span className="text-base tracking-tight">Alfred OS</span>
+      <span className="text-base tracking-tight">Business Pilot</span>
     </div>
   )
 }

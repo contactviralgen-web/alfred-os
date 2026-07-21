@@ -4,7 +4,7 @@ import Link from "next/link"
 import { AuthCard } from "@/components/auth/auth-card"
 import { ForgotPasswordForm } from "@/components/auth/forgot-password-form"
 
-export const metadata: Metadata = { title: "Mot de passe oublié — Alfred OS" }
+export const metadata: Metadata = { title: "Mot de passe oublié — Business Pilot" }
 
 export default function MotDePasseOubliePage() {
   return (
