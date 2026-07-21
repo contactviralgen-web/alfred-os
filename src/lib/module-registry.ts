@@ -1,0 +1,82 @@
+import type { LucideIcon } from "lucide-react"
+import {
+  Bell,
+  Boxes,
+  Bot,
+  Contact,
+  Gauge,
+  Layers,
+  ListChecks,
+  ShoppingCart,
+  Workflow,
+} from "lucide-react"
+
+export type ElementNavigation = {
+  titre: string
+  segment: string
+  icone: LucideIcon
+  permission?: string
+  bientotDisponible?: boolean
+}
+
+export type ConfigurationModule = {
+  id: string
+  nav: ElementNavigation[]
+}
+
+// Registre central des modules d'Alfred OS. Un futur module (CRM, Amazon, Stock,
+// Automatisation, Agents) s'ajoute ici sans modifier le shell applicatif — voir
+// src/modules/<module>/README.md pour le contrat d'interface attendu de chacun.
+export const REGISTRE_MODULES: ConfigurationModule[] = [
+  {
+    id: "dashboard",
+    nav: [
+      {
+        titre: "Tableau de bord",
+        segment: "tableau-de-bord",
+        icone: Gauge,
+        permission: "dashboard.view",
+      },
+    ],
+  },
+  {
+    id: "crm",
+    nav: [{ titre: "CRM", segment: "crm", icone: Contact, bientotDisponible: true }],
+  },
+  {
+    id: "amazon",
+    nav: [
+      {
+        titre: "Amazon",
+        segment: "amazon",
+        icone: ShoppingCart,
+        bientotDisponible: true,
+      },
+    ],
+  },
+  {
+    id: "stock",
+    nav: [{ titre: "Stock", segment: "stock", icone: Boxes, bientotDisponible: true }],
+  },
+  {
+    id: "automation",
+    nav: [
+      {
+        titre: "Automatisations",
+        segment: "automatisations",
+        icone: Workflow,
+        bientotDisponible: true,
+      },
+    ],
+  },
+  {
+    id: "agents",
+    nav: [{ titre: "Agents IA", segment: "agents", icone: Bot, bientotDisponible: true }],
+  },
+]
+
+export const NAV_GENERAL: ElementNavigation[] = [
+  { titre: "Tâches", segment: "taches", icone: ListChecks, bientotDisponible: true },
+  { titre: "Notifications", segment: "notifications", icone: Bell },
+  { titre: "Journal d'activité", segment: "journal-activite", icone: Layers },
+]
