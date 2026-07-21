@@ -1,14 +1,13 @@
 import "server-only"
 
 import { createClient } from "@/lib/supabase/server"
+import { getUtilisateurConnecte } from "@/lib/auth/session"
 
 export async function obtenirMembershipUtilisateur(organizationId: string) {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await getUtilisateurConnecte()
   if (!user) return null
 
+  const supabase = await createClient()
   const { data } = await supabase
     .from("organization_members")
     .select("*, roles(nom, slug)")
@@ -23,11 +22,10 @@ export async function obtenirMembershipUtilisateur(organizationId: string) {
 export async function listerPermissionsUtilisateur(
   organizationId: string
 ): Promise<string[]> {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await getUtilisateurConnecte()
   if (!user) return []
+
+  const supabase = await createClient()
 
   const { data } = await supabase
     .from("organization_members")

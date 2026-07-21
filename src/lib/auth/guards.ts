@@ -1,5 +1,6 @@
 import "server-only"
 
+import { cache } from "react"
 import { redirect } from "next/navigation"
 
 import { obtenirOrganisationParSlug } from "@/modules/core/services/organizations.service"
@@ -9,10 +10,12 @@ import {
 } from "@/modules/core/services/memberships.service"
 import { obtenirWorkspaceParSlug } from "@/modules/core/services/workspaces.service"
 
-// RLS garantit déjà qu'une organisation dont l'utilisateur n'est pas membre ne
-// sera jamais retournée par obtenirOrganisationParSlug (elle apparaît "not found"
-// pour un non-membre) : ce guard traduit simplement cette absence en redirection.
-export async function exigerContexteOrganisation(orgSlug: string) {
+// cache() mémorise le résultat par requête serveur (même clé d'arguments) :
+// le layout du workspace ET chaque page qu'il enveloppe appellent ce guard,
+// sans cache() cela doublait les allers-retours Supabase (organisation,
+// membership, permissions) à chaque navigation, d'où la latence ressentie
+// au clic.
+export const exigerContexteOrganisation = cache(async (orgSlug: string) => {
   const organisation = await obtenirOrganisationParSlug(orgSlug)
   if (!organisation) {
     redirect("/bienvenue")
@@ -28,19 +31,21 @@ export async function exigerContexteOrganisation(orgSlug: string) {
   }
 
   return { organisation, membership, permissions }
-}
+})
 
-export async function exigerContexteWorkspace(orgSlug: string, workspaceSlug: string) {
-  const contexteOrganisation = await exigerContexteOrganisation(orgSlug)
+export const exigerContexteWorkspace = cache(
+  async (orgSlug: string, workspaceSlug: string) => {
+    const contexteOrganisation = await exigerContexteOrganisation(orgSlug)
 
-  const workspace = await obtenirWorkspaceParSlug(
-    contexteOrganisation.organisation.id,
-    workspaceSlug
-  )
+    const workspace = await obtenirWorkspaceParSlug(
+      contexteOrganisation.organisation.id,
+      workspaceSlug
+    )
 
-  if (!workspace) {
-    redirect(`/${orgSlug}`)
+    if (!workspace) {
+      redirect(`/${orgSlug}`)
+    }
+
+    return { ...contexteOrganisation, workspace }
   }
-
-  return { ...contexteOrganisation, workspace }
-}
+)

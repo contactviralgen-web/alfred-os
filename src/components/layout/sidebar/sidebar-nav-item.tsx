@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation"
 
 import { cn } from "@/lib/utils"
 import type { ElementNavigation } from "@/lib/module-registry"
-import { Badge } from "@/components/ui/badge"
 
 export function SidebarNavItem({
   item,
@@ -26,9 +25,7 @@ export function SidebarNavItem({
       <Icone className="size-4 shrink-0" />
       <span className="flex-1 truncate">{item.titre}</span>
       {item.bientotDisponible ? (
-        <Badge variant="secondary" className="pointer-events-none text-[10px] font-normal">
-          Bientôt
-        </Badge>
+        <span className="text-[11px] text-muted-foreground/60">Bientôt</span>
       ) : null}
     </>
   )

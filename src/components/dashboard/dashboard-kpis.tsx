@@ -1,7 +1,5 @@
 "use client"
 
-import { CircleDollarSign, ShoppingCart, TrendingUp, Wallet } from "lucide-react"
-
 import { KpiCard, KpiGrid } from "@/components/dashboard/kpi-card"
 
 const formatEur = (v: number) =>
@@ -27,22 +25,15 @@ export function DashboardKpis({
         valeur={ca30j}
         formatValeur={formatEur}
         variationPct={croissancePct}
-        icone={CircleDollarSign}
       />
-      <KpiCard
-        titre="Bénéfice (30j)"
-        valeur={benefice30j}
-        formatValeur={formatEur}
-        icone={Wallet}
-      />
+      <KpiCard titre="Bénéfice (30j)" valeur={benefice30j} formatValeur={formatEur} />
       <KpiCard
         titre="Marge"
         valeur={margePct}
         formatValeur={(v) => `${v.toFixed(1)}`}
         suffixe="%"
-        icone={TrendingUp}
       />
-      <KpiCard titre="Commandes (30j)" valeur={commandes30j} icone={ShoppingCart} />
+      <KpiCard titre="Commandes (30j)" valeur={commandes30j} />
     </KpiGrid>
   )
 }

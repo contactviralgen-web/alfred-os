@@ -1,13 +1,13 @@
 import "server-only"
 
 import { createClient } from "@/lib/supabase/server"
+import { getUtilisateurConnecte } from "@/lib/auth/session"
 
 export async function listerTachesUtilisateur(workspaceId: string) {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await getUtilisateurConnecte()
   if (!user) return []
+
+  const supabase = await createClient()
 
   const { data } = await supabase
     .from("tasks")
@@ -39,11 +39,10 @@ export async function listerProchainsEvenements(workspaceId: string) {
 }
 
 export async function listerNotificationsUtilisateur(limite = 8) {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await getUtilisateurConnecte()
   if (!user) return []
+
+  const supabase = await createClient()
 
   const { data } = await supabase
     .from("notifications")
@@ -64,11 +63,10 @@ export async function marquerNotificationLue(notificationId: string) {
 }
 
 export async function marquerToutesNotificationsLues() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await getUtilisateurConnecte()
   if (!user) return
+
+  const supabase = await createClient()
 
   const { error } = await supabase
     .from("notifications")

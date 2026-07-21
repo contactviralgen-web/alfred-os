@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { animate, motion } from "framer-motion"
-import { ArrowDownRight, ArrowUpRight, type LucideIcon } from "lucide-react"
+import { ArrowDownRight, ArrowUpRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Card } from "@/components/ui/card"
@@ -28,7 +28,6 @@ export function KpiCard({
   formatValeur = (v) => Math.round(v).toLocaleString("fr-FR"),
   suffixe,
   variationPct,
-  icone: Icone,
   badge,
 }: {
   titre: string
@@ -36,21 +35,15 @@ export function KpiCard({
   formatValeur?: (v: number) => string
   suffixe?: string
   variationPct?: number
-  icone: LucideIcon
   badge?: React.ReactNode
 }) {
   const valeurAnimee = useCompteur(valeur)
   const positif = (variationPct ?? 0) >= 0
 
   return (
-    <Card className="p-4">
-      <div className="flex items-start justify-between">
-        <p className="text-sm text-muted-foreground">{titre}</p>
-        <span className="flex size-7 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-          <Icone className="size-3.5" />
-        </span>
-      </div>
-      <div className="mt-2 flex items-baseline gap-1.5">
+    <Card className="gap-1.5 p-4 shadow-none ring-0 border border-border/60">
+      <p className="text-sm text-muted-foreground">{titre}</p>
+      <div className="flex items-baseline gap-1.5">
         <span className="text-2xl font-semibold tracking-tight">
           {formatValeur(valeurAnimee)}
         </span>
