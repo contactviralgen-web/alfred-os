@@ -6,15 +6,17 @@ import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import type { Tables } from "@/types/database.types"
 
-// cache() évite qu'un même rendu serveur (layout + page + plusieurs services)
-// ne revalide plusieurs fois le même JWT auprès de Supabase Auth — chaque
-// appel non mis en cache est un aller-retour réseau à part entière.
-export const getUtilisateurConnecte = cache(async () => {
+// getClaims() vérifie le JWT localement via les clés de signature asymétriques
+// du projet (ES256) plutôt que d'appeler le serveur Auth à chaque fois comme
+// le fait getUser() — la différence est significative sur des fonctions
+// serverless éphémères où chaque aller-retour réseau vers Supabase compte.
+// cache() évite en plus qu'un même rendu (layout + page + plusieurs services)
+// ne refasse cette vérification plusieurs fois pour la même requête.
+export const getUtilisateurConnecte = cache(async (): Promise<{ id: string } | null> => {
   const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  return user
+  const { data, error } = await supabase.auth.getClaims()
+  if (error || !data) return null
+  return { id: data.claims.sub }
 })
 
 export async function exigerUtilisateurConnecte() {

@@ -51,9 +51,12 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  // getClaims() vérifie le JWT localement (clé de signature asymétrique du
+  // projet) au lieu d'appeler le serveur Auth à chaque requête comme getUser() :
+  // le proxy s'exécutant sur littéralement chaque navigation, c'est le point
+  // le plus rentable pour éviter cet aller-retour réseau supplémentaire.
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const user = claimsData?.claims ?? null
 
   const { pathname } = request.nextUrl
   const estRoutePublique = ROUTES_PUBLIQUES.some((route) =>
