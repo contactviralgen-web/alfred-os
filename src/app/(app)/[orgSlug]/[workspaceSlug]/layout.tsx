@@ -13,17 +13,19 @@ export default async function WorkspaceLayout({
   params: Promise<{ orgSlug: string; workspaceSlug: string }>
 }) {
   const { orgSlug, workspaceSlug } = await params
-  const { organisation, workspace, permissions } = await exigerContexteWorkspace(
-    orgSlug,
-    workspaceSlug
-  )
 
-  const [organisations, workspaces, profil, notifications] = await Promise.all([
-    listerOrganisationsUtilisateur(),
-    listerWorkspaces(organisation.id),
-    getProfil(),
-    listerNotificationsUtilisateur(),
-  ])
+  // Le contexte (org/workspace/permissions) et les données indépendantes de
+  // l'utilisateur courant n'ont pas de dépendance entre eux : on les lance
+  // en parallèle plutôt qu'en chaîne pour réduire la latence de navigation.
+  const [{ organisation, workspace, permissions }, organisations, profil, notifications] =
+    await Promise.all([
+      exigerContexteWorkspace(orgSlug, workspaceSlug),
+      listerOrganisationsUtilisateur(),
+      getProfil(),
+      listerNotificationsUtilisateur(),
+    ])
+
+  const workspaces = await listerWorkspaces(organisation.id)
 
   return (
     <AppShell

@@ -24,6 +24,26 @@ export async function obtenirWorkspaceParSlug(organizationId: string, slug: stri
   return data
 }
 
+// Résout le workspace directement à partir des deux slugs (via une jointure
+// sur organizations), sans dépendre d'un organization_id déjà résolu — ce qui
+// permet de lancer cette requête en parallèle de la résolution du contexte
+// organisation plutôt qu'après elle.
+export async function obtenirWorkspaceParSlugs(orgSlug: string, workspaceSlug: string) {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from("workspaces")
+    .select(
+      "id, organization_id, nom, slug, description, icone, parametres, cree_par, cree_le, modifie_le, supprime_le, organizations!inner(slug)"
+    )
+    .eq("organizations.slug", orgSlug)
+    .eq("slug", workspaceSlug)
+    .maybeSingle()
+  if (!data) return null
+  const { organizations, ...workspace } = data
+  void organizations
+  return workspace
+}
+
 export async function creerWorkspace(organizationId: string, nom: string) {
   const supabase = await createClient()
   const slugBase = slugify(nom) || "workspace"

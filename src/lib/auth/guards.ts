@@ -8,7 +8,7 @@ import {
   listerPermissionsUtilisateur,
   obtenirMembershipUtilisateur,
 } from "@/modules/core/services/memberships.service"
-import { obtenirWorkspaceParSlug } from "@/modules/core/services/workspaces.service"
+import { obtenirWorkspaceParSlugs } from "@/modules/core/services/workspaces.service"
 
 // cache() mémorise le résultat par requête serveur (même clé d'arguments) :
 // le layout du workspace ET chaque page qu'il enveloppe appellent ce guard,
@@ -35,12 +35,14 @@ export const exigerContexteOrganisation = cache(async (orgSlug: string) => {
 
 export const exigerContexteWorkspace = cache(
   async (orgSlug: string, workspaceSlug: string) => {
-    const contexteOrganisation = await exigerContexteOrganisation(orgSlug)
-
-    const workspace = await obtenirWorkspaceParSlug(
-      contexteOrganisation.organisation.id,
-      workspaceSlug
-    )
+    // La résolution du workspace (par jointure sur le slug d'organisation) ne
+    // dépend pas du résultat de exigerContexteOrganisation : lancée en
+    // parallèle plutôt qu'après, elle ne coûte plus d'aller-retour Supabase
+    // supplémentaire en série.
+    const [contexteOrganisation, workspace] = await Promise.all([
+      exigerContexteOrganisation(orgSlug),
+      obtenirWorkspaceParSlugs(orgSlug, workspaceSlug),
+    ])
 
     if (!workspace) {
       redirect(`/${orgSlug}`)
