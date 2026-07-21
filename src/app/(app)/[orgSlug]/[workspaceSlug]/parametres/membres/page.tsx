@@ -9,7 +9,7 @@ import { listerMembresOrganisation } from "@/modules/core/services/memberships.s
 import { listerInvitationsOrganisation } from "@/modules/core/services/invitations.service"
 import { listerRolesDisponibles } from "@/modules/core/services/roles.service"
 
-export const metadata: Metadata = { title: "Membres — Business Pilot" }
+export const metadata: Metadata = { title: "Membres — Pilot" }
 
 export default async function ParametresMembresPage({
   params,

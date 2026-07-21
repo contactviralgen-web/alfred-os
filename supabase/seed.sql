@@ -1,4 +1,4 @@
--- Données de démonstration réalistes pour Business Pilot.
+-- Données de démonstration réalistes pour Pilot.
 --
 -- Ce script n'est PAS une migration : il ne s'exécute pas automatiquement sur
 -- Supabase Cloud (contrairement à `supabase db reset` en local). Il cible une
@@ -40,6 +40,8 @@ begin
   where organization_id = v_org_id order by cree_le asc limit 1;
 
   -- Nettoyage des données de démo précédentes de cette organisation.
+  delete from public.crm_activities where organization_id = v_org_id;
+  delete from public.crm_contacts where organization_id = v_org_id;
   delete from public.notifications where organization_id = v_org_id;
   delete from public.calendar_events where organization_id = v_org_id;
   delete from public.tasks where organization_id = v_org_id;
@@ -128,6 +130,28 @@ begin
     end loop;
   end loop;
 
+  -- Fiches CRM clients à partir des commandes (un client particulier par nom distinct).
+  insert into public.crm_contacts (organization_id, workspace_id, prenom, statut, source)
+  select v_org_id, v_workspace_id, distinct_clients.client_nom, 'client', 'commande'
+  from (select distinct client_nom from public.orders where workspace_id = v_workspace_id) as distinct_clients;
+
+  update public.orders o
+  set contact_id = c.id
+  from public.crm_contacts c
+  where c.workspace_id = v_workspace_id and c.prenom = o.client_nom and o.workspace_id = v_workspace_id;
+
+  -- Quelques notes/activités de démonstration sur les 5 premiers clients.
+  insert into public.crm_activities (organization_id, workspace_id, contact_id, type, contenu, date_activite, cree_par)
+  select
+    v_org_id, v_workspace_id, c.id, 'note',
+    'Client fidèle, plusieurs commandes passées. À recontacter pour une offre de fidélité.',
+    now() - (random() * interval '10 days'),
+    v_user_id
+  from public.crm_contacts c
+  where c.workspace_id = v_workspace_id
+  order by c.cree_le
+  limit 5;
+
   -- Agrégats journaliers (exclut les commandes annulées).
   insert into public.revenue_metrics (organization_id, workspace_id, date, chiffre_affaires, benefice, nombre_commandes, panier_moyen)
   select
@@ -203,7 +227,7 @@ begin
       (v_org_id, v_user_id, 'equipe', 'Nouveau membre', 'Un nouveau membre a rejoint l''organisation.', '/atlas-distribution/general/parametres/membres', false, now() - interval '1 day'),
       (v_org_id, v_user_id, 'ventes', 'Bonne performance', 'Le chiffre d''affaires du jour dépasse la moyenne de 15%.', '/atlas-distribution/general/tableau-de-bord', true, now() - interval '1 day'),
       (v_org_id, v_user_id, 'stock', 'Stock bas', '3 produits atteignent leur seuil d''alerte.', '/atlas-distribution/general/tableau-de-bord', true, now() - interval '2 days'),
-      (v_org_id, v_user_id, 'systeme', 'Bienvenue sur Business Pilot', 'Votre organisation a été créée avec succès.', '/atlas-distribution/general/tableau-de-bord', true, now() - interval '3 days');
+      (v_org_id, v_user_id, 'systeme', 'Bienvenue sur Pilot', 'Votre organisation a été créée avec succès.', '/atlas-distribution/general/tableau-de-bord', true, now() - interval '3 days');
   end if;
 
   raise notice 'Seed terminé pour l''organisation % (workspace %)', v_org_id, v_workspace_id;

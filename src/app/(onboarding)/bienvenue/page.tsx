@@ -8,7 +8,7 @@ import {
   obtenirPremierWorkspaceSlug,
 } from "@/modules/core/services/organizations.service"
 
-export const metadata: Metadata = { title: "Bienvenue — Business Pilot" }
+export const metadata: Metadata = { title: "Bienvenue — Pilot" }
 
 export default async function BienvenuePage() {
   const organisations = await listerOrganisationsUtilisateur()
@@ -20,7 +20,7 @@ export default async function BienvenuePage() {
 
   return (
     <AuthCard
-      titre="Bienvenue sur Business Pilot"
+      titre="Bienvenue sur Pilot"
       description="Créez votre organisation pour démarrer"
     >
       <CreateOrganizationForm />

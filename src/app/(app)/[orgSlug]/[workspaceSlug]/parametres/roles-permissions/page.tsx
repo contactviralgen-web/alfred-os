@@ -5,7 +5,7 @@ import { RolesPermissionsMatrix } from "@/components/settings/roles-permissions-
 import { exigerContexteOrganisation } from "@/lib/auth/guards"
 import { obtenirMatriceRolesPermissions } from "@/modules/core/services/permissions.service"
 
-export const metadata: Metadata = { title: "Rôles & permissions — Business Pilot" }
+export const metadata: Metadata = { title: "Rôles & permissions — Pilot" }
 
 export default async function ParametresRolesPermissionsPage({
   params,

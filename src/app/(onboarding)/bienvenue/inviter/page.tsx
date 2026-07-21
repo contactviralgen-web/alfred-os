@@ -6,7 +6,7 @@ import { InviteMembersForm } from "@/components/onboarding/invite-members-form"
 import { obtenirOrganisationParSlug, obtenirPremierWorkspaceSlug } from "@/modules/core/services/organizations.service"
 import { listerRolesDisponibles } from "@/modules/core/services/roles.service"
 
-export const metadata: Metadata = { title: "Inviter votre équipe — Business Pilot" }
+export const metadata: Metadata = { title: "Inviter votre équipe — Pilot" }
 
 export default async function InviterPage({
   searchParams,

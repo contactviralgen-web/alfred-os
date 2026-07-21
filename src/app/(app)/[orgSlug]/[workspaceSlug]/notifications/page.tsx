@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/shared/page-header"
 import { NotificationsFeed } from "@/components/dashboard/notifications-feed"
 import { listerNotificationsUtilisateur } from "@/modules/dashboard/services/productivity.service"
 
-export const metadata: Metadata = { title: "Notifications — Business Pilot" }
+export const metadata: Metadata = { title: "Notifications — Pilot" }
 
 export default async function NotificationsPage({
   params,

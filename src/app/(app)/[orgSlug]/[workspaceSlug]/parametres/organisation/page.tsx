@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/shared/page-header"
 import { OrganizationSettingsForm } from "@/components/settings/organization-settings-form"
 import { exigerContexteOrganisation } from "@/lib/auth/guards"
 
-export const metadata: Metadata = { title: "Organisation — Business Pilot" }
+export const metadata: Metadata = { title: "Organisation — Pilot" }
 
 export default async function ParametresOrganisationPage({
   params,
@@ -18,7 +18,7 @@ export default async function ParametresOrganisationPage({
     <>
       <PageHeader
         titre="Organisation"
-        description="Informations générales de votre entreprise sur Business Pilot"
+        description="Informations générales de votre entreprise sur Pilot"
       />
       <div className="p-6">
         <OrganizationSettingsForm

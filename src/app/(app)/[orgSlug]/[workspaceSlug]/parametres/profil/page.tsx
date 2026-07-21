@@ -6,7 +6,7 @@ import { ResetPasswordForm } from "@/components/auth/reset-password-form"
 import { ThemeToggleSetting } from "@/components/shared/theme-toggle"
 import { getProfil } from "@/lib/auth/session"
 
-export const metadata: Metadata = { title: "Profil — Business Pilot" }
+export const metadata: Metadata = { title: "Profil — Pilot" }
 
 export default async function ParametresProfilPage() {
   const profil = await getProfil()

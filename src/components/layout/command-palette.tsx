@@ -59,7 +59,7 @@ export function CommandPalette({
         open={ouvert}
         onOpenChange={setOuvert}
         title="Recherche rapide"
-        description="Naviguer dans Business Pilot"
+        description="Naviguer dans Pilot"
       >
       <CommandInput placeholder="Rechercher une page, une action..." />
       <CommandList>

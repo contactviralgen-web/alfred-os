@@ -24,9 +24,9 @@ export type ConfigurationModule = {
   nav: ElementNavigation[]
 }
 
-// Registre central des modules d'Business Pilot. Un futur module (CRM, Amazon, Stock,
-// Automatisation, Agents) s'ajoute ici sans modifier le shell applicatif — voir
-// src/modules/<module>/README.md pour le contrat d'interface attendu de chacun.
+// Registre central des modules de Pilot. Un futur module s'ajoute ici sans
+// modifier le shell applicatif — voir src/modules/<module>/README.md pour le
+// contrat d'interface attendu de chacun.
 export const REGISTRE_MODULES: ConfigurationModule[] = [
   {
     id: "dashboard",
@@ -41,7 +41,7 @@ export const REGISTRE_MODULES: ConfigurationModule[] = [
   },
   {
     id: "crm",
-    nav: [{ titre: "CRM", segment: "crm", icone: Contact, bientotDisponible: true }],
+    nav: [{ titre: "CRM", segment: "crm", icone: Contact }],
   },
   {
     id: "amazon",
@@ -71,7 +71,7 @@ export const REGISTRE_MODULES: ConfigurationModule[] = [
   },
   {
     id: "agents",
-    nav: [{ titre: "Agents IA", segment: "agents", icone: Bot, bientotDisponible: true }],
+    nav: [{ titre: "Directeur IA", segment: "directeur-ia", icone: Bot }],
   },
 ]
 

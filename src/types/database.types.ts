@@ -155,6 +155,164 @@ export type Database = {
           },
         ]
       }
+      crm_activities: {
+        Row: {
+          contact_id: string | null
+          contenu: string
+          cree_le: string
+          cree_par: string | null
+          date_activite: string
+          id: string
+          organization_id: string
+          type: Database["public"]["Enums"]["type_activite_crm"]
+          workspace_id: string
+        }
+        Insert: {
+          contact_id?: string | null
+          contenu: string
+          cree_le?: string
+          cree_par?: string | null
+          date_activite?: string
+          id?: string
+          organization_id: string
+          type?: Database["public"]["Enums"]["type_activite_crm"]
+          workspace_id: string
+        }
+        Update: {
+          contact_id?: string | null
+          contenu?: string
+          cree_le?: string
+          cree_par?: string | null
+          date_activite?: string
+          id?: string
+          organization_id?: string
+          type?: Database["public"]["Enums"]["type_activite_crm"]
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_activities_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_activities_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "v_crm_contact_summary"
+            referencedColumns: ["contact_id"]
+          },
+          {
+            foreignKeyName: "crm_activities_cree_par_fkey"
+            columns: ["cree_par"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_activities_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_activities_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_contacts: {
+        Row: {
+          assigne_a: string | null
+          cree_le: string
+          cree_par: string | null
+          email: string | null
+          id: string
+          modifie_le: string
+          nom: string | null
+          notes: string | null
+          organization_id: string
+          prenom: string | null
+          score_ia: number | null
+          source: string | null
+          statut: Database["public"]["Enums"]["statut_contact_crm"]
+          tags: string[]
+          telephone: string | null
+          workspace_id: string
+        }
+        Insert: {
+          assigne_a?: string | null
+          cree_le?: string
+          cree_par?: string | null
+          email?: string | null
+          id?: string
+          modifie_le?: string
+          nom?: string | null
+          notes?: string | null
+          organization_id: string
+          prenom?: string | null
+          score_ia?: number | null
+          source?: string | null
+          statut?: Database["public"]["Enums"]["statut_contact_crm"]
+          tags?: string[]
+          telephone?: string | null
+          workspace_id: string
+        }
+        Update: {
+          assigne_a?: string | null
+          cree_le?: string
+          cree_par?: string | null
+          email?: string | null
+          id?: string
+          modifie_le?: string
+          nom?: string | null
+          notes?: string | null
+          organization_id?: string
+          prenom?: string | null
+          score_ia?: number | null
+          source?: string | null
+          statut?: Database["public"]["Enums"]["statut_contact_crm"]
+          tags?: string[]
+          telephone?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_contacts_assigne_a_fkey"
+            columns: ["assigne_a"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_contacts_cree_par_fkey"
+            columns: ["cree_par"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_contacts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_contacts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invitations: {
         Row: {
           cree_le: string
@@ -310,6 +468,7 @@ export type Database = {
         Row: {
           canal: Database["public"]["Enums"]["canal_commande"]
           client_nom: string | null
+          contact_id: string | null
           cree_le: string
           id: string
           montant_marge: number
@@ -322,6 +481,7 @@ export type Database = {
         Insert: {
           canal?: Database["public"]["Enums"]["canal_commande"]
           client_nom?: string | null
+          contact_id?: string | null
           cree_le?: string
           id?: string
           montant_marge?: number
@@ -334,6 +494,7 @@ export type Database = {
         Update: {
           canal?: Database["public"]["Enums"]["canal_commande"]
           client_nom?: string | null
+          contact_id?: string | null
           cree_le?: string
           id?: string
           montant_marge?: number
@@ -344,6 +505,20 @@ export type Database = {
           workspace_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "orders_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "v_crm_contact_summary"
+            referencedColumns: ["contact_id"]
+          },
           {
             foreignKeyName: "orders_organization_id_fkey"
             columns: ["organization_id"]
@@ -1079,6 +1254,24 @@ export type Database = {
       }
     }
     Views: {
+      v_crm_contact_summary: {
+        Row: {
+          contact_id: string | null
+          derniere_commande_le: string | null
+          nombre_commandes: number | null
+          total_depense: number | null
+          workspace_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_contacts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       v_top_products: {
         Row: {
           categorie: string | null
@@ -1189,6 +1382,15 @@ export type Database = {
         }
         Returns: string
       }
+      relier_ou_creer_contact_depuis_commande: {
+        Args: {
+          p_client_nom: string
+          p_email?: string
+          p_organization_id: string
+          p_workspace_id: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       canal_commande: "site_web" | "amazon" | "manuel"
@@ -1202,9 +1404,11 @@ export type Database = {
         | "livree"
         | "bloquee"
         | "annulee"
+      statut_contact_crm: "prospect" | "client" | "perdu"
       statut_invitation: "en_attente" | "acceptee" | "expiree" | "revoquee"
       statut_membre: "actif" | "invite" | "suspendu"
       statut_tache: "a_faire" | "en_cours" | "terminee"
+      type_activite_crm: "note" | "appel" | "email" | "rdv"
       type_alerte_stock: "rupture" | "stock_bas" | "surstock"
       type_evenement_calendrier: "reunion" | "echeance" | "rappel"
     }
@@ -1349,9 +1553,11 @@ export const Constants = {
         "bloquee",
         "annulee",
       ],
+      statut_contact_crm: ["prospect", "client", "perdu"],
       statut_invitation: ["en_attente", "acceptee", "expiree", "revoquee"],
       statut_membre: ["actif", "invite", "suspendu"],
       statut_tache: ["a_faire", "en_cours", "terminee"],
+      type_activite_crm: ["note", "appel", "email", "rdv"],
       type_alerte_stock: ["rupture", "stock_bas", "surstock"],
       type_evenement_calendrier: ["reunion", "echeance", "rappel"],
     },

@@ -4,7 +4,7 @@ import Link from "next/link"
 
 import { AuthCard } from "@/components/auth/auth-card"
 
-export const metadata: Metadata = { title: "Vérifiez votre email — Business Pilot" }
+export const metadata: Metadata = { title: "Vérifiez votre email — Pilot" }
 
 export default function VerifierEmailPage() {
   return (

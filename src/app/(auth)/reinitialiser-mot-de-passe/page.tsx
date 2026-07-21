@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { AuthCard } from "@/components/auth/auth-card"
 import { ResetPasswordForm } from "@/components/auth/reset-password-form"
 
-export const metadata: Metadata = { title: "Nouveau mot de passe — Business Pilot" }
+export const metadata: Metadata = { title: "Nouveau mot de passe — Pilot" }
 
 export default function ReinitialiserMotDePassePage() {
   return (

@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/shared/empty-state"
 import { exigerContexteOrganisation } from "@/lib/auth/guards"
 import { listerActiviteRecente } from "@/modules/core/services/activity-log.service"
 
-export const metadata: Metadata = { title: "Journal d'activité — Business Pilot" }
+export const metadata: Metadata = { title: "Journal d'activité — Pilot" }
 
 const LIBELLES_ACTION: Record<string, string> = {
   "organisation.creee": "a créé l'organisation",

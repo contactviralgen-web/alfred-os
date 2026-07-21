@@ -1,4 +1,4 @@
--- Les organisations représentent les entreprises clientes d'Business Pilot (tenants).
+-- Les organisations représentent les entreprises clientes d'Pilot (tenants).
 create type public.plan_organisation as enum ('essai', 'starter', 'pro', 'entreprise');
 
 create table public.organizations (

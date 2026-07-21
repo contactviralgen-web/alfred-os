@@ -6,7 +6,7 @@ import { TeamsTable } from "@/components/settings/teams-table"
 import { exigerContexteOrganisation } from "@/lib/auth/guards"
 import { listerEquipes } from "@/modules/core/services/teams.service"
 
-export const metadata: Metadata = { title: "Équipes — Business Pilot" }
+export const metadata: Metadata = { title: "Équipes — Pilot" }
 
 export default async function ParametresEquipesPage({
   params,

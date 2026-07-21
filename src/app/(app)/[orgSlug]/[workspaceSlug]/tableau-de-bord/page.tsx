@@ -25,7 +25,7 @@ import {
   listerTachesUtilisateur,
 } from "@/modules/dashboard/services/productivity.service"
 
-export const metadata: Metadata = { title: "Tableau de bord — Business Pilot" }
+export const metadata: Metadata = { title: "Tableau de bord — Pilot" }
 
 export default async function TableauDeBordPage({
   params,

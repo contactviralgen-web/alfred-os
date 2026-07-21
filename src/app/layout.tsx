@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Business Pilot — Le système d'exploitation intelligent des entreprises",
+  title: "Pilot — Le copilote IA de votre entreprise",
   description:
-    "Business Pilot unifie CRM, gestion des stocks, Amazon, automatisations et agents IA dans un seul cockpit de pilotage.",
+    "Pilot centralise votre CRM, vos stocks, Amazon, vos fournisseurs et vos documents, et vous aide à décider grâce à l'IA.",
 }
 
 export default function RootLayout({
