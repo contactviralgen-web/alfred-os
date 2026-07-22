@@ -89,12 +89,6 @@ export function RevenueChart({
           projection et non une valeur réalisée. */}
       <ChartContainer config={config(metrique)} className="mt-4 aspect-auto h-72 w-full">
         <ComposedChart data={donnees} margin={{ left: 0, right: 8, top: 8 }}>
-          <defs>
-            <linearGradient id="fillValeurBarre" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--color-valeur)" stopOpacity={1} />
-              <stop offset="100%" stopColor="var(--color-valeur)" stopOpacity={0.55} />
-            </linearGradient>
-          </defs>
           <CartesianGrid vertical={false} strokeOpacity={0.35} />
           <XAxis
             dataKey="date"
@@ -125,7 +119,7 @@ export function RevenueChart({
               />
             }
           />
-          <Bar dataKey="valeur" fill="url(#fillValeurBarre)" radius={[4, 4, 0, 0]} maxBarSize={28} />
+          <Bar dataKey="valeur" fill="var(--color-valeur)" radius={[3, 3, 0, 0]} maxBarSize={28} />
           {afficherPrevision ? (
             <Line
               dataKey="valeurPrevue"

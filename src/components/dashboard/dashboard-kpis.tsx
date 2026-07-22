@@ -1,12 +1,47 @@
 "use client"
 
-import { Percent, Receipt, ShoppingBag, Wallet } from "lucide-react"
+import { useEffect, useState } from "react"
+import { animate } from "framer-motion"
+import { ArrowDownRight, ArrowUpRight, Percent, ShoppingBag, Wallet } from "lucide-react"
 
-import { KpiCard, KpiGrid } from "@/components/dashboard/kpi-card"
+import { Card } from "@/components/ui/card"
 import { LIBELLE_PERIODE, type PeriodeGraphique } from "@/modules/dashboard/services/revenue-chart.types"
 
 const formatEur = (v: number) =>
   v.toLocaleString("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })
+
+function useCompteur(valeurCible: number) {
+  const [valeur, setValeur] = useState(0)
+  useEffect(() => {
+    const controls = animate(0, valeurCible, { duration: 0.8, ease: "easeOut", onUpdate: setValeur })
+    return () => controls.stop()
+  }, [valeurCible])
+  return valeur
+}
+
+function MiniStat({
+  titre,
+  valeur,
+  icone: Icone,
+  couleur,
+}: {
+  titre: string
+  valeur: string
+  icone: typeof Percent
+  couleur: string
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <span className={`flex size-9 items-center justify-center rounded-xl ${couleur}`}>
+        <Icone className="size-4.5" strokeWidth={2} />
+      </span>
+      <div>
+        <p className="text-lg font-bold tracking-tight tabular-nums">{valeur}</p>
+        <p className="text-xs text-muted-foreground">{titre}</p>
+      </div>
+    </div>
+  )
+}
 
 export function DashboardKpis({
   periode,
@@ -24,34 +59,61 @@ export function DashboardKpis({
   croissancePct?: number
 }) {
   const suffixePeriode = LIBELLE_PERIODE[periode]
+  const caAnime = useCompteur(ca)
+  const positif = (croissancePct ?? 0) >= 0
 
   return (
-    <KpiGrid>
-      <KpiCard
-        titre={`Chiffre d'affaires (${suffixePeriode})`}
-        valeur={ca}
-        formatValeur={formatEur}
-        variationPct={croissancePct}
-        icone={Receipt}
-      />
-      <KpiCard
-        titre={`Bénéfice (${suffixePeriode})`}
-        valeur={benefice}
-        formatValeur={formatEur}
-        icone={Wallet}
-      />
-      <KpiCard
-        titre="Marge"
-        valeur={margePct}
-        formatValeur={(v) => `${v.toFixed(1)}`}
-        suffixe="%"
-        icone={Percent}
-      />
-      <KpiCard
-        titre={`Commandes (${suffixePeriode})`}
-        valeur={commandes}
-        icone={ShoppingBag}
-      />
-    </KpiGrid>
+    <Card className="border border-border/60 p-5 shadow-none ring-0">
+      <p className="mb-4 text-sm font-semibold text-muted-foreground">
+        Résumé — {suffixePeriode}
+      </p>
+      <div className="flex flex-col gap-6 md:flex-row md:items-center">
+        <div className="flex items-center gap-3 md:border-r md:border-border md:pr-6">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-foreground text-background">
+            <Wallet className="size-5" strokeWidth={2} />
+          </span>
+          <div>
+            <p className="text-xs text-muted-foreground">Chiffre d&apos;affaires</p>
+            <div className="flex items-baseline gap-2">
+              <p className="text-2xl font-bold tracking-tight tabular-nums whitespace-nowrap">
+                {formatEur(caAnime)}
+              </p>
+              {croissancePct !== undefined ? (
+                <span
+                  className={
+                    "flex items-center gap-0.5 text-xs font-semibold " +
+                    (positif ? "text-foreground" : "text-muted-foreground")
+                  }
+                >
+                  {positif ? <ArrowUpRight className="size-3" /> : <ArrowDownRight className="size-3" />}
+                  {Math.abs(croissancePct).toFixed(1)}%
+                </span>
+              ) : null}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid flex-1 grid-cols-3 gap-6">
+          <MiniStat
+            titre="Bénéfice"
+            valeur={formatEur(benefice)}
+            icone={Wallet}
+            couleur="bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
+          />
+          <MiniStat
+            titre="Marge"
+            valeur={`${margePct.toFixed(1)}%`}
+            icone={Percent}
+            couleur="bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400"
+          />
+          <MiniStat
+            titre="Commandes"
+            valeur={String(commandes)}
+            icone={ShoppingBag}
+            couleur="bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400"
+          />
+        </div>
+      </div>
+    </Card>
   )
 }

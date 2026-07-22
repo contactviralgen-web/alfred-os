@@ -54,12 +54,6 @@ export function MarginEvolutionChart({
           correctement grâce à cette séparation. */}
       <ChartContainer config={config} className="mt-4 aspect-auto h-64 w-full">
         <ComposedChart data={donnees} margin={{ left: 0, right: 8, top: 8 }}>
-          <defs>
-            <linearGradient id="fillMargeBarre" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--color-margeNette)" stopOpacity={1} />
-              <stop offset="100%" stopColor="var(--color-margeNette)" stopOpacity={0.55} />
-            </linearGradient>
-          </defs>
           <CartesianGrid vertical={false} strokeOpacity={0.35} />
           <XAxis
             dataKey="date"
@@ -112,8 +106,8 @@ export function MarginEvolutionChart({
           <Bar
             yAxisId="marge"
             dataKey="margeNette"
-            fill="url(#fillMargeBarre)"
-            radius={[4, 4, 0, 0]}
+            fill="var(--color-margeNette)"
+            radius={[3, 3, 0, 0]}
             maxBarSize={40}
           />
         </ComposedChart>
