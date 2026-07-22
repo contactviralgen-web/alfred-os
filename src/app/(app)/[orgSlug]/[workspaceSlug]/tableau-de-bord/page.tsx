@@ -11,10 +11,10 @@ import { TasksWidget } from "@/components/dashboard/tasks-widget"
 import { MiniCalendarWidget } from "@/components/dashboard/mini-calendar-widget"
 import { exigerContexteWorkspace } from "@/lib/auth/guards"
 import {
-  obtenirCourbeCA,
   obtenirRepartitionCanaux,
   obtenirResumeKpis,
 } from "@/modules/dashboard/services/revenue-metrics.service"
+import { obtenirPointsGraphique } from "@/modules/dashboard/services/revenue-chart.service"
 import {
   obtenirCommandesBloquees,
   obtenirTopProduits,
@@ -46,7 +46,7 @@ export default async function TableauDeBordPage({
     evenements,
   ] = await Promise.all([
     obtenirResumeKpis(workspace.id),
-    obtenirCourbeCA(workspace.id),
+    obtenirPointsGraphique(workspace.id, "mois", "ca"),
     obtenirRepartitionCanaux(workspace.id),
     obtenirTopProduits(workspace.id),
     obtenirAlertesStock(workspace.id),
@@ -72,7 +72,11 @@ export default async function TableauDeBordPage({
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <RevenueChart donnees={courbeCa} />
+            <RevenueChart
+              donneesInitiales={courbeCa}
+              orgSlug={orgSlug}
+              workspaceSlug={workspaceSlug}
+            />
           </div>
           <ChannelBreakdown donnees={repartitionCanaux} />
         </div>

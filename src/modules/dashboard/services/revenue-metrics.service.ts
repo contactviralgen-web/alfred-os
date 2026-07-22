@@ -1,6 +1,7 @@
 import "server-only"
 
 import { createClient } from "@/lib/supabase/server"
+import { obtenirBeneficeTotalPeriode } from "@/modules/rentabilite/services/margins.service"
 
 export type ResumeKpis = {
   caJour: number
@@ -32,8 +33,15 @@ export async function obtenirResumeKpis(workspaceId: string): Promise<ResumeKpis
 
   const ca30j = somme(trente, "chiffre_affaires")
   const ca30jPrecedent = somme(trentePrecedents, "chiffre_affaires")
-  const benefice30j = somme(trente, "benefice")
   const commandes30j = somme(trente, "nombre_commandes")
+
+  // Bénéfice réel (module Rentabilité) plutôt que la colonne `benefice` à
+  // plat de `revenue_metrics`, désormais conservée uniquement à titre
+  // d'historique de seed.
+  const { margeNette: benefice30j } = await obtenirBeneficeTotalPeriode(workspaceId, {
+    debut: new Date(Date.now() - 30 * 86400000).toISOString(),
+    fin: new Date().toISOString(),
+  })
 
   return {
     caJour: Number(data[0]?.chiffre_affaires ?? 0),

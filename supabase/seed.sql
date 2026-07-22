@@ -27,6 +27,12 @@ declare
   v_nb_items int;
   v_i int;
   v_moyenne_ca numeric;
+  v_supplier_id uuid;
+  v_supplier_order_id uuid;
+  v_ponctualite_bias numeric;
+  v_nb_cmd_fournisseur int;
+  v_date_prevue date;
+  v_date_reelle date;
 begin
   select id into v_org_id from public.organizations where slug = v_org_slug;
   if v_org_id is null then
@@ -51,6 +57,11 @@ begin
   delete from public.orders where organization_id = v_org_id;
   delete from public.stock_alerts where workspace_id = v_workspace_id;
   delete from public.stock_levels where workspace_id = v_workspace_id;
+  delete from public.workspace_cost_settings where workspace_id = v_workspace_id;
+  delete from public.supplier_invoices where organization_id = v_org_id;
+  delete from public.supplier_order_items where supplier_order_id in (select id from public.supplier_orders where organization_id = v_org_id);
+  delete from public.supplier_orders where organization_id = v_org_id;
+  delete from public.suppliers where organization_id = v_org_id;
   delete from public.products where organization_id = v_org_id;
 
   -- Catalogue produits (4 catégories, marges variées).
@@ -82,6 +93,65 @@ begin
     (v_org_id, v_workspace_id, 'BEAU-005', 'Brosse démêlante anti-casse', 5.50, 19.90, 'Beauté');
 
   select array_agg(id) into v_product_ids from public.products where workspace_id = v_workspace_id;
+
+  -- Réglages de rentabilité : TVA workspace + charges par produit (le trigger
+  -- `creer_product_cost_settings_apres_produit` a déjà créé une ligne par défaut
+  -- pour chaque produit ci-dessus ; on la met à jour avec des valeurs réalistes
+  -- variées par catégorie, avec deux exceptions volontaires pour que le
+  -- classement par marge NETTE diffère visiblement du classement par marge
+  -- brute (`v_top_products`) en démo.
+  insert into public.workspace_cost_settings (organization_id, workspace_id, taux_tva_pct, prix_ttc)
+  values (v_org_id, v_workspace_id, 20.00, true);
+
+  update public.product_cost_settings pcs set
+    cout_transport_flat = cat.transport, cout_douane_flat = cat.douane,
+    frais_amazon_pct = cat.amazon_pct, frais_fba_flat = cat.fba,
+    frais_stockage_unitaire_flat = cat.stockage, taux_retour_pct = cat.retour_pct,
+    cout_divers_flat = cat.divers
+  from public.products p
+  join lateral (
+    select
+      case p.categorie
+        when 'Électronique' then 2.50 when 'Maison' then 3.00 when 'Sport' then 2.50 else 0.80
+      end as transport,
+      case p.categorie
+        when 'Électronique' then 1.80 when 'Maison' then 1.20 when 'Sport' then 1.00 else 0.50
+      end as douane,
+      case p.categorie
+        when 'Électronique' then 15.00 when 'Maison' then 14.00 when 'Sport' then 14.00 else 10.00
+      end as amazon_pct,
+      case p.categorie
+        when 'Électronique' then 3.50 when 'Maison' then 4.50 when 'Sport' then 4.00 else 1.50
+      end as fba,
+      case p.categorie
+        when 'Électronique' then 1.20 when 'Maison' then 1.50 when 'Sport' then 1.20 else 0.60
+      end as stockage,
+      case p.categorie
+        when 'Électronique' then 6.00 when 'Maison' then 3.00 when 'Sport' then 4.00 else 2.00
+      end as retour_pct,
+      case p.categorie
+        when 'Électronique' then 1.50 when 'Maison' then 1.00 when 'Sport' then 1.00 else 0.50
+      end as divers
+  ) as cat on true
+  where pcs.product_id = p.id and p.workspace_id = v_workspace_id;
+
+  -- Exception 1 : le casque audio a la meilleure marge BRUTE apparente (prix
+  -- élevé) mais des frais Amazon/FBA/retours réels bien plus lourds qu'il n'y
+  -- paraît — sa marge NETTE réelle chute une fois les vraies charges comptées.
+  update public.product_cost_settings pcs set
+    frais_amazon_pct = 17.00, frais_fba_flat = 7.50, cout_transport_flat = 5.00,
+    cout_douane_flat = 3.50, taux_retour_pct = 11.00, cout_divers_flat = 3.00
+  from public.products p
+  where pcs.product_id = p.id and p.workspace_id = v_workspace_id and p.sku = 'ELEC-001';
+
+  -- Exception 2 : le bandeau démaquillant a une marge brute modeste mais très
+  -- peu de charges réelles (produit léger, faible taux de retour) — sa marge
+  -- nette réelle en % dépasse des produits en apparence plus rentables.
+  update public.product_cost_settings pcs set
+    frais_amazon_pct = 8.00, frais_fba_flat = 0.30, cout_transport_flat = 0.20,
+    cout_douane_flat = 0.15, taux_retour_pct = 0.50, cout_divers_flat = 0.10
+  from public.products p
+  where pcs.product_id = p.id and p.workspace_id = v_workspace_id and p.sku = 'BEAU-004';
 
   -- 90 jours d'historique de commandes avec tendance de croissance.
   for v_offset in reverse 89..0 loop
@@ -198,6 +268,89 @@ begin
   from public.products p
   join public.stock_levels sl on sl.product_id = p.id
   where p.workspace_id = v_workspace_id and sl.quantite_disponible <= sl.seuil_alerte;
+
+  -- Fournisseurs : un par grande catégorie de produits, plus deux profils
+  -- secondaires, avec des performances volontairement différenciées pour que
+  -- le score de recommandation calculé côté service distingue clairement un
+  -- "meilleur fournisseur" en démo.
+  insert into public.suppliers (organization_id, workspace_id, nom, email, telephone, statut, delai_livraison_jours, note_performance)
+  values
+    (v_org_id, v_workspace_id, 'Electro Import Asia', 'contact@electroimport-asia.com', '+33 1 84 20 11 03', 'actif', 7, 4.8),
+    (v_org_id, v_workspace_id, 'Maison & Style Distribution', 'commandes@maisonstyle-dist.fr', '+33 4 72 55 09 41', 'actif', 15, 4.2),
+    (v_org_id, v_workspace_id, 'SportGear Europe', 'sales@sportgear-europe.eu', '+33 2 40 33 18 27', 'actif', 21, 3.6),
+    (v_org_id, v_workspace_id, 'BeautyLine Cosmétiques', 'contact@beautyline-cosmetiques.fr', '+33 1 47 88 62 14', 'actif', 30, 3.0),
+    (v_org_id, v_workspace_id, 'Global Pack Solutions', 'contact@globalpack-solutions.com', '+33 3 20 44 71 09', 'actif', 45, 2.5),
+    (v_org_id, v_workspace_id, 'Nova Textile Trading', 'info@novatextile-trading.com', '+33 5 61 29 84 30', 'inactif', 38, 2.8);
+
+  -- Commandes d'achat + factures par fournisseur (biais de ponctualité
+  -- décroissant dans le même ordre que les notes ci-dessus).
+  for v_supplier_id, v_ponctualite_bias in
+    select s.id,
+      case s.nom
+        when 'Electro Import Asia' then 0.95
+        when 'Maison & Style Distribution' then 0.80
+        when 'SportGear Europe' then 0.60
+        when 'BeautyLine Cosmétiques' then 0.45
+        when 'Global Pack Solutions' then 0.30
+        else 0.50
+      end
+    from public.suppliers s
+    where s.workspace_id = v_workspace_id
+  loop
+    v_nb_cmd_fournisseur := 3 + floor(random() * 3)::int;
+
+    for v_i in 1..v_nb_cmd_fournisseur loop
+      v_date_prevue := current_date - floor(random() * 150)::int;
+      v_date_reelle := case
+        when random() < v_ponctualite_bias then v_date_prevue - floor(random() * 2)::int
+        else v_date_prevue + 1 + floor(random() * 6)::int
+      end;
+
+      insert into public.supplier_orders (
+        organization_id, workspace_id, supplier_id, numero_commande, statut,
+        montant_total, date_commande, date_livraison_prevue, date_livraison_reelle
+      )
+      values (
+        v_org_id, v_workspace_id, v_supplier_id,
+        'PO-' || to_char(v_date_prevue, 'YYMM') || '-' || substr(v_supplier_id::text, 1, 4) || '-' || v_i,
+        'livree', 0, v_date_prevue - 10, v_date_prevue, v_date_reelle
+      )
+      returning id into v_supplier_order_id;
+
+      insert into public.supplier_order_items (supplier_order_id, product_id, quantite, prix_unitaire)
+      select v_supplier_order_id, p.id, 20 + floor(random() * 80)::int, p.prix_achat
+      from public.products p
+      where p.workspace_id = v_workspace_id
+      order by random()
+      limit 1 + floor(random() * 2)::int;
+
+      update public.supplier_orders so set
+        montant_total = coalesce((select sum(quantite * prix_unitaire) from public.supplier_order_items where supplier_order_id = so.id), 0)
+      where so.id = v_supplier_order_id;
+
+      insert into public.supplier_invoices (
+        organization_id, workspace_id, supplier_id, supplier_order_id, numero_facture,
+        montant, statut, date_emission, date_echeance, date_paiement
+      )
+      select
+        v_org_id, v_workspace_id, v_supplier_id, v_supplier_order_id,
+        'FA-' || to_char(v_date_prevue, 'YYMM') || '-' || substr(v_supplier_order_id::text, 1, 4),
+        so.montant_total,
+        (case when random() < 0.15 then 'en_retard' when random() < 0.5 then 'en_attente' else 'payee' end)::public.statut_facture_fournisseur,
+        v_date_prevue - 10, v_date_prevue + 20,
+        case when random() < 0.6 then v_date_prevue + floor(random() * 15)::int else null end
+      from public.supplier_orders so where so.id = v_supplier_order_id;
+    end loop;
+  end loop;
+
+  -- Une commande "en cours" par fournisseur actif pour montrer un pipeline vivant.
+  insert into public.supplier_orders (organization_id, workspace_id, supplier_id, numero_commande, statut, montant_total, date_commande, date_livraison_prevue)
+  select v_org_id, v_workspace_id, s.id,
+    'PO-' || to_char(current_date, 'YYMM') || '-' || substr(s.id::text, 1, 4) || '-EC',
+    (array['brouillon', 'envoyee', 'confirmee', 'en_transit'])[1 + floor(random() * 4)::int]::public.statut_commande_fournisseur,
+    500 + floor(random() * 4000)::int, current_date - floor(random() * 5)::int, current_date + 5 + floor(random() * 20)::int
+  from public.suppliers s
+  where s.workspace_id = v_workspace_id and s.statut = 'actif';
 
   -- Tâches.
   if v_user_id is not null then

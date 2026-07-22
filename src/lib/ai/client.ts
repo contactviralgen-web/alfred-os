@@ -8,9 +8,17 @@ export function creerClientIA() {
   return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 }
 
+export function estErreurCreditsEpuises(erreur: unknown): boolean {
+  return (
+    erreur instanceof Anthropic.APIError &&
+    erreur.status === 400 &&
+    /credit balance/i.test(erreur.message)
+  )
+}
+
 export function messageErreurIA(erreur: unknown): string {
   if (erreur instanceof Anthropic.APIError) {
-    if (erreur.status === 400 && /credit balance/i.test(erreur.message)) {
+    if (estErreurCreditsEpuises(erreur)) {
       return "Le compte Anthropic n'a pas de crédits disponibles. Ajoutez un moyen de paiement sur console.anthropic.com pour activer les fonctionnalités IA."
     }
     if (erreur.status === 401) {

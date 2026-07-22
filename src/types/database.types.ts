@@ -456,11 +456,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_product_margins"
+            referencedColumns: ["order_id"]
+          },
+          {
             foreignKeyName: "order_items_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "v_product_margins"
+            referencedColumns: ["product_id"]
           },
         ]
       }
@@ -661,6 +675,83 @@ export type Database = {
           module?: string
         }
         Relationships: []
+      }
+      product_cost_settings: {
+        Row: {
+          cout_divers_flat: number
+          cout_douane_flat: number
+          cout_transport_flat: number
+          cree_le: string
+          frais_amazon_pct: number
+          frais_fba_flat: number
+          frais_stockage_unitaire_flat: number
+          id: string
+          modifie_le: string
+          organization_id: string
+          product_id: string
+          taux_retour_pct: number
+          workspace_id: string
+        }
+        Insert: {
+          cout_divers_flat?: number
+          cout_douane_flat?: number
+          cout_transport_flat?: number
+          cree_le?: string
+          frais_amazon_pct?: number
+          frais_fba_flat?: number
+          frais_stockage_unitaire_flat?: number
+          id?: string
+          modifie_le?: string
+          organization_id: string
+          product_id: string
+          taux_retour_pct?: number
+          workspace_id: string
+        }
+        Update: {
+          cout_divers_flat?: number
+          cout_douane_flat?: number
+          cout_transport_flat?: number
+          cree_le?: string
+          frais_amazon_pct?: number
+          frais_fba_flat?: number
+          frais_stockage_unitaire_flat?: number
+          id?: string
+          modifie_le?: string
+          organization_id?: string
+          product_id?: string
+          taux_retour_pct?: number
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_cost_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_cost_settings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_cost_settings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "v_product_margins"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_cost_settings_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       products: {
         Row: {
@@ -964,6 +1055,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "stock_alerts_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "v_product_margins"
+            referencedColumns: ["product_id"]
+          },
+          {
             foreignKeyName: "stock_alerts_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
@@ -1009,7 +1107,284 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "stock_levels_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "v_product_margins"
+            referencedColumns: ["product_id"]
+          },
+          {
             foreignKeyName: "stock_levels_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supplier_invoices: {
+        Row: {
+          cree_le: string
+          date_echeance: string | null
+          date_emission: string
+          date_paiement: string | null
+          id: string
+          montant: number
+          numero_facture: string
+          organization_id: string
+          statut: Database["public"]["Enums"]["statut_facture_fournisseur"]
+          supplier_id: string
+          supplier_order_id: string | null
+          workspace_id: string
+        }
+        Insert: {
+          cree_le?: string
+          date_echeance?: string | null
+          date_emission?: string
+          date_paiement?: string | null
+          id?: string
+          montant?: number
+          numero_facture: string
+          organization_id: string
+          statut?: Database["public"]["Enums"]["statut_facture_fournisseur"]
+          supplier_id: string
+          supplier_order_id?: string | null
+          workspace_id: string
+        }
+        Update: {
+          cree_le?: string
+          date_echeance?: string | null
+          date_emission?: string
+          date_paiement?: string | null
+          id?: string
+          montant?: number
+          numero_facture?: string
+          organization_id?: string
+          statut?: Database["public"]["Enums"]["statut_facture_fournisseur"]
+          supplier_id?: string
+          supplier_order_id?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_invoices_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_invoices_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_invoices_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "v_supplier_performance"
+            referencedColumns: ["supplier_id"]
+          },
+          {
+            foreignKeyName: "supplier_invoices_supplier_order_id_fkey"
+            columns: ["supplier_order_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_invoices_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supplier_order_items: {
+        Row: {
+          cree_le: string
+          id: string
+          prix_unitaire: number
+          product_id: string
+          quantite: number
+          supplier_order_id: string
+        }
+        Insert: {
+          cree_le?: string
+          id?: string
+          prix_unitaire?: number
+          product_id: string
+          quantite: number
+          supplier_order_id: string
+        }
+        Update: {
+          cree_le?: string
+          id?: string
+          prix_unitaire?: number
+          product_id?: string
+          quantite?: number
+          supplier_order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "v_product_margins"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "supplier_order_items_supplier_order_id_fkey"
+            columns: ["supplier_order_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supplier_orders: {
+        Row: {
+          cree_le: string
+          date_commande: string
+          date_livraison_prevue: string | null
+          date_livraison_reelle: string | null
+          id: string
+          modifie_le: string
+          montant_total: number
+          notes: string | null
+          numero_commande: string
+          organization_id: string
+          statut: Database["public"]["Enums"]["statut_commande_fournisseur"]
+          supplier_id: string
+          workspace_id: string
+        }
+        Insert: {
+          cree_le?: string
+          date_commande?: string
+          date_livraison_prevue?: string | null
+          date_livraison_reelle?: string | null
+          id?: string
+          modifie_le?: string
+          montant_total?: number
+          notes?: string | null
+          numero_commande: string
+          organization_id: string
+          statut?: Database["public"]["Enums"]["statut_commande_fournisseur"]
+          supplier_id: string
+          workspace_id: string
+        }
+        Update: {
+          cree_le?: string
+          date_commande?: string
+          date_livraison_prevue?: string | null
+          date_livraison_reelle?: string | null
+          id?: string
+          modifie_le?: string
+          montant_total?: number
+          notes?: string | null
+          numero_commande?: string
+          organization_id?: string
+          statut?: Database["public"]["Enums"]["statut_commande_fournisseur"]
+          supplier_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_orders_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "v_supplier_performance"
+            referencedColumns: ["supplier_id"]
+          },
+          {
+            foreignKeyName: "supplier_orders_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suppliers: {
+        Row: {
+          adresse: string | null
+          cree_le: string
+          delai_livraison_jours: number | null
+          email: string | null
+          id: string
+          modifie_le: string
+          nom: string
+          note_performance: number | null
+          notes: string | null
+          organization_id: string
+          statut: Database["public"]["Enums"]["statut_fournisseur"]
+          telephone: string | null
+          workspace_id: string
+        }
+        Insert: {
+          adresse?: string | null
+          cree_le?: string
+          delai_livraison_jours?: number | null
+          email?: string | null
+          id?: string
+          modifie_le?: string
+          nom: string
+          note_performance?: number | null
+          notes?: string | null
+          organization_id: string
+          statut?: Database["public"]["Enums"]["statut_fournisseur"]
+          telephone?: string | null
+          workspace_id: string
+        }
+        Update: {
+          adresse?: string | null
+          cree_le?: string
+          delai_livraison_jours?: number | null
+          email?: string | null
+          id?: string
+          modifie_le?: string
+          nom?: string
+          note_performance?: number | null
+          notes?: string | null
+          organization_id?: string
+          statut?: Database["public"]["Enums"]["statut_fournisseur"]
+          telephone?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suppliers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "suppliers_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
@@ -1149,6 +1524,51 @@ export type Database = {
           },
         ]
       }
+      workspace_cost_settings: {
+        Row: {
+          cree_le: string
+          id: string
+          modifie_le: string
+          organization_id: string
+          prix_ttc: boolean
+          taux_tva_pct: number
+          workspace_id: string
+        }
+        Insert: {
+          cree_le?: string
+          id?: string
+          modifie_le?: string
+          organization_id: string
+          prix_ttc?: boolean
+          taux_tva_pct?: number
+          workspace_id: string
+        }
+        Update: {
+          cree_le?: string
+          id?: string
+          modifie_le?: string
+          organization_id?: string
+          prix_ttc?: boolean
+          taux_tva_pct?: number
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_cost_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workspace_cost_settings_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspace_members: {
         Row: {
           cree_le: string
@@ -1272,6 +1692,66 @@ export type Database = {
           },
         ]
       }
+      v_product_margins: {
+        Row: {
+          categorie: string | null
+          chiffre_affaires: number | null
+          cout_divers_flat: number | null
+          cout_douane_flat: number | null
+          cout_transport_flat: number | null
+          cree_le: string | null
+          frais_amazon_pct: number | null
+          frais_fba_flat: number | null
+          frais_stockage_unitaire_flat: number | null
+          order_id: string | null
+          order_item_id: string | null
+          organization_id: string | null
+          prix_achat: number | null
+          prix_ttc: boolean | null
+          prix_unitaire: number | null
+          product_id: string | null
+          produit_nom: string | null
+          quantite: number | null
+          statut: Database["public"]["Enums"]["statut_commande"] | null
+          taux_retour_pct: number | null
+          taux_tva_pct: number | null
+          workspace_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_supplier_performance: {
+        Row: {
+          commandes_livrees: number | null
+          commandes_livrees_a_temps: number | null
+          commandes_livrees_avec_dates: number | null
+          supplier_id: string | null
+          workspace_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suppliers_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       v_top_products: {
         Row: {
           categorie: string | null
@@ -1291,6 +1771,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "v_product_margins"
+            referencedColumns: ["product_id"]
           },
           {
             foreignKeyName: "products_organization_id_fkey"
@@ -1404,7 +1891,16 @@ export type Database = {
         | "livree"
         | "bloquee"
         | "annulee"
+      statut_commande_fournisseur:
+        | "brouillon"
+        | "envoyee"
+        | "confirmee"
+        | "en_transit"
+        | "livree"
+        | "annulee"
       statut_contact_crm: "prospect" | "client" | "perdu"
+      statut_facture_fournisseur: "en_attente" | "payee" | "en_retard"
+      statut_fournisseur: "actif" | "inactif"
       statut_invitation: "en_attente" | "acceptee" | "expiree" | "revoquee"
       statut_membre: "actif" | "invite" | "suspendu"
       statut_tache: "a_faire" | "en_cours" | "terminee"
@@ -1553,7 +2049,17 @@ export const Constants = {
         "bloquee",
         "annulee",
       ],
+      statut_commande_fournisseur: [
+        "brouillon",
+        "envoyee",
+        "confirmee",
+        "en_transit",
+        "livree",
+        "annulee",
+      ],
       statut_contact_crm: ["prospect", "client", "perdu"],
+      statut_facture_fournisseur: ["en_attente", "payee", "en_retard"],
+      statut_fournisseur: ["actif", "inactif"],
       statut_invitation: ["en_attente", "acceptee", "expiree", "revoquee"],
       statut_membre: ["actif", "invite", "suspendu"],
       statut_tache: ["a_faire", "en_cours", "terminee"],

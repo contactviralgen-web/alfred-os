@@ -8,6 +8,8 @@ import {
   Layers,
   ListChecks,
   ShoppingCart,
+  TrendingUp,
+  Truck,
   Workflow,
 } from "lucide-react"
 
@@ -42,6 +44,14 @@ export const REGISTRE_MODULES: ConfigurationModule[] = [
   {
     id: "crm",
     nav: [{ titre: "CRM", segment: "crm", icone: Contact }],
+  },
+  {
+    id: "fournisseurs",
+    nav: [{ titre: "Fournisseurs", segment: "fournisseurs", icone: Truck }],
+  },
+  {
+    id: "rentabilite",
+    nav: [{ titre: "Rentabilité", segment: "rentabilite", icone: TrendingUp }],
   },
   {
     id: "amazon",

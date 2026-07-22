@@ -1,28 +1,37 @@
 import "server-only"
 
-import { creerClientIA, messageErreurIA, MODELE_IA } from "@/lib/ai/client"
+import { creerClientIA, estErreurCreditsEpuises, messageErreurIA, MODELE_IA } from "@/lib/ai/client"
 import {
-  obtenirCourbeCA,
   obtenirRepartitionCanaux,
   obtenirResumeKpis,
+  type ResumeKpis,
 } from "@/modules/dashboard/services/revenue-metrics.service"
+import { obtenirPointsGraphique } from "@/modules/dashboard/services/revenue-chart.service"
 import {
   obtenirCommandesBloquees,
   obtenirTopProduits,
 } from "@/modules/dashboard/services/orders-metrics.service"
 import { obtenirAlertesStock } from "@/modules/dashboard/services/stock-alerts.service"
 import { listerTachesUtilisateur } from "@/modules/dashboard/services/productivity.service"
+import { genererReponseSimulee } from "@/modules/agents/services/directeur-fallback.service"
 
 export type MessageChat = { role: "user" | "assistant"; content: string }
 
-async function construireContexteEntreprise(
-  organisationNom: string,
-  workspaceId: string
-) {
+export type ContexteEntreprise = {
+  kpis: ResumeKpis | null
+  courbeCa: Awaited<ReturnType<typeof obtenirPointsGraphique>>
+  canaux: Awaited<ReturnType<typeof obtenirRepartitionCanaux>>
+  topProduits: Awaited<ReturnType<typeof obtenirTopProduits>>
+  alertesStock: Awaited<ReturnType<typeof obtenirAlertesStock>>
+  commandesBloquees: Awaited<ReturnType<typeof obtenirCommandesBloquees>>
+  taches: Awaited<ReturnType<typeof listerTachesUtilisateur>>
+}
+
+export async function collecterDonneesEntreprise(workspaceId: string): Promise<ContexteEntreprise> {
   const [kpis, courbeCa, canaux, topProduits, alertesStock, commandesBloquees, taches] =
     await Promise.all([
       obtenirResumeKpis(workspaceId),
-      obtenirCourbeCA(workspaceId),
+      obtenirPointsGraphique(workspaceId, "mois", "ca"),
       obtenirRepartitionCanaux(workspaceId),
       obtenirTopProduits(workspaceId, 8),
       obtenirAlertesStock(workspaceId),
@@ -30,10 +39,15 @@ async function construireContexteEntreprise(
       listerTachesUtilisateur(workspaceId),
     ])
 
+  return { kpis, courbeCa, canaux, topProduits, alertesStock, commandesBloquees, taches }
+}
+
+export function formaterContextePrompt(organisationNom: string, donnees: ContexteEntreprise) {
+  const { kpis, courbeCa, canaux, topProduits, alertesStock, commandesBloquees, taches } = donnees
+
   const derniersJours = courbeCa
-    .filter((p) => p.chiffreAffaires !== null)
     .slice(-14)
-    .map((p) => `${p.date}: ${p.chiffreAffaires}€`)
+    .map((p) => `${p.date}: ${p.valeur}€`)
     .join(", ")
 
   return `Tu es le Directeur IA de "${organisationNom}" sur Pilot, une plateforme de pilotage d'entreprise. Tu es un conseiller d'affaires direct, factuel et orienté action.
@@ -82,8 +96,10 @@ export async function poserQuestionDirecteur(
   historique: MessageChat[],
   question: string
 ): Promise<{ succes: true; reponse: string } | { succes: false; message: string }> {
+  const donnees = await collecterDonneesEntreprise(workspaceId)
+
   try {
-    const contexte = await construireContexteEntreprise(organisationNom, workspaceId)
+    const contexte = formaterContextePrompt(organisationNom, donnees)
     const client = creerClientIA()
 
     const response = await client.messages.create({
@@ -107,6 +123,9 @@ export async function poserQuestionDirecteur(
 
     return { succes: true, reponse: texte.text }
   } catch (erreur) {
+    if (estErreurCreditsEpuises(erreur)) {
+      return { succes: true, reponse: genererReponseSimulee(question, donnees) }
+    }
     return { succes: false, message: messageErreurIA(erreur) }
   }
 }
