@@ -90,6 +90,7 @@ export async function creerCommandeFournisseurAction(
     await creerCommandeFournisseur(organisation.id, workspace.id, {
       ...analyse.data,
       date_livraison_prevue: analyse.data.date_livraison_prevue || null,
+      date_paiement_prevue: analyse.data.date_paiement_prevue || null,
     })
   } catch (erreur) {
     return {
@@ -133,6 +134,28 @@ export async function mettreAJourStatutCommandeAction(
   revalidatePath(`/${orgSlug}/${wsSlug}/fournisseurs/${supplierId}`)
   revalidatePath(`/${orgSlug}/${wsSlug}/fournisseurs`)
   return { succes: true, message: "Statut de la commande mis à jour." }
+}
+
+export async function marquerCommandeRecueAction(
+  orderId: string,
+  supplierId: string,
+  orgSlug: string,
+  wsSlug: string
+): Promise<ResultatAction> {
+  await exigerContexteWorkspace(orgSlug, wsSlug)
+
+  try {
+    await mettreAJourStatutCommande(orderId, "livree", new Date().toISOString().slice(0, 10))
+  } catch (erreur) {
+    return {
+      succes: false,
+      message: erreur instanceof Error ? erreur.message : "Une erreur est survenue.",
+    }
+  }
+
+  revalidatePath(`/${orgSlug}/${wsSlug}/fournisseurs/${supplierId}`)
+  revalidatePath(`/${orgSlug}/${wsSlug}/fournisseurs`)
+  return { succes: true, message: "Commande marquée comme reçue." }
 }
 
 export async function creerFactureAction(

@@ -20,9 +20,7 @@ export default async function FournisseursPage({
   const { workspace } = await exigerContexteWorkspace(orgSlug, workspaceSlug)
   const fournisseurs = await listerFournisseurs(workspace.id)
 
-  const meilleur = fournisseurs
-    .filter((f) => f.statut === "actif")
-    .sort((a, b) => b.scoreRecommandation - a.scoreRecommandation)[0]
+  const meilleur = fournisseurs.find((f) => f.estRecommande)
 
   return (
     <>

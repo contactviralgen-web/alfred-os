@@ -7,9 +7,14 @@ import {
   obtenirLignesMarges,
 } from "@/modules/rentabilite/services/margins.service"
 
-export type PeriodeGraphique = "24h" | "7j" | "mois" | "annee"
-export type MetriqueGraphique = "ca" | "benefice"
-export type PointGraphique = { date: string; libelle: string; valeur: number; valeurPrevue: number | null }
+export {
+  plageDatesPeriode,
+  LIBELLE_PERIODE,
+  type PeriodeGraphique,
+  type MetriqueGraphique,
+  type PointGraphique,
+} from "@/modules/dashboard/services/revenue-chart.types"
+import type { PeriodeGraphique, MetriqueGraphique, PointGraphique } from "@/modules/dashboard/services/revenue-chart.types"
 
 async function obtenirPoints24h(
   workspaceId: string,

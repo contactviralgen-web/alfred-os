@@ -2,111 +2,68 @@ import "server-only"
 
 import { createClient } from "@/lib/supabase/server"
 import { obtenirBeneficeTotalPeriode } from "@/modules/rentabilite/services/margins.service"
+import { plageDatesPeriode, type PeriodeGraphique } from "@/modules/dashboard/services/revenue-chart.service"
 
 export type ResumeKpis = {
-  caJour: number
-  caVeille: number
-  ca30j: number
-  benefice30j: number
+  ca: number
+  benefice: number
   margePct: number
-  commandes30j: number
-  panierMoyen30j: number
+  commandes: number
+  panierMoyen: number
   croissancePct: number
 }
 
-export async function obtenirResumeKpis(workspaceId: string): Promise<ResumeKpis | null> {
+export async function obtenirResumeKpis(
+  workspaceId: string,
+  periode: PeriodeGraphique
+): Promise<ResumeKpis | null> {
   const supabase = await createClient()
-  const { data } = await supabase
-    .from("revenue_metrics")
-    .select("date, chiffre_affaires, benefice, nombre_commandes")
-    .eq("workspace_id", workspaceId)
-    .order("date", { ascending: false })
-    .limit(60)
+  const { debut, fin, debutPrecedent, finPrecedent } = plageDatesPeriode(periode)
 
-  if (!data || data.length === 0) return null
-
-  const trente = data.slice(0, 30)
-  const trentePrecedents = data.slice(30, 60)
-
-  const somme = (lignes: typeof data, cle: "chiffre_affaires" | "benefice" | "nombre_commandes") =>
-    lignes.reduce((total, ligne) => total + Number(ligne[cle]), 0)
-
-  const ca30j = somme(trente, "chiffre_affaires")
-  const ca30jPrecedent = somme(trentePrecedents, "chiffre_affaires")
-  const commandes30j = somme(trente, "nombre_commandes")
-
-  // Bénéfice réel (module Rentabilité) plutôt que la colonne `benefice` à
-  // plat de `revenue_metrics`, désormais conservée uniquement à titre
-  // d'historique de seed.
-  const { margeNette: benefice30j } = await obtenirBeneficeTotalPeriode(workspaceId, {
-    debut: new Date(Date.now() - 30 * 86400000).toISOString(),
-    fin: new Date().toISOString(),
-  })
-
-  return {
-    caJour: Number(data[0]?.chiffre_affaires ?? 0),
-    caVeille: Number(data[1]?.chiffre_affaires ?? 0),
-    ca30j,
-    benefice30j,
-    margePct: ca30j > 0 ? (benefice30j / ca30j) * 100 : 0,
-    commandes30j,
-    panierMoyen30j: commandes30j > 0 ? ca30j / commandes30j : 0,
-    croissancePct: ca30jPrecedent > 0 ? ((ca30j - ca30jPrecedent) / ca30jPrecedent) * 100 : 0,
-  }
-}
-
-export type PointCourbeCA = {
-  date: string
-  chiffreAffaires: number | null
-  chiffreAffairesPrevu: number | null
-}
-
-export async function obtenirCourbeCA(workspaceId: string): Promise<PointCourbeCA[]> {
-  const supabase = await createClient()
-
-  const [{ data: historique }, { data: previsions }] = await Promise.all([
+  const [{ data: courante }, { data: precedente }, { margeNette: benefice }] = await Promise.all([
     supabase
-      .from("revenue_metrics")
-      .select("date, chiffre_affaires")
+      .from("orders")
+      .select("montant_total")
       .eq("workspace_id", workspaceId)
-      .gte("date", new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10))
-      .order("date", { ascending: true }),
+      .neq("statut", "annulee")
+      .gte("cree_le", debut)
+      .lt("cree_le", fin),
     supabase
-      .from("revenue_forecasts")
-      .select("date, chiffre_affaires_prevu")
+      .from("orders")
+      .select("montant_total")
       .eq("workspace_id", workspaceId)
-      .order("date", { ascending: true }),
+      .neq("statut", "annulee")
+      .gte("cree_le", debutPrecedent)
+      .lt("cree_le", finPrecedent),
+    obtenirBeneficeTotalPeriode(workspaceId, { debut, fin }),
   ])
 
-  const points = new Map<string, PointCourbeCA>()
+  if (!courante || courante.length === 0) return null
 
-  for (const ligne of historique ?? []) {
-    points.set(ligne.date, {
-      date: ligne.date,
-      chiffreAffaires: Number(ligne.chiffre_affaires),
-      chiffreAffairesPrevu: null,
-    })
+  const ca = courante.reduce((total, o) => total + Number(o.montant_total), 0)
+  const caPrecedent = (precedente ?? []).reduce((total, o) => total + Number(o.montant_total), 0)
+  const commandes = courante.length
+
+  return {
+    ca,
+    benefice,
+    margePct: ca > 0 ? (benefice / ca) * 100 : 0,
+    commandes,
+    panierMoyen: commandes > 0 ? ca / commandes : 0,
+    croissancePct: caPrecedent > 0 ? ((ca - caPrecedent) / caPrecedent) * 100 : 0,
   }
-
-  for (const ligne of previsions ?? []) {
-    points.set(ligne.date, {
-      date: ligne.date,
-      chiffreAffaires: null,
-      chiffreAffairesPrevu: Number(ligne.chiffre_affaires_prevu),
-    })
-  }
-
-  return Array.from(points.values()).sort((a, b) => a.date.localeCompare(b.date))
 }
 
-export async function obtenirRepartitionCanaux(workspaceId: string) {
+export async function obtenirRepartitionCanaux(workspaceId: string, periode: PeriodeGraphique) {
   const supabase = await createClient()
+  const { debut, fin } = plageDatesPeriode(periode)
   const { data } = await supabase
     .from("orders")
     .select("canal, montant_total")
     .eq("workspace_id", workspaceId)
     .neq("statut", "annulee")
-    .gte("cree_le", new Date(Date.now() - 30 * 86400000).toISOString())
+    .gte("cree_le", debut)
+    .lt("cree_le", fin)
 
   const parCanal = new Map<string, number>()
   for (const ligne of data ?? []) {

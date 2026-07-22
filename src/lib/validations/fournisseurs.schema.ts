@@ -8,16 +8,22 @@ export const schemaFournisseur = z.object({
   notes: z.string().optional(),
   statut: z.enum(["actif", "inactif"]).optional(),
   delai_livraison_jours: z.coerce.number().int().min(0).optional().nullable(),
-  note_performance: z.coerce.number().min(0).max(5).optional().nullable(),
+})
+
+export const schemaLigneCommande = z.object({
+  product_id: z.string().uuid("Produit invalide"),
+  quantite: z.coerce.number().int().min(1, "La quantité doit être d'au moins 1"),
+  prix_unitaire: z.coerce.number().min(0, "Le prix unitaire doit être positif"),
 })
 
 export const schemaCommandeFournisseur = z.object({
   supplier_id: z.string().uuid("Fournisseur invalide"),
   numero_commande: z.string().min(1, "Le numéro de commande est obligatoire"),
-  montant_total: z.coerce.number().min(0).optional(),
   date_commande: z.string().optional(),
   date_livraison_prevue: z.string().optional().or(z.literal("")),
+  date_paiement_prevue: z.string().optional().or(z.literal("")),
   notes: z.string().optional(),
+  lignes: z.array(schemaLigneCommande).min(1, "Ajoutez au moins un produit à la commande"),
 })
 
 export const schemaStatutCommandeFournisseur = z.object({

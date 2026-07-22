@@ -30,9 +30,9 @@ export type ContexteEntreprise = {
 export async function collecterDonneesEntreprise(workspaceId: string): Promise<ContexteEntreprise> {
   const [kpis, courbeCa, canaux, topProduits, alertesStock, commandesBloquees, taches] =
     await Promise.all([
-      obtenirResumeKpis(workspaceId),
+      obtenirResumeKpis(workspaceId, "mois"),
       obtenirPointsGraphique(workspaceId, "mois", "ca"),
-      obtenirRepartitionCanaux(workspaceId),
+      obtenirRepartitionCanaux(workspaceId, "mois"),
       obtenirTopProduits(workspaceId, 8),
       obtenirAlertesStock(workspaceId),
       obtenirCommandesBloquees(workspaceId),
@@ -62,9 +62,9 @@ Règles :
 === DONNÉES DE L'ENTREPRISE (temps réel) ===
 
 Résumé des 30 derniers jours :
-- Chiffre d'affaires : ${kpis?.ca30j.toFixed(0) ?? "N/A"}€ (croissance ${kpis?.croissancePct.toFixed(1) ?? "N/A"}% vs période précédente)
-- Bénéfice : ${kpis?.benefice30j.toFixed(0) ?? "N/A"}€ (marge ${kpis?.margePct.toFixed(1) ?? "N/A"}%)
-- Commandes : ${kpis?.commandes30j ?? "N/A"} (panier moyen ${kpis?.panierMoyen30j.toFixed(0) ?? "N/A"}€)
+- Chiffre d'affaires : ${kpis?.ca.toFixed(0) ?? "N/A"}€ (croissance ${kpis?.croissancePct.toFixed(1) ?? "N/A"}% vs période précédente)
+- Bénéfice : ${kpis?.benefice.toFixed(0) ?? "N/A"}€ (marge ${kpis?.margePct.toFixed(1) ?? "N/A"}%)
+- Commandes : ${kpis?.commandes ?? "N/A"} (panier moyen ${kpis?.panierMoyen.toFixed(0) ?? "N/A"}€)
 
 CA journalier (14 derniers jours) : ${derniersJours || "aucune donnée"}
 

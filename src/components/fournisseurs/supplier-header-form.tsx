@@ -19,7 +19,6 @@ export function SupplierHeaderForm({
   adresse,
   statut,
   delaiLivraisonJours,
-  notePerformance,
 }: {
   supplierId: string
   orgSlug: string
@@ -30,7 +29,6 @@ export function SupplierHeaderForm({
   adresse: string | null
   statut: string
   delaiLivraisonJours: number | null
-  notePerformance: number | null
 }) {
   const [valeurs, setValeurs] = useState({
     nom,
@@ -39,7 +37,6 @@ export function SupplierHeaderForm({
     adresse: adresse ?? "",
     statut,
     delai_livraison_jours: delaiLivraisonJours != null ? String(delaiLivraisonJours) : "",
-    note_performance: notePerformance != null ? String(notePerformance) : "",
   })
   const [isPending, startTransition] = useTransition()
 
@@ -55,7 +52,6 @@ export function SupplierHeaderForm({
         delai_livraison_jours: valeurs.delai_livraison_jours
           ? Number(valeurs.delai_livraison_jours)
           : null,
-        note_performance: valeurs.note_performance ? Number(valeurs.note_performance) : null,
       })
       if (!resultat.succes) {
         toast.error(resultat.message)
@@ -105,17 +101,6 @@ export function SupplierHeaderForm({
             onChange={(e) =>
               setValeurs((v) => ({ ...v, delai_livraison_jours: e.target.value }))
             }
-          />
-        </div>
-        <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">Note performance (0-5)</Label>
-          <Input
-            type="number"
-            min={0}
-            max={5}
-            step={0.5}
-            value={valeurs.note_performance}
-            onChange={(e) => setValeurs((v) => ({ ...v, note_performance: e.target.value }))}
           />
         </div>
       </div>

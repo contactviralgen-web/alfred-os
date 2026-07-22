@@ -273,14 +273,14 @@ begin
   -- secondaires, avec des performances volontairement différenciées pour que
   -- le score de recommandation calculé côté service distingue clairement un
   -- "meilleur fournisseur" en démo.
-  insert into public.suppliers (organization_id, workspace_id, nom, email, telephone, statut, delai_livraison_jours, note_performance)
+  insert into public.suppliers (organization_id, workspace_id, nom, email, telephone, statut, delai_livraison_jours)
   values
-    (v_org_id, v_workspace_id, 'Electro Import Asia', 'contact@electroimport-asia.com', '+33 1 84 20 11 03', 'actif', 7, 4.8),
-    (v_org_id, v_workspace_id, 'Maison & Style Distribution', 'commandes@maisonstyle-dist.fr', '+33 4 72 55 09 41', 'actif', 15, 4.2),
-    (v_org_id, v_workspace_id, 'SportGear Europe', 'sales@sportgear-europe.eu', '+33 2 40 33 18 27', 'actif', 21, 3.6),
-    (v_org_id, v_workspace_id, 'BeautyLine Cosmétiques', 'contact@beautyline-cosmetiques.fr', '+33 1 47 88 62 14', 'actif', 30, 3.0),
-    (v_org_id, v_workspace_id, 'Global Pack Solutions', 'contact@globalpack-solutions.com', '+33 3 20 44 71 09', 'actif', 45, 2.5),
-    (v_org_id, v_workspace_id, 'Nova Textile Trading', 'info@novatextile-trading.com', '+33 5 61 29 84 30', 'inactif', 38, 2.8);
+    (v_org_id, v_workspace_id, 'Electro Import Asia', 'contact@electroimport-asia.com', '+33 1 84 20 11 03', 'actif', 7),
+    (v_org_id, v_workspace_id, 'Maison & Style Distribution', 'commandes@maisonstyle-dist.fr', '+33 4 72 55 09 41', 'actif', 15),
+    (v_org_id, v_workspace_id, 'SportGear Europe', 'sales@sportgear-europe.eu', '+33 2 40 33 18 27', 'actif', 21),
+    (v_org_id, v_workspace_id, 'BeautyLine Cosmétiques', 'contact@beautyline-cosmetiques.fr', '+33 1 47 88 62 14', 'actif', 30),
+    (v_org_id, v_workspace_id, 'Global Pack Solutions', 'contact@globalpack-solutions.com', '+33 3 20 44 71 09', 'actif', 45),
+    (v_org_id, v_workspace_id, 'Nova Textile Trading', 'info@novatextile-trading.com', '+33 5 61 29 84 30', 'inactif', 38);
 
   -- Commandes d'achat + factures par fournisseur (biais de ponctualité
   -- décroissant dans le même ordre que les notes ci-dessus).
@@ -308,12 +308,13 @@ begin
 
       insert into public.supplier_orders (
         organization_id, workspace_id, supplier_id, numero_commande, statut,
-        montant_total, date_commande, date_livraison_prevue, date_livraison_reelle
+        montant_total, date_commande, date_livraison_prevue, date_livraison_reelle,
+        date_paiement_prevue
       )
       values (
         v_org_id, v_workspace_id, v_supplier_id,
         'PO-' || to_char(v_date_prevue, 'YYMM') || '-' || substr(v_supplier_id::text, 1, 4) || '-' || v_i,
-        'livree', 0, v_date_prevue - 10, v_date_prevue, v_date_reelle
+        'livree', 0, v_date_prevue - 10, v_date_prevue, v_date_reelle, v_date_prevue + 20
       )
       returning id into v_supplier_order_id;
 
@@ -344,11 +345,12 @@ begin
   end loop;
 
   -- Une commande "en cours" par fournisseur actif pour montrer un pipeline vivant.
-  insert into public.supplier_orders (organization_id, workspace_id, supplier_id, numero_commande, statut, montant_total, date_commande, date_livraison_prevue)
+  insert into public.supplier_orders (organization_id, workspace_id, supplier_id, numero_commande, statut, montant_total, date_commande, date_livraison_prevue, date_paiement_prevue)
   select v_org_id, v_workspace_id, s.id,
     'PO-' || to_char(current_date, 'YYMM') || '-' || substr(s.id::text, 1, 4) || '-EC',
     (array['brouillon', 'envoyee', 'confirmee', 'en_transit'])[1 + floor(random() * 4)::int]::public.statut_commande_fournisseur,
-    500 + floor(random() * 4000)::int, current_date - floor(random() * 5)::int, current_date + 5 + floor(random() * 20)::int
+    500 + floor(random() * 4000)::int, current_date - floor(random() * 5)::int, current_date + 5 + floor(random() * 20)::int,
+    current_date + 20 + floor(random() * 15)::int
   from public.suppliers s
   where s.workspace_id = v_workspace_id and s.statut = 'actif';
 

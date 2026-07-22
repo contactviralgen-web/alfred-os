@@ -10,6 +10,7 @@ import { SupplierOrdersPanel } from "@/components/fournisseurs/supplier-orders-p
 import { SupplierInvoicesPanel } from "@/components/fournisseurs/supplier-invoices-panel"
 import { exigerContexteWorkspace } from "@/lib/auth/guards"
 import { obtenirFournisseur } from "@/modules/fournisseurs/services/suppliers.service"
+import { listerProduitsSimple } from "@/modules/rentabilite/services/products.service"
 
 export const metadata: Metadata = { title: "Fournisseur — Pilot" }
 
@@ -20,7 +21,10 @@ export default async function SupplierDetailPage({
 }) {
   const { orgSlug, workspaceSlug, supplierId } = await params
   const { workspace } = await exigerContexteWorkspace(orgSlug, workspaceSlug)
-  const donnees = await obtenirFournisseur(workspace.id, supplierId)
+  const [donnees, produits] = await Promise.all([
+    obtenirFournisseur(workspace.id, supplierId),
+    listerProduitsSimple(workspace.id),
+  ])
 
   if (!donnees) notFound()
 
@@ -36,7 +40,9 @@ export default async function SupplierDetailPage({
             <Badge variant="outline">
               Ponctualité : {tauxPonctualite != null ? `${tauxPonctualite}%` : "N/A"}
             </Badge>
-            <Badge variant="default">Score recommandé : {scoreRecommandation}</Badge>
+            <Badge variant="default">
+              Score recommandé : {scoreRecommandation ?? "N/A"}
+            </Badge>
           </div>
         }
       />
@@ -54,7 +60,6 @@ export default async function SupplierDetailPage({
               adresse={fournisseur.adresse}
               statut={fournisseur.statut}
               delaiLivraisonJours={fournisseur.delai_livraison_jours}
-              notePerformance={fournisseur.note_performance}
             />
           </Card>
 
@@ -70,6 +75,7 @@ export default async function SupplierDetailPage({
                   orgSlug={orgSlug}
                   workspaceSlug={workspaceSlug}
                   commandes={commandes}
+                  produits={produits}
                 />
               </TabsContent>
               <TabsContent value="factures" className="mt-4">
@@ -88,14 +94,6 @@ export default async function SupplierDetailPage({
           <p className="mb-3 text-sm font-medium">Performance</p>
           <div className="space-y-3 text-sm">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Note performance</span>
-              <span className="font-medium">
-                {fournisseur.note_performance != null
-                  ? `${fournisseur.note_performance}/5`
-                  : "Non renseignée"}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Taux de ponctualité</span>
               <span className="font-medium">
                 {tauxPonctualite != null ? `${tauxPonctualite}%` : "Pas de données"}
@@ -111,7 +109,9 @@ export default async function SupplierDetailPage({
             </div>
             <div className="flex items-center justify-between border-t border-border/60 pt-3">
               <span className="text-muted-foreground">Score recommandé</span>
-              <span className="font-medium">{scoreRecommandation} / 100</span>
+              <span className="font-medium">
+                {scoreRecommandation != null ? `${scoreRecommandation} / 100` : "Pas encore de commande livrée"}
+              </span>
             </div>
           </div>
         </Card>

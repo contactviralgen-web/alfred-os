@@ -1258,6 +1258,7 @@ export type Database = {
           date_commande: string
           date_livraison_prevue: string | null
           date_livraison_reelle: string | null
+          date_paiement_prevue: string | null
           id: string
           modifie_le: string
           montant_total: number
@@ -1273,6 +1274,7 @@ export type Database = {
           date_commande?: string
           date_livraison_prevue?: string | null
           date_livraison_reelle?: string | null
+          date_paiement_prevue?: string | null
           id?: string
           modifie_le?: string
           montant_total?: number
@@ -1288,6 +1290,7 @@ export type Database = {
           date_commande?: string
           date_livraison_prevue?: string | null
           date_livraison_reelle?: string | null
+          date_paiement_prevue?: string | null
           id?: string
           modifie_le?: string
           montant_total?: number
@@ -1338,7 +1341,6 @@ export type Database = {
           id: string
           modifie_le: string
           nom: string
-          note_performance: number | null
           notes: string | null
           organization_id: string
           statut: Database["public"]["Enums"]["statut_fournisseur"]
@@ -1353,7 +1355,6 @@ export type Database = {
           id?: string
           modifie_le?: string
           nom: string
-          note_performance?: number | null
           notes?: string | null
           organization_id: string
           statut?: Database["public"]["Enums"]["statut_fournisseur"]
@@ -1368,7 +1369,6 @@ export type Database = {
           id?: string
           modifie_le?: string
           nom?: string
-          note_performance?: number | null
           notes?: string | null
           organization_id?: string
           statut?: Database["public"]["Enums"]["statut_fournisseur"]

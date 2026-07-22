@@ -1,6 +1,5 @@
 "use client"
 
-import { useState, useTransition } from "react"
 import {
   Area,
   AreaChart,
@@ -17,27 +16,26 @@ import {
 } from "@/components/ui/chart"
 import { Card } from "@/components/ui/card"
 import { ForecastBadge } from "@/components/dashboard/forecast-badge"
-import { obtenirPointsGraphiqueAction } from "@/lib/actions/dashboard.actions"
+import { AiInsightPanel } from "@/components/agents/ai-insight-panel"
 import type {
   MetriqueGraphique,
   PeriodeGraphique,
   PointGraphique,
-} from "@/modules/dashboard/services/revenue-chart.service"
-import { cn } from "@/lib/utils"
+} from "@/modules/dashboard/services/revenue-chart.types"
+import { LIBELLE_PERIODE } from "@/modules/dashboard/services/revenue-chart.types"
+import type { InsightIA } from "@/modules/agents/services/insights.service"
 
-const PERIODES: { valeur: PeriodeGraphique; libelle: string }[] = [
-  { valeur: "24h", libelle: "24h" },
-  { valeur: "7j", libelle: "7 jours" },
-  { valeur: "mois", libelle: "Mois" },
-  { valeur: "annee", libelle: "Année" },
-]
-
-const SOUS_TITRES: Record<PeriodeGraphique, string> = {
-  "24h": "Dernières 24 heures, par heure",
-  "7j": "7 derniers jours",
-  mois: "30 derniers jours + prévision",
-  annee: "12 derniers mois",
-}
+const formateurCompact = new Intl.NumberFormat("fr-FR", {
+  style: "currency",
+  currency: "EUR",
+  notation: "compact",
+  maximumFractionDigits: 1,
+})
+const formateurExact = new Intl.NumberFormat("fr-FR", {
+  style: "currency",
+  currency: "EUR",
+  maximumFractionDigits: 0,
+})
 
 function config(metrique: MetriqueGraphique): ChartConfig {
   return {
@@ -50,39 +48,25 @@ function config(metrique: MetriqueGraphique): ChartConfig {
 }
 
 function formaterAxeDate(periode: PeriodeGraphique, valeur: string) {
-  if (periode === "24h") return valeur
+  if (periode === "24h") {
+    const heure = Number(valeur)
+    return heure % 3 === 0 ? `${heure}h` : ""
+  }
   if (periode === "annee") return new Date(valeur).toLocaleDateString("fr-FR", { month: "short", year: "2-digit" })
   return new Date(valeur).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" })
 }
 
 export function RevenueChart({
-  donneesInitiales,
-  orgSlug,
-  workspaceSlug,
+  donnees,
+  periode,
+  metrique,
+  insight,
 }: {
-  donneesInitiales: PointGraphique[]
-  orgSlug: string
-  workspaceSlug: string
+  donnees: PointGraphique[]
+  periode: PeriodeGraphique
+  metrique: MetriqueGraphique
+  insight: InsightIA
 }) {
-  const [periode, setPeriode] = useState<PeriodeGraphique>("mois")
-  const [metrique, setMetrique] = useState<MetriqueGraphique>("ca")
-  const [donnees, setDonnees] = useState<PointGraphique[]>(donneesInitiales)
-  const [isPending, startTransition] = useTransition()
-
-  function changerFiltre(nouvellePeriode: PeriodeGraphique, nouvelleMetrique: MetriqueGraphique) {
-    setPeriode(nouvellePeriode)
-    setMetrique(nouvelleMetrique)
-    startTransition(async () => {
-      const resultat = await obtenirPointsGraphiqueAction(
-        orgSlug,
-        workspaceSlug,
-        nouvellePeriode,
-        nouvelleMetrique
-      )
-      setDonnees(resultat)
-    })
-  }
-
   const afficherPrevision = metrique === "ca" && (periode === "7j" || periode === "mois")
 
   return (
@@ -92,69 +76,44 @@ export function RevenueChart({
           <p className="text-sm font-medium">
             {metrique === "ca" ? "Chiffre d'affaires" : "Bénéfice net réel"}
           </p>
-          <p className="text-xs text-muted-foreground">{SOUS_TITRES[periode]}</p>
+          <p className="text-xs text-muted-foreground">{LIBELLE_PERIODE[periode]}</p>
         </div>
-        <div className="flex items-center gap-2">
-          {afficherPrevision ? <ForecastBadge /> : null}
-          <div className="flex items-center gap-1 rounded-lg border border-border/60 p-0.5">
-            {(["ca", "benefice"] as const).map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => changerFiltre(periode, m)}
-                className={cn(
-                  "rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
-                  metrique === m
-                    ? "bg-foreground text-background"
-                    : "text-muted-foreground hover:bg-accent/60"
-                )}
-              >
-                {m === "ca" ? "CA" : "Bénéfice"}
-              </button>
-            ))}
-          </div>
-          <div className="flex items-center gap-1 rounded-lg border border-border/60 p-0.5">
-            {PERIODES.map((p) => (
-              <button
-                key={p.valeur}
-                type="button"
-                onClick={() => changerFiltre(p.valeur, metrique)}
-                className={cn(
-                  "rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
-                  periode === p.valeur
-                    ? "bg-foreground text-background"
-                    : "text-muted-foreground hover:bg-accent/60"
-                )}
-              >
-                {p.libelle}
-              </button>
-            ))}
-          </div>
-        </div>
+        {afficherPrevision ? <ForecastBadge /> : null}
       </div>
-      <ChartContainer
-        config={config(metrique)}
-        className={cn("mt-4 aspect-auto h-72 w-full transition-opacity", isPending && "opacity-50")}
-      >
+      <ChartContainer config={config(metrique)} className="mt-4 aspect-auto h-72 w-full">
         <AreaChart data={donnees} margin={{ left: 0, right: 8 }}>
           <defs>
             <linearGradient id="fillValeur" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--color-valeur)" stopOpacity={0.35} />
-              <stop offset="95%" stopColor="var(--color-valeur)" stopOpacity={0} />
+              <stop offset="5%" stopColor="var(--color-valeur)" stopOpacity={0.4} />
+              <stop offset="95%" stopColor="var(--color-valeur)" stopOpacity={0.02} />
             </linearGradient>
           </defs>
-          <CartesianGrid vertical={false} strokeOpacity={0.15} />
+          <CartesianGrid vertical={false} strokeOpacity={0.3} />
           <XAxis
             dataKey="date"
             tickLine={false}
             axisLine={false}
             tickMargin={8}
+            interval="preserveStartEnd"
             tickFormatter={(value: string) => formaterAxeDate(periode, value)}
           />
-          <YAxis tickLine={false} axisLine={false} tickMargin={8} width={48} />
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+            width={56}
+            tickFormatter={(value: number) => formateurCompact.format(value)}
+          />
           <ChartTooltip
             content={
-              <ChartTooltipContent labelFormatter={(value) => formaterAxeDate(periode, value)} indicator="dot" />
+              <ChartTooltipContent
+                labelFormatter={(value) => formaterAxeDate(periode, value) || value}
+                formatter={(value, name) => [
+                  formateurExact.format(Number(value)),
+                  name === "valeurPrevue" ? "Prévision" : config(metrique).valeur.label,
+                ]}
+                indicator="dot"
+              />
             }
           />
           <Area
@@ -162,7 +121,7 @@ export function RevenueChart({
             type="monotone"
             fill="url(#fillValeur)"
             stroke="var(--color-valeur)"
-            strokeWidth={2}
+            strokeWidth={2.5}
             connectNulls
           />
           {afficherPrevision ? (
@@ -178,6 +137,7 @@ export function RevenueChart({
           ) : null}
         </AreaChart>
       </ChartContainer>
+      <AiInsightPanel insight={insight} />
     </Card>
   )
 }

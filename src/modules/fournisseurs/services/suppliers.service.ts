@@ -10,57 +10,74 @@ export type DonneesFournisseur = {
   notes?: string | null
   statut?: "actif" | "inactif"
   delai_livraison_jours?: number | null
-  note_performance?: number | null
 }
 
-// Score de recommandation déterministe (0-100), sans IA : moyenne pondérée de
-// la note de performance manuelle (40%), du taux de livraison à temps (40%) et
-// d'un bonus lié à la rapidité du délai annoncé (20%, plus le délai est court
-// meilleur est le score).
+// Score de recommandation déterministe (0-100), sans IA, calculé
+// UNIQUEMENT à partir de l'historique réel de commandes livrées : 60%
+// ponctualité constatée + 40% précision du délai (écart entre le délai réel
+// moyen constaté et le délai annoncé par le fournisseur). Pas de note
+// manuelle : sans commande livrée, il n'y a rien à mesurer → pas de score.
 export function calculerScoreRecommandation(params: {
-  notePerformance: number | null
   tauxPonctualite: number | null
-  delaiLivraisonJours: number | null
-}): number {
-  const { notePerformance, tauxPonctualite, delaiLivraisonJours } = params
+  ecartDelaiMoyenJours: number | null
+}): number | null {
+  const { tauxPonctualite, ecartDelaiMoyenJours } = params
+  if (tauxPonctualite === null) return null
 
-  const scoreNote = notePerformance !== null ? (notePerformance / 5) * 100 : 50
-  const scorePonctualite = tauxPonctualite !== null ? tauxPonctualite : 50
-  const scoreDelai =
-    delaiLivraisonJours !== null
-      ? Math.max(0, 100 - Math.min(delaiLivraisonJours, 60) * (100 / 60))
-      : 50
+  const scorePonctualite = tauxPonctualite
+  // Écart nul ou négatif (livré en avance/à temps) = score plein ; chaque
+  // jour de retard moyen coûte des points, plafonné à 0.
+  const scorePrecisionDelai =
+    ecartDelaiMoyenJours === null
+      ? scorePonctualite
+      : Math.max(0, 100 - Math.max(0, ecartDelaiMoyenJours) * 10)
 
-  const score = scoreNote * 0.4 + scorePonctualite * 0.4 + scoreDelai * 0.2
-  return Math.round(score)
+  return Math.round(scorePonctualite * 0.6 + scorePrecisionDelai * 0.4)
 }
 
 async function obtenirPerformances(workspaceId: string) {
   const supabase = await createClient()
   const { data } = await supabase
-    .from("v_supplier_performance")
-    .select("*")
+    .from("supplier_orders")
+    .select("supplier_id, statut, date_commande, date_livraison_prevue, date_livraison_reelle")
     .eq("workspace_id", workspaceId)
+    .eq("statut", "livree")
 
-  const parFournisseur = new Map(
-    (data ?? []).map((p) => [
-      p.supplier_id,
-      {
-        commandesLivrees: p.commandes_livrees ?? 0,
-        commandesLivreesAvecDates: p.commandes_livrees_avec_dates ?? 0,
-        commandesLivreesATemps: p.commandes_livrees_a_temps ?? 0,
-      },
-    ])
-  )
+  const parFournisseur = new Map<
+    string,
+    { livreesAvecDates: number; livreesATemps: number; sommeEcartJours: number; nbEcarts: number }
+  >()
+
+  for (const commande of data ?? []) {
+    if (!commande.date_livraison_prevue || !commande.date_livraison_reelle) continue
+    const existant = parFournisseur.get(commande.supplier_id) ?? {
+      livreesAvecDates: 0,
+      livreesATemps: 0,
+      sommeEcartJours: 0,
+      nbEcarts: 0,
+    }
+    existant.livreesAvecDates += 1
+    const ecartJours =
+      (new Date(commande.date_livraison_reelle).getTime() -
+        new Date(commande.date_livraison_prevue).getTime()) /
+      86400000
+    if (ecartJours <= 0) existant.livreesATemps += 1
+    existant.sommeEcartJours += ecartJours
+    existant.nbEcarts += 1
+    parFournisseur.set(commande.supplier_id, existant)
+  }
+
   return parFournisseur
 }
 
-function tauxPonctualite(perf: {
-  commandesLivreesAvecDates: number
-  commandesLivreesATemps: number
-} | undefined): number | null {
-  if (!perf || perf.commandesLivreesAvecDates === 0) return null
-  return Math.round((perf.commandesLivreesATemps / perf.commandesLivreesAvecDates) * 100)
+function tauxPonctualite(perf: { livreesAvecDates: number; livreesATemps: number } | undefined): number | null {
+  if (!perf || perf.livreesAvecDates === 0) return null
+  return Math.round((perf.livreesATemps / perf.livreesAvecDates) * 100)
+}
+
+function ecartDelaiMoyenJours(perf: { sommeEcartJours: number; nbEcarts: number } | undefined): number | null {
+  if (!perf || perf.nbEcarts === 0) return null
+  return perf.sommeEcartJours / perf.nbEcarts
 }
 
 export async function listerFournisseurs(workspaceId: string) {
@@ -74,16 +91,28 @@ export async function listerFournisseurs(workspaceId: string) {
     obtenirPerformances(workspaceId),
   ])
 
-  return (fournisseurs ?? []).map((f) => {
+  const fournisseursAvecScore = (fournisseurs ?? []).map((f) => {
     const perf = performances.get(f.id)
     const taux = tauxPonctualite(perf)
     const score = calculerScoreRecommandation({
-      notePerformance: f.note_performance,
       tauxPonctualite: taux,
-      delaiLivraisonJours: f.delai_livraison_jours,
+      ecartDelaiMoyenJours: ecartDelaiMoyenJours(perf),
     })
     return { ...f, tauxPonctualite: taux, scoreRecommandation: score }
   })
+
+  const meilleurScore = Math.max(
+    0,
+    ...fournisseursAvecScore
+      .filter((f) => f.statut === "actif" && f.scoreRecommandation !== null)
+      .map((f) => f.scoreRecommandation as number)
+  )
+
+  return fournisseursAvecScore.map((f) => ({
+    ...f,
+    estRecommande:
+      f.statut === "actif" && f.scoreRecommandation !== null && f.scoreRecommandation === meilleurScore,
+  }))
 }
 
 export async function obtenirFournisseur(workspaceId: string, supplierId: string) {
@@ -116,9 +145,8 @@ export async function obtenirFournisseur(workspaceId: string, supplierId: string
   const perf = performances.get(supplierId)
   const taux = tauxPonctualite(perf)
   const score = calculerScoreRecommandation({
-    notePerformance: fournisseur.note_performance,
     tauxPonctualite: taux,
-    delaiLivraisonJours: fournisseur.delai_livraison_jours,
+    ecartDelaiMoyenJours: ecartDelaiMoyenJours(perf),
   })
 
   return {

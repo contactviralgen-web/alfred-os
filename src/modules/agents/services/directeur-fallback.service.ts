@@ -24,8 +24,8 @@ function ligneResume(donnees: ContexteEntreprise): string {
       : `en baisse de ${Math.abs(kpis.croissancePct).toFixed(1)}%`
 
   const phrases: string[] = [
-    `Sur les 30 derniers jours, le chiffre d'affaires s'élève à ${formaterEuros(kpis.ca30j)} (${tendance} vs la période précédente), pour un bénéfice net réel de ${formaterEuros(kpis.benefice30j)} (marge de ${kpis.margePct.toFixed(1)}%).`,
-    `${kpis.commandes30j} commandes ont été enregistrées, pour un panier moyen de ${formaterEuros(kpis.panierMoyen30j)}.`,
+    `Sur les 30 derniers jours, le chiffre d'affaires s'élève à ${formaterEuros(kpis.ca)} (${tendance} vs la période précédente), pour un bénéfice net réel de ${formaterEuros(kpis.benefice)} (marge de ${kpis.margePct.toFixed(1)}%).`,
+    `${kpis.commandes} commandes ont été enregistrées, pour un panier moyen de ${formaterEuros(kpis.panierMoyen)}.`,
   ]
 
   if (alertesStock.length > 0) {
@@ -108,6 +108,6 @@ export function genererReponseSimulee(question: string, donnees: ContexteEntrepr
 
   const { kpis } = donnees
   return kpis
-    ? `D'après les données disponibles, le chiffre d'affaires des 30 derniers jours est de ${formaterEuros(kpis.ca30j)} pour un bénéfice net réel de ${formaterEuros(kpis.benefice30j)} (marge ${kpis.margePct.toFixed(1)}%). Pouvez-vous préciser votre question — sur les produits, le stock, les commandes ou les fournisseurs — pour une réponse plus ciblée ?`
+    ? `D'après les données disponibles, le chiffre d'affaires des 30 derniers jours est de ${formaterEuros(kpis.ca)} pour un bénéfice net réel de ${formaterEuros(kpis.benefice)} (marge ${kpis.margePct.toFixed(1)}%). Pouvez-vous préciser votre question — sur les produits, le stock, les commandes ou les fournisseurs — pour une réponse plus ciblée ?`
     : "Je n'ai pas encore assez de données pour répondre précisément à cette question. Pouvez-vous préciser sur quel sujet (produits, stock, commandes, fournisseurs) ?"
 }

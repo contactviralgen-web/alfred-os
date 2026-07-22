@@ -1,39 +1,44 @@
 "use client"
 
 import { KpiCard, KpiGrid } from "@/components/dashboard/kpi-card"
+import { LIBELLE_PERIODE, type PeriodeGraphique } from "@/modules/dashboard/services/revenue-chart.types"
 
 const formatEur = (v: number) =>
   v.toLocaleString("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })
 
 export function DashboardKpis({
-  ca30j,
-  benefice30j,
+  periode,
+  ca,
+  benefice,
   margePct,
-  commandes30j,
+  commandes,
   croissancePct,
 }: {
-  ca30j: number
-  benefice30j: number
+  periode: PeriodeGraphique
+  ca: number
+  benefice: number
   margePct: number
-  commandes30j: number
+  commandes: number
   croissancePct?: number
 }) {
+  const suffixePeriode = LIBELLE_PERIODE[periode]
+
   return (
     <KpiGrid>
       <KpiCard
-        titre="Chiffre d'affaires (30j)"
-        valeur={ca30j}
+        titre={`Chiffre d'affaires (${suffixePeriode})`}
+        valeur={ca}
         formatValeur={formatEur}
         variationPct={croissancePct}
       />
-      <KpiCard titre="Bénéfice (30j)" valeur={benefice30j} formatValeur={formatEur} />
+      <KpiCard titre={`Bénéfice (${suffixePeriode})`} valeur={benefice} formatValeur={formatEur} />
       <KpiCard
         titre="Marge"
         valeur={margePct}
         formatValeur={(v) => `${v.toFixed(1)}`}
         suffixe="%"
       />
-      <KpiCard titre="Commandes (30j)" valeur={commandes30j} />
+      <KpiCard titre={`Commandes (${suffixePeriode})`} valeur={commandes} />
     </KpiGrid>
   )
 }

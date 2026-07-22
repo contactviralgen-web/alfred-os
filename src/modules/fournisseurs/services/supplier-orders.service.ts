@@ -10,15 +10,22 @@ export type StatutCommandeFournisseur =
   | "livree"
   | "annulee"
 
+export type LigneCommandeFournisseur = {
+  product_id: string
+  quantite: number
+  prix_unitaire: number
+}
+
 export type DonneesCommandeFournisseur = {
   supplier_id: string
   numero_commande: string
   statut?: StatutCommandeFournisseur
-  montant_total?: number
   date_commande?: string
   date_livraison_prevue?: string | null
   date_livraison_reelle?: string | null
+  date_paiement_prevue?: string | null
   notes?: string | null
+  lignes: LigneCommandeFournisseur[]
 }
 
 export async function listerCommandesFournisseur(workspaceId: string, supplierId?: string) {
@@ -43,12 +50,33 @@ export async function creerCommandeFournisseur(
   donnees: DonneesCommandeFournisseur
 ) {
   const supabase = await createClient()
-  const { error } = await supabase.from("supplier_orders").insert({
-    organization_id: organizationId,
-    workspace_id: workspaceId,
-    ...donnees,
-  })
-  if (error) throw new Error("Impossible de créer la commande fournisseur.")
+  const { lignes, ...champsCommande } = donnees
+  const montantTotal = lignes.reduce((total, l) => total + l.quantite * l.prix_unitaire, 0)
+
+  const { data: commande, error } = await supabase
+    .from("supplier_orders")
+    .insert({
+      organization_id: organizationId,
+      workspace_id: workspaceId,
+      ...champsCommande,
+      montant_total: montantTotal,
+    })
+    .select("id")
+    .single()
+
+  if (error || !commande) throw new Error("Impossible de créer la commande fournisseur.")
+
+  const { error: erreurLignes } = await supabase.from("supplier_order_items").insert(
+    lignes.map((l) => ({
+      supplier_order_id: commande.id,
+      product_id: l.product_id,
+      quantite: l.quantite,
+      prix_unitaire: l.prix_unitaire,
+    }))
+  )
+  if (erreurLignes) throw new Error("Commande créée mais impossible d'enregistrer les lignes de produits.")
+
+  return commande.id as string
 }
 
 export async function mettreAJourStatutCommande(

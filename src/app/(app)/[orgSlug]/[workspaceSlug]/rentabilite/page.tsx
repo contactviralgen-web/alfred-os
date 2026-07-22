@@ -5,6 +5,7 @@ import { WorkspaceTvaForm } from "@/components/rentabilite/workspace-tva-form"
 import { ProductCostsTable } from "@/components/rentabilite/product-costs-table"
 import { MarginEvolutionChart } from "@/components/rentabilite/margin-evolution-chart"
 import { ProductMarginsTable } from "@/components/rentabilite/product-margins-table"
+import { NewProductDialog } from "@/components/rentabilite/new-product-dialog"
 import { exigerContexteWorkspace } from "@/lib/auth/guards"
 import {
   obtenirEvolutionMarge,
@@ -13,6 +14,7 @@ import {
   obtenirReglagesCoutsProduits,
   obtenirReglagesWorkspace,
 } from "@/modules/rentabilite/services/margins.service"
+import { genererInsightMarge } from "@/modules/agents/services/insights.service"
 
 export const metadata: Metadata = { title: "Rentabilité — Pilot" }
 
@@ -56,15 +58,21 @@ export default async function RentabilitePage({
           tauxTvaPct={reglages.tauxTvaPct}
           prixTtc={reglages.prixTtc}
         />
-        <MarginEvolutionChart donnees={evolutionMarge} />
+        <MarginEvolutionChart
+          donnees={evolutionMarge}
+          insight={genererInsightMarge(margesParProduit)}
+        />
         <ProductMarginsTable parProduit={margesParProduit} parCategorie={margesParCategorie} />
         <div className="space-y-2">
-          <p className="text-sm font-medium">
-            Charges par produit{" "}
-            <span className="text-muted-foreground">
-              — à renseigner manuellement en attendant la connexion Amazon SP-API
-            </span>
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium">
+              Charges par produit{" "}
+              <span className="text-muted-foreground">
+                — à renseigner manuellement en attendant la connexion Amazon SP-API
+              </span>
+            </p>
+            <NewProductDialog orgSlug={orgSlug} workspaceSlug={workspaceSlug} />
+          </div>
           <ProductCostsTable
             produits={coutsProduits}
             orgSlug={orgSlug}

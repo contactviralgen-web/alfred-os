@@ -19,9 +19,9 @@ export type FournisseurLigne = {
   nom: string
   statut: string
   delai_livraison_jours: number | null
-  note_performance: number | null
   tauxPonctualite: number | null
-  scoreRecommandation: number
+  scoreRecommandation: number | null
+  estRecommande: boolean
 }
 
 export function SuppliersTable({
@@ -46,61 +46,55 @@ export function SuppliersTable({
     )
   }
 
-  const meilleurScore = Math.max(...fournisseurs.map((f) => f.scoreRecommandation))
-
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Fournisseur</TableHead>
           <TableHead>Statut</TableHead>
-          <TableHead>Délai moyen</TableHead>
-          <TableHead>Ponctualité</TableHead>
-          <TableHead>Note performance</TableHead>
+          <TableHead>Délai promis</TableHead>
+          <TableHead>Ponctualité réelle</TableHead>
           <TableHead>Score recommandé</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {fournisseurs.map((fournisseur) => {
-          const estTopRecommande =
-            fournisseur.scoreRecommandation === meilleurScore && meilleurScore > 0
-          return (
-            <TableRow key={fournisseur.id} className="cursor-pointer">
-              <TableCell>
-                <Link
-                  href={`/${orgSlug}/${workspaceSlug}/fournisseurs/${fournisseur.id}`}
-                  className="block"
-                >
-                  <span className="text-sm font-medium">{fournisseur.nom}</span>
-                </Link>
-              </TableCell>
-              <TableCell>
-                <Badge variant={fournisseur.statut === "actif" ? "secondary" : "outline"}>
-                  {fournisseur.statut}
-                </Badge>
-              </TableCell>
-              <TableCell className="text-sm">
-                {fournisseur.delai_livraison_jours != null
-                  ? `${fournisseur.delai_livraison_jours} j`
-                  : "—"}
-              </TableCell>
-              <TableCell className="text-sm">
-                {fournisseur.tauxPonctualite != null ? `${fournisseur.tauxPonctualite}%` : "—"}
-              </TableCell>
-              <TableCell className="text-sm">
-                {fournisseur.note_performance != null ? `${fournisseur.note_performance}/5` : "—"}
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">{fournisseur.scoreRecommandation}</span>
-                  {estTopRecommande ? (
-                    <Badge variant="default">Top recommandé</Badge>
-                  ) : null}
-                </div>
-              </TableCell>
-            </TableRow>
-          )
-        })}
+        {fournisseurs.map((fournisseur) => (
+          <TableRow key={fournisseur.id} className="cursor-pointer">
+            <TableCell>
+              <Link
+                href={`/${orgSlug}/${workspaceSlug}/fournisseurs/${fournisseur.id}`}
+                className="block"
+              >
+                <span className="text-sm font-medium">{fournisseur.nom}</span>
+              </Link>
+            </TableCell>
+            <TableCell>
+              <Badge variant={fournisseur.statut === "actif" ? "secondary" : "outline"}>
+                {fournisseur.statut}
+              </Badge>
+            </TableCell>
+            <TableCell className="text-sm">
+              {fournisseur.delai_livraison_jours != null
+                ? `${fournisseur.delai_livraison_jours} j`
+                : "—"}
+            </TableCell>
+            <TableCell className="text-sm">
+              {fournisseur.tauxPonctualite != null ? `${fournisseur.tauxPonctualite}%` : "—"}
+            </TableCell>
+            <TableCell>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">
+                  {fournisseur.scoreRecommandation != null
+                    ? fournisseur.scoreRecommandation
+                    : "Pas encore de commande"}
+                </span>
+                {fournisseur.estRecommande ? (
+                  <Badge variant="default">Top recommandé</Badge>
+                ) : null}
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
       </TableBody>
     </Table>
   )
