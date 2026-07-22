@@ -22,10 +22,10 @@ export function SidebarNavItem({
 
   const contenu = (
     <>
-      <Icone className="size-4 shrink-0" />
+      <Icone className={cn("size-4 shrink-0", actif && "text-sidebar-primary")} />
       <span className="flex-1 truncate">{item.titre}</span>
       {item.bientotDisponible ? (
-        <span className="text-[11px] text-muted-foreground/60">Bientôt</span>
+        <span className="text-[11px] text-sidebar-foreground/40">Bientôt</span>
       ) : null}
     </>
   )
@@ -33,8 +33,8 @@ export function SidebarNavItem({
   const classesCommunes = cn(
     "flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm transition-colors",
     actif
-      ? "bg-accent text-foreground"
-      : "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
+      ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground"
+      : "text-sidebar-foreground/65 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
   )
 
   if (item.bientotDisponible) {

@@ -71,10 +71,10 @@ export function RevenueChart({
   const afficherPrevision = metrique === "ca" && (periode === "7j" || periode === "mois")
 
   return (
-    <Card className="p-4">
+    <Card className="border border-border/60 p-4 shadow-none ring-0 transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/5">
       <div className="flex flex-wrap items-center justify-between gap-3 px-2">
         <div>
-          <p className="text-sm font-medium">
+          <p className="text-base font-bold tracking-tight">
             {metrique === "ca" ? "Chiffre d'affaires" : "Bénéfice net réel"}
           </p>
           <p className="text-xs text-muted-foreground">{LIBELLE_PERIODE[periode]}</p>
@@ -88,14 +88,21 @@ export function RevenueChart({
           prévision reste une ligne, cohérente avec le fait que c'est une
           projection et non une valeur réalisée. */}
       <ChartContainer config={config(metrique)} className="mt-4 aspect-auto h-72 w-full">
-        <ComposedChart data={donnees} margin={{ left: 0, right: 8 }}>
-          <CartesianGrid vertical={false} strokeOpacity={0.3} />
+        <ComposedChart data={donnees} margin={{ left: 0, right: 8, top: 8 }}>
+          <defs>
+            <linearGradient id="fillValeurBarre" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--color-valeur)" stopOpacity={1} />
+              <stop offset="100%" stopColor="var(--color-valeur)" stopOpacity={0.55} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid vertical={false} strokeOpacity={0.35} />
           <XAxis
             dataKey="date"
             tickLine={false}
             axisLine={false}
             tickMargin={8}
             interval="preserveStartEnd"
+            tick={{ fontSize: 12 }}
             tickFormatter={(value: string) => formaterAxeDate(periode, value)}
           />
           <YAxis
@@ -103,6 +110,7 @@ export function RevenueChart({
             axisLine={false}
             tickMargin={8}
             width={56}
+            tick={{ fontSize: 12 }}
             tickFormatter={(value: number) => formateurCompact.format(value)}
           />
           <ChartTooltip
@@ -117,13 +125,13 @@ export function RevenueChart({
               />
             }
           />
-          <Bar dataKey="valeur" fill="var(--color-valeur)" radius={[3, 3, 0, 0]} maxBarSize={28} />
+          <Bar dataKey="valeur" fill="url(#fillValeurBarre)" radius={[4, 4, 0, 0]} maxBarSize={28} />
           {afficherPrevision ? (
             <Line
               dataKey="valeurPrevue"
               type="monotone"
               stroke="var(--color-valeurPrevue)"
-              strokeWidth={2}
+              strokeWidth={2.5}
               strokeDasharray="4 4"
               dot={false}
               connectNulls

@@ -113,7 +113,7 @@ export function SupplierHeaderForm({
             className={cn(
               "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs capitalize",
               valeurs.statut === s
-                ? "border-foreground bg-foreground text-background"
+                ? "border-primary bg-primary text-primary-foreground shadow-sm"
                 : "border-border/60 text-muted-foreground hover:bg-accent/60"
             )}
           >

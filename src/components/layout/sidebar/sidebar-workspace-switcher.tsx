@@ -33,7 +33,7 @@ export function SidebarWorkspaceSwitcher({
         render={
           <button
             type="button"
-            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-sm text-muted-foreground hover:bg-accent/60 hover:text-foreground"
+            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
           >
             <Layers className="size-3.5 shrink-0" />
             <span className="flex-1 truncate">{actif?.nom ?? "Workspace"}</span>

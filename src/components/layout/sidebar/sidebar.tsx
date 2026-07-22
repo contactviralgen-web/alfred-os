@@ -26,8 +26,8 @@ export function Sidebar({
   workspaces: WorkspaceSwitcherItem[]
 }) {
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-border/60 bg-card/40 md:flex">
-      <div className="flex flex-col gap-1 border-b border-border/60 p-3">
+    <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex">
+      <div className="flex flex-col gap-1 border-b border-sidebar-border p-3">
         <SidebarOrgSwitcher organisations={organisations} orgSlugActif={orgSlug} />
         <SidebarWorkspaceSwitcher
           workspaces={workspaces}
@@ -49,7 +49,7 @@ export function Sidebar({
         </div>
 
         <div className="flex flex-col gap-0.5">
-          <p className="px-2.5 pb-1 text-xs font-medium tracking-wide text-muted-foreground/70 uppercase">
+          <p className="px-2.5 pb-1 text-xs font-semibold tracking-wide text-sidebar-foreground/45 uppercase">
             Modules
           </p>
           {REGISTRE_MODULES.flatMap((module) => module.nav).map((item) => (
@@ -63,10 +63,10 @@ export function Sidebar({
         </div>
       </nav>
 
-      <div className="border-t border-border/60 p-3">
+      <div className="border-t border-sidebar-border p-3">
         <Link
           href={`/${orgSlug}/${workspaceSlug}/parametres/organisation`}
-          className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground"
+          className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
         >
           <Settings className="size-4" />
           Paramètres

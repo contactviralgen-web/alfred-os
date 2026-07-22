@@ -30,8 +30,8 @@ export function MobileNav({
           </button>
         }
       />
-      <SheetContent side="left" className="w-72 p-0">
-        <SheetHeader className="border-b border-border/60">
+      <SheetContent side="left" className="w-72 bg-sidebar p-0 text-sidebar-foreground">
+        <SheetHeader className="border-b border-sidebar-border">
           <SheetTitle>
             <Logo />
           </SheetTitle>
@@ -51,7 +51,7 @@ export function MobileNav({
             ))}
           </div>
           <div className="flex flex-col gap-0.5">
-            <p className="px-2.5 pb-1 text-xs font-medium tracking-wide text-muted-foreground/70 uppercase">
+            <p className="px-2.5 pb-1 text-xs font-semibold tracking-wide text-sidebar-foreground/45 uppercase">
               Modules
             </p>
             {REGISTRE_MODULES.flatMap((m) => m.nav).map((item) => (
@@ -65,7 +65,7 @@ export function MobileNav({
           </div>
           <Link
             href={`/${orgSlug}/${workspaceSlug}/parametres/organisation`}
-            className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm text-muted-foreground hover:bg-accent/60 hover:text-foreground"
+            className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
           >
             <Settings className="size-4" />
             Paramètres

@@ -1,5 +1,7 @@
 "use client"
 
+import { Activity, ShoppingBag, ShoppingCart, Wallet } from "lucide-react"
+
 import { KpiCard, KpiGrid } from "@/components/dashboard/kpi-card"
 
 const formatEur = (v: number) =>
@@ -18,18 +20,26 @@ export function AmazonKpis({
 }) {
   return (
     <KpiGrid>
-      <KpiCard titre="CA Amazon (30j)" valeur={ca} formatValeur={formatEur} />
-      <KpiCard titre="Bénéfice net réel (30j)" valeur={benefice} formatValeur={formatEur} />
-      <KpiCard titre="Commandes Amazon (30j)" valeur={commandes} />
+      <KpiCard titre="CA Amazon (30j)" valeur={ca} formatValeur={formatEur} icone={ShoppingCart} couleur="bleu" />
+      <KpiCard
+        titre="Bénéfice net réel (30j)"
+        valeur={benefice}
+        formatValeur={formatEur}
+        icone={Wallet}
+        couleur="emeraude"
+      />
+      <KpiCard titre="Commandes Amazon (30j)" valeur={commandes} icone={ShoppingBag} couleur="ambre" />
       <KpiCard
         titre="Account Health"
         valeur={scoreSante}
         suffixe="/100"
+        icone={Activity}
+        couleur={scoreSante >= 80 ? "emeraude" : "rose"}
         badge={
           scoreSante >= 80 ? (
-            <span className="text-xs text-emerald-600 dark:text-emerald-400">Bon état</span>
+            <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Bon état</span>
           ) : (
-            <span className="text-xs text-amber-600 dark:text-amber-400">À surveiller</span>
+            <span className="text-xs font-semibold text-amber-600 dark:text-amber-400">À surveiller</span>
           )
         }
       />

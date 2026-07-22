@@ -1,5 +1,7 @@
 "use client"
 
+import { Percent, Receipt, ShoppingBag, Wallet } from "lucide-react"
+
 import { KpiCard, KpiGrid } from "@/components/dashboard/kpi-card"
 import { LIBELLE_PERIODE, type PeriodeGraphique } from "@/modules/dashboard/services/revenue-chart.types"
 
@@ -30,15 +32,30 @@ export function DashboardKpis({
         valeur={ca}
         formatValeur={formatEur}
         variationPct={croissancePct}
+        icone={Receipt}
+        couleur="bleu"
       />
-      <KpiCard titre={`Bénéfice (${suffixePeriode})`} valeur={benefice} formatValeur={formatEur} />
+      <KpiCard
+        titre={`Bénéfice (${suffixePeriode})`}
+        valeur={benefice}
+        formatValeur={formatEur}
+        icone={Wallet}
+        couleur="emeraude"
+      />
       <KpiCard
         titre="Marge"
         valeur={margePct}
         formatValeur={(v) => `${v.toFixed(1)}`}
         suffixe="%"
+        icone={Percent}
+        couleur="violet"
       />
-      <KpiCard titre={`Commandes (${suffixePeriode})`} valeur={commandes} />
+      <KpiCard
+        titre={`Commandes (${suffixePeriode})`}
+        valeur={commandes}
+        icone={ShoppingBag}
+        couleur="ambre"
+      />
     </KpiGrid>
   )
 }

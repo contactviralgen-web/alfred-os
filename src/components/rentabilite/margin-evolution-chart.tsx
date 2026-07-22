@@ -14,8 +14,8 @@ import type { PointEvolutionMarge } from "@/modules/rentabilite/services/margins
 import type { InsightIA } from "@/modules/agents/services/insights.service"
 
 const config = {
-  chiffreAffaires: { label: "CA", color: "var(--chart-1)" },
-  margeNette: { label: "Marge nette réelle", color: "var(--chart-2)" },
+  chiffreAffaires: { label: "CA", color: "var(--chart-2)" },
+  margeNette: { label: "Marge nette réelle", color: "var(--chart-1)" },
 } satisfies ChartConfig
 
 const formateurCompact = new Intl.NumberFormat("fr-FR", {
@@ -38,37 +38,54 @@ export function MarginEvolutionChart({
   insight: InsightIA
 }) {
   return (
-    <Card className="p-4">
+    <Card className="border border-border/60 p-4 shadow-none ring-0 transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/5">
       <div className="px-2">
-        <p className="text-sm font-medium">Évolution de la marge nette</p>
-        <p className="text-xs text-muted-foreground">6 derniers mois — CA (ligne de référence) vs marge réelle après charges (barres)</p>
+        <p className="text-base font-bold tracking-tight">Évolution de la marge nette</p>
+        <p className="text-xs text-muted-foreground">
+          6 derniers mois — CA (ligne de référence) vs marge réelle après charges (barres)
+        </p>
       </div>
-      {/* Marge nette en barres sur l'axe principal (visible, échelle adaptée
-          à ses propres valeurs) : c'est la métrique à lire précisément mois
-          par mois, y compris négative (barre sous zéro). CA en ligne de
-          contexte sur un axe secondaire masqué — sans lui, son échelle bien
-          plus grande écraserait visuellement les barres de marge. */}
+      {/* Marge nette en barres sur l'axe principal gauche (échelle adaptée à
+          ses propres valeurs) : c'est la métrique à lire précisément mois par
+          mois, y compris négative. CA en ligne de contexte sur un axe
+          secondaire à DROITE (orientation explicite — deux axes "left"
+          implicites se marchaient dessus et masquaient les ticks, cause du
+          bug de lisibilité) — masqué visuellement mais toujours dimensionné
+          correctement grâce à cette séparation. */}
       <ChartContainer config={config} className="mt-4 aspect-auto h-64 w-full">
-        <ComposedChart data={donnees} margin={{ left: 0, right: 8 }}>
-          <CartesianGrid vertical={false} strokeOpacity={0.3} />
+        <ComposedChart data={donnees} margin={{ left: 0, right: 8, top: 8 }}>
+          <defs>
+            <linearGradient id="fillMargeBarre" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--color-margeNette)" stopOpacity={1} />
+              <stop offset="100%" stopColor="var(--color-margeNette)" stopOpacity={0.55} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid vertical={false} strokeOpacity={0.35} />
           <XAxis
             dataKey="date"
             tickLine={false}
             axisLine={false}
             tickMargin={8}
+            tick={{ fontSize: 12 }}
             tickFormatter={(value: string) =>
               new Date(value).toLocaleDateString("fr-FR", { month: "short", year: "2-digit" })
             }
           />
           <YAxis
             yAxisId="marge"
+            orientation="left"
             tickLine={false}
             axisLine={false}
             tickMargin={8}
-            width={56}
+            width={60}
+            tick={{ fontSize: 12 }}
+            domain={([min, max]: readonly [number, number]): [number, number] => [
+              Math.min(0, min),
+              Math.max(0, max),
+            ]}
             tickFormatter={(value: number) => formateurCompact.format(value)}
           />
-          <YAxis yAxisId="ca" hide domain={["auto", "auto"]} />
+          <YAxis yAxisId="ca" orientation="right" hide width={0} domain={["auto", "auto"]} />
           <ChartTooltip
             content={
               <ChartTooltipContent
@@ -88,16 +105,16 @@ export function MarginEvolutionChart({
             dataKey="chiffreAffaires"
             type="monotone"
             stroke="var(--color-chiffreAffaires)"
-            strokeWidth={1.5}
+            strokeWidth={2}
             strokeDasharray="4 4"
             dot={false}
           />
           <Bar
             yAxisId="marge"
             dataKey="margeNette"
-            fill="var(--color-margeNette)"
-            radius={[3, 3, 0, 0]}
-            maxBarSize={36}
+            fill="url(#fillMargeBarre)"
+            radius={[4, 4, 0, 0]}
+            maxBarSize={40}
           />
         </ComposedChart>
       </ChartContainer>

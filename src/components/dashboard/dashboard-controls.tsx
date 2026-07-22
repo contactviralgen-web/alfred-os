@@ -51,7 +51,7 @@ export function DashboardControls({
             className={cn(
               "rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
               metrique === m
-                ? "bg-foreground text-background"
+                ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-muted-foreground hover:bg-accent/60"
             )}
           >
@@ -68,7 +68,7 @@ export function DashboardControls({
             className={cn(
               "rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
               periode === p.valeur
-                ? "bg-foreground text-background"
+                ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-muted-foreground hover:bg-accent/60"
             )}
           >

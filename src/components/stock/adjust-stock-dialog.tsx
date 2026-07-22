@@ -83,7 +83,7 @@ export function AdjustStockDialog({
                 className={cn(
                   "rounded-lg border px-2.5 py-1.5 text-xs",
                   type === t.valeur
-                    ? "border-foreground bg-foreground text-background"
+                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
                     : "border-border/60 text-muted-foreground hover:bg-accent/60"
                 )}
               >
