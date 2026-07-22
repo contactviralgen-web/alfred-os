@@ -1,6 +1,6 @@
 "use client"
 
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { Bar, CartesianGrid, ComposedChart, Line, XAxis, YAxis } from "recharts"
 
 import {
   ChartContainer,
@@ -41,16 +41,15 @@ export function MarginEvolutionChart({
     <Card className="p-4">
       <div className="px-2">
         <p className="text-sm font-medium">Évolution de la marge nette</p>
-        <p className="text-xs text-muted-foreground">6 derniers mois — CA vs marge réelle après charges</p>
+        <p className="text-xs text-muted-foreground">6 derniers mois — CA (ligne de référence) vs marge réelle après charges (barres)</p>
       </div>
+      {/* Marge nette en barres sur l'axe principal (visible, échelle adaptée
+          à ses propres valeurs) : c'est la métrique à lire précisément mois
+          par mois, y compris négative (barre sous zéro). CA en ligne de
+          contexte sur un axe secondaire masqué — sans lui, son échelle bien
+          plus grande écraserait visuellement les barres de marge. */}
       <ChartContainer config={config} className="mt-4 aspect-auto h-64 w-full">
-        <AreaChart data={donnees} margin={{ left: 0, right: 8 }}>
-          <defs>
-            <linearGradient id="fillMarge" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--color-margeNette)" stopOpacity={0.4} />
-              <stop offset="95%" stopColor="var(--color-margeNette)" stopOpacity={0.02} />
-            </linearGradient>
-          </defs>
+        <ComposedChart data={donnees} margin={{ left: 0, right: 8 }}>
           <CartesianGrid vertical={false} strokeOpacity={0.3} />
           <XAxis
             dataKey="date"
@@ -62,12 +61,14 @@ export function MarginEvolutionChart({
             }
           />
           <YAxis
+            yAxisId="marge"
             tickLine={false}
             axisLine={false}
             tickMargin={8}
             width={56}
             tickFormatter={(value: number) => formateurCompact.format(value)}
           />
+          <YAxis yAxisId="ca" hide domain={["auto", "auto"]} />
           <ChartTooltip
             content={
               <ChartTooltipContent
@@ -82,22 +83,23 @@ export function MarginEvolutionChart({
               />
             }
           />
-          <Area
+          <Line
+            yAxisId="ca"
             dataKey="chiffreAffaires"
             type="monotone"
-            fill="none"
             stroke="var(--color-chiffreAffaires)"
-            strokeWidth={2}
+            strokeWidth={1.5}
             strokeDasharray="4 4"
+            dot={false}
           />
-          <Area
+          <Bar
+            yAxisId="marge"
             dataKey="margeNette"
-            type="monotone"
-            fill="url(#fillMarge)"
-            stroke="var(--color-margeNette)"
-            strokeWidth={2.5}
+            fill="var(--color-margeNette)"
+            radius={[3, 3, 0, 0]}
+            maxBarSize={36}
           />
-        </AreaChart>
+        </ComposedChart>
       </ChartContainer>
       <AiInsightPanel insight={insight} />
     </Card>

@@ -105,12 +105,6 @@ export default async function TableauDeBordPage({
         actions={<DashboardControls periode={periode} metrique={metrique} />}
       />
       <div className="space-y-6 p-6">
-        <DecisionCenter
-          problemes={centreDecisions.problemes}
-          opportunites={centreDecisions.opportunites}
-          actions={centreDecisions.actions}
-        />
-
         <DashboardKpis
           periode={periode}
           ca={kpis?.ca ?? 0}
@@ -118,6 +112,12 @@ export default async function TableauDeBordPage({
           margePct={kpis?.margePct ?? 0}
           commandes={kpis?.commandes ?? 0}
           croissancePct={kpis?.croissancePct}
+        />
+
+        <DecisionCenter
+          problemes={centreDecisions.problemes}
+          opportunites={centreDecisions.opportunites}
+          actions={centreDecisions.actions}
         />
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

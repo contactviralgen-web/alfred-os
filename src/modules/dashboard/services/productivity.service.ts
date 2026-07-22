@@ -20,6 +20,23 @@ export async function listerTachesUtilisateur(workspaceId: string) {
   return data ?? []
 }
 
+export async function creerTache(
+  organizationId: string,
+  workspaceId: string,
+  donnees: { assigneA: string | null; titre: string; description?: string | null; priorite?: "basse" | "normale" | "haute" }
+) {
+  const supabase = await createClient()
+  const { error } = await supabase.from("tasks").insert({
+    organization_id: organizationId,
+    workspace_id: workspaceId,
+    assigne_a: donnees.assigneA,
+    titre: donnees.titre,
+    description: donnees.description ?? null,
+    priorite: donnees.priorite ?? "normale",
+  })
+  if (error) throw new Error("Impossible de créer la tâche.")
+}
+
 export async function basculerStatutTache(taskId: string, statut: "a_faire" | "terminee") {
   const supabase = await createClient()
   const { error } = await supabase.from("tasks").update({ statut }).eq("id", taskId)

@@ -1,9 +1,10 @@
 "use client"
 
 import {
-  Area,
-  AreaChart,
+  Bar,
   CartesianGrid,
+  ComposedChart,
+  Line,
   XAxis,
   YAxis,
 } from "recharts"
@@ -80,14 +81,14 @@ export function RevenueChart({
         </div>
         {afficherPrevision ? <ForecastBadge /> : null}
       </div>
+      {/* Barres pour la valeur réalisée : chaque point est un total agrégé
+          par période (heure/jour/mois), pas une quantité continue — un
+          barchart représente cette réalité mieux qu'une aire/ligne lissée,
+          et gère naturellement les valeurs négatives en mode Bénéfice. La
+          prévision reste une ligne, cohérente avec le fait que c'est une
+          projection et non une valeur réalisée. */}
       <ChartContainer config={config(metrique)} className="mt-4 aspect-auto h-72 w-full">
-        <AreaChart data={donnees} margin={{ left: 0, right: 8 }}>
-          <defs>
-            <linearGradient id="fillValeur" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--color-valeur)" stopOpacity={0.4} />
-              <stop offset="95%" stopColor="var(--color-valeur)" stopOpacity={0.02} />
-            </linearGradient>
-          </defs>
+        <ComposedChart data={donnees} margin={{ left: 0, right: 8 }}>
           <CartesianGrid vertical={false} strokeOpacity={0.3} />
           <XAxis
             dataKey="date"
@@ -116,26 +117,19 @@ export function RevenueChart({
               />
             }
           />
-          <Area
-            dataKey="valeur"
-            type="monotone"
-            fill="url(#fillValeur)"
-            stroke="var(--color-valeur)"
-            strokeWidth={2.5}
-            connectNulls
-          />
+          <Bar dataKey="valeur" fill="var(--color-valeur)" radius={[3, 3, 0, 0]} maxBarSize={28} />
           {afficherPrevision ? (
-            <Area
+            <Line
               dataKey="valeurPrevue"
               type="monotone"
-              fill="none"
               stroke="var(--color-valeurPrevue)"
               strokeWidth={2}
               strokeDasharray="4 4"
+              dot={false}
               connectNulls
             />
           ) : null}
-        </AreaChart>
+        </ComposedChart>
       </ChartContainer>
       <AiInsightPanel insight={insight} />
     </Card>

@@ -163,16 +163,19 @@ type LigneMargeNormalisee = LigneVProductMargins & {
 
 export async function obtenirLignesMarges(
   workspaceId: string,
-  periode: Periode
+  periode: Periode,
+  canal?: "site_web" | "amazon" | "manuel"
 ): Promise<LigneMargeNormalisee[]> {
   const supabase = await createClient()
-  const { data } = await supabase
+  let requete = supabase
     .from("v_product_margins")
     .select("*")
     .eq("workspace_id", workspaceId)
     .neq("statut", "annulee")
     .gte("cree_le", periode.debut)
     .lt("cree_le", periode.fin)
+  if (canal) requete = requete.eq("canal", canal)
+  const { data } = await requete
 
   return (data ?? [])
     .filter((ligne) => ligne.product_id !== null && ligne.cree_le !== null)
@@ -275,8 +278,12 @@ export async function obtenirEvolutionMarge(
     .sort((a, b) => a.date.localeCompare(b.date))
 }
 
-export async function obtenirBeneficeTotalPeriode(workspaceId: string, periode: Periode) {
-  const lignes = await obtenirLignesMarges(workspaceId, periode)
+export async function obtenirBeneficeTotalPeriode(
+  workspaceId: string,
+  periode: Periode,
+  canal?: "site_web" | "amazon" | "manuel"
+) {
+  const lignes = await obtenirLignesMarges(workspaceId, periode, canal)
   let chiffreAffaires = 0
   let margeNette = 0
   for (const ligne of lignes) {

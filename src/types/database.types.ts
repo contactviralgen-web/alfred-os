@@ -97,6 +97,144 @@ export type Database = {
           },
         ]
       }
+      amazon_connections: {
+        Row: {
+          connecte_le: string | null
+          id: string
+          marketplaces: string[]
+          modifie_le: string
+          organization_id: string
+          seller_id: string | null
+          statut: Database["public"]["Enums"]["statut_connexion_amazon"]
+          workspace_id: string
+        }
+        Insert: {
+          connecte_le?: string | null
+          id?: string
+          marketplaces?: string[]
+          modifie_le?: string
+          organization_id: string
+          seller_id?: string | null
+          statut?: Database["public"]["Enums"]["statut_connexion_amazon"]
+          workspace_id: string
+        }
+        Update: {
+          connecte_le?: string | null
+          id?: string
+          marketplaces?: string[]
+          modifie_le?: string
+          organization_id?: string
+          seller_id?: string | null
+          statut?: Database["public"]["Enums"]["statut_connexion_amazon"]
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "amazon_connections_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "amazon_connections_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_executions: {
+        Row: {
+          cree_le: string
+          id: string
+          resume: string
+          rule_id: string
+          workspace_id: string
+        }
+        Insert: {
+          cree_le?: string
+          id?: string
+          resume: string
+          rule_id: string
+          workspace_id: string
+        }
+        Update: {
+          cree_le?: string
+          id?: string
+          resume?: string
+          rule_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_executions_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "automation_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_executions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_rules: {
+        Row: {
+          actif: boolean
+          action: Database["public"]["Enums"]["action_automatisation"]
+          cree_le: string
+          declencheur: Database["public"]["Enums"]["declencheur_automatisation"]
+          description: string | null
+          id: string
+          nom: string
+          organization_id: string
+          workspace_id: string
+        }
+        Insert: {
+          actif?: boolean
+          action: Database["public"]["Enums"]["action_automatisation"]
+          cree_le?: string
+          declencheur: Database["public"]["Enums"]["declencheur_automatisation"]
+          description?: string | null
+          id?: string
+          nom: string
+          organization_id: string
+          workspace_id: string
+        }
+        Update: {
+          actif?: boolean
+          action?: Database["public"]["Enums"]["action_automatisation"]
+          cree_le?: string
+          declencheur?: Database["public"]["Enums"]["declencheur_automatisation"]
+          description?: string | null
+          id?: string
+          nom?: string
+          organization_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_rules_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       calendar_events: {
         Row: {
           cree_le: string
@@ -753,6 +891,65 @@ export type Database = {
           },
         ]
       }
+      product_returns: {
+        Row: {
+          cree_le: string
+          id: string
+          motif: Database["public"]["Enums"]["motif_retour_amazon"]
+          organization_id: string
+          product_id: string
+          quantite: number
+          workspace_id: string
+        }
+        Insert: {
+          cree_le?: string
+          id?: string
+          motif?: Database["public"]["Enums"]["motif_retour_amazon"]
+          organization_id: string
+          product_id: string
+          quantite?: number
+          workspace_id: string
+        }
+        Update: {
+          cree_le?: string
+          id?: string
+          motif?: Database["public"]["Enums"]["motif_retour_amazon"]
+          organization_id?: string
+          product_id?: string
+          quantite?: number
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_returns_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_returns_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_returns_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "v_product_margins"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_returns_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           actif: boolean
@@ -1115,6 +1312,68 @@ export type Database = {
           },
           {
             foreignKeyName: "stock_levels_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_movements: {
+        Row: {
+          cree_le: string
+          id: string
+          motif: string | null
+          organization_id: string
+          product_id: string
+          quantite: number
+          type: Database["public"]["Enums"]["type_mouvement_stock"]
+          workspace_id: string
+        }
+        Insert: {
+          cree_le?: string
+          id?: string
+          motif?: string | null
+          organization_id: string
+          product_id: string
+          quantite: number
+          type: Database["public"]["Enums"]["type_mouvement_stock"]
+          workspace_id: string
+        }
+        Update: {
+          cree_le?: string
+          id?: string
+          motif?: string | null
+          organization_id?: string
+          product_id?: string
+          quantite?: number
+          type?: Database["public"]["Enums"]["type_mouvement_stock"]
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "v_product_margins"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "stock_movements_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
@@ -1694,6 +1953,7 @@ export type Database = {
       }
       v_product_margins: {
         Row: {
+          canal: Database["public"]["Enums"]["canal_commande"] | null
           categorie: string | null
           chiffre_affaires: number | null
           cout_divers_flat: number | null
@@ -1880,7 +2140,18 @@ export type Database = {
       }
     }
     Enums: {
+      action_automatisation: "creer_tache" | "envoyer_notification"
       canal_commande: "site_web" | "amazon" | "manuel"
+      declencheur_automatisation:
+        | "stock_bas"
+        | "commande_bloquee"
+        | "fournisseur_en_retard"
+      motif_retour_amazon:
+        | "defectueux"
+        | "ne_correspond_pas"
+        | "taille_couleur"
+        | "change_avis"
+        | "autre"
       plan_organisation: "essai" | "starter" | "pro" | "entreprise"
       priorite_tache: "basse" | "normale" | "haute"
       statut_alerte_stock: "ouverte" | "resolue"
@@ -1898,6 +2169,7 @@ export type Database = {
         | "en_transit"
         | "livree"
         | "annulee"
+      statut_connexion_amazon: "connecte" | "deconnecte"
       statut_contact_crm: "prospect" | "client" | "perdu"
       statut_facture_fournisseur: "en_attente" | "payee" | "en_retard"
       statut_fournisseur: "actif" | "inactif"
@@ -1907,6 +2179,7 @@ export type Database = {
       type_activite_crm: "note" | "appel" | "email" | "rdv"
       type_alerte_stock: "rupture" | "stock_bas" | "surstock"
       type_evenement_calendrier: "reunion" | "echeance" | "rappel"
+      type_mouvement_stock: "entree" | "sortie" | "ajustement"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2037,7 +2310,20 @@ export const Constants = {
   },
   public: {
     Enums: {
+      action_automatisation: ["creer_tache", "envoyer_notification"],
       canal_commande: ["site_web", "amazon", "manuel"],
+      declencheur_automatisation: [
+        "stock_bas",
+        "commande_bloquee",
+        "fournisseur_en_retard",
+      ],
+      motif_retour_amazon: [
+        "defectueux",
+        "ne_correspond_pas",
+        "taille_couleur",
+        "change_avis",
+        "autre",
+      ],
       plan_organisation: ["essai", "starter", "pro", "entreprise"],
       priorite_tache: ["basse", "normale", "haute"],
       statut_alerte_stock: ["ouverte", "resolue"],
@@ -2057,6 +2343,7 @@ export const Constants = {
         "livree",
         "annulee",
       ],
+      statut_connexion_amazon: ["connecte", "deconnecte"],
       statut_contact_crm: ["prospect", "client", "perdu"],
       statut_facture_fournisseur: ["en_attente", "payee", "en_retard"],
       statut_fournisseur: ["actif", "inactif"],
@@ -2066,6 +2353,7 @@ export const Constants = {
       type_activite_crm: ["note", "appel", "email", "rdv"],
       type_alerte_stock: ["rupture", "stock_bas", "surstock"],
       type_evenement_calendrier: ["reunion", "echeance", "rappel"],
+      type_mouvement_stock: ["entree", "sortie", "ajustement"],
     },
   },
 } as const

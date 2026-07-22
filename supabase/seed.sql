@@ -33,6 +33,8 @@ declare
   v_nb_cmd_fournisseur int;
   v_date_prevue date;
   v_date_reelle date;
+  v_regle_stock_id uuid;
+  v_regle_commande_id uuid;
 begin
   select id into v_org_id from public.organizations where slug = v_org_slug;
   if v_org_id is null then
@@ -57,6 +59,9 @@ begin
   delete from public.orders where organization_id = v_org_id;
   delete from public.stock_alerts where workspace_id = v_workspace_id;
   delete from public.stock_levels where workspace_id = v_workspace_id;
+  delete from public.stock_movements where workspace_id = v_workspace_id;
+  delete from public.amazon_connections where workspace_id = v_workspace_id;
+  delete from public.automation_rules where workspace_id = v_workspace_id;
   delete from public.workspace_cost_settings where workspace_id = v_workspace_id;
   delete from public.supplier_invoices where organization_id = v_org_id;
   delete from public.supplier_order_items where supplier_order_id in (select id from public.supplier_orders where organization_id = v_org_id);
@@ -353,6 +358,43 @@ begin
     current_date + 20 + floor(random() * 15)::int
   from public.suppliers s
   where s.workspace_id = v_workspace_id and s.statut = 'actif';
+
+  -- Amazon : connexion simulée (démo), quelques retours produits avec des
+  -- motifs variés (donnée qu'Amazon fournirait automatiquement une fois
+  -- l'API Retours connectée — saisie manuelle en attendant).
+  insert into public.amazon_connections (organization_id, workspace_id, statut, seller_id, marketplaces, connecte_le)
+  values (v_org_id, v_workspace_id, 'connecte', 'A2B7K9QXM3PLNH', array['FR', 'DE'], now() - interval '14 days');
+
+  insert into public.product_returns (organization_id, workspace_id, product_id, quantite, motif, cree_le)
+  select
+    v_org_id, v_workspace_id,
+    v_product_ids[1 + floor(random() * array_length(v_product_ids, 1))::int],
+    1 + floor(random() * 2)::int,
+    (array['defectueux', 'ne_correspond_pas', 'taille_couleur', 'change_avis', 'autre'])[1 + floor(random() * 5)::int]::public.motif_retour_amazon,
+    now() - (random() * interval '25 days')
+  from generate_series(1, 9);
+
+  -- Automatisations : deux règles actives (stock bas, commande bloquée) plus
+  -- une inactive, avec un historique d'exécution antérieur pour ne pas
+  -- démarrer sur une page vide.
+  insert into public.automation_rules (organization_id, workspace_id, nom, declencheur, action, actif, description)
+  values
+    (v_org_id, v_workspace_id, 'Réapprovisionnement automatique', 'stock_bas', 'creer_tache', true, 'Crée une tâche dès qu''une alerte de stock est ouverte.')
+    returning id into v_regle_stock_id;
+
+  insert into public.automation_rules (organization_id, workspace_id, nom, declencheur, action, actif, description)
+  values
+    (v_org_id, v_workspace_id, 'Suivi des commandes bloquées', 'commande_bloquee', 'creer_tache', true, 'Crée une tâche pour chaque commande client bloquée.')
+    returning id into v_regle_commande_id;
+
+  insert into public.automation_rules (organization_id, workspace_id, nom, declencheur, action, actif, description)
+  values
+    (v_org_id, v_workspace_id, 'Alerte retard fournisseur', 'fournisseur_en_retard', 'envoyer_notification', false, 'Notifie en cas de retard de livraison fournisseur.');
+
+  insert into public.automation_executions (rule_id, workspace_id, resume, cree_le)
+  values
+    (v_regle_stock_id, v_workspace_id, '2 tâche(s) créée(s) — Réapprovisionnement automatique', now() - interval '2 days'),
+    (v_regle_commande_id, v_workspace_id, '1 tâche(s) créée(s) — Suivi des commandes bloquées', now() - interval '1 days');
 
   -- Tâches.
   if v_user_id is not null then

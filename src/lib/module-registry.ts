@@ -55,29 +55,15 @@ export const REGISTRE_MODULES: ConfigurationModule[] = [
   },
   {
     id: "amazon",
-    nav: [
-      {
-        titre: "Amazon",
-        segment: "amazon",
-        icone: ShoppingCart,
-        bientotDisponible: true,
-      },
-    ],
+    nav: [{ titre: "Amazon", segment: "amazon", icone: ShoppingCart }],
   },
   {
     id: "stock",
-    nav: [{ titre: "Stock", segment: "stock", icone: Boxes, bientotDisponible: true }],
+    nav: [{ titre: "Stock", segment: "stock", icone: Boxes }],
   },
   {
     id: "automation",
-    nav: [
-      {
-        titre: "Automatisations",
-        segment: "automatisations",
-        icone: Workflow,
-        bientotDisponible: true,
-      },
-    ],
+    nav: [{ titre: "Automatisations", segment: "automatisations", icone: Workflow }],
   },
   {
     id: "agents",
