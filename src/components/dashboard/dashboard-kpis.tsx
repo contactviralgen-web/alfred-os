@@ -23,16 +23,14 @@ function MiniStat({
   titre,
   valeur,
   icone: Icone,
-  couleur,
 }: {
   titre: string
   valeur: string
   icone: typeof Percent
-  couleur: string
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <span className={`flex size-9 items-center justify-center rounded-xl ${couleur}`}>
+      <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
         <Icone className="size-4.5" strokeWidth={2} />
       </span>
       <div>
@@ -94,24 +92,9 @@ export function DashboardKpis({
         </div>
 
         <div className="grid flex-1 grid-cols-3 gap-6">
-          <MiniStat
-            titre="Bénéfice"
-            valeur={formatEur(benefice)}
-            icone={Wallet}
-            couleur="bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
-          />
-          <MiniStat
-            titre="Marge"
-            valeur={`${margePct.toFixed(1)}%`}
-            icone={Percent}
-            couleur="bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400"
-          />
-          <MiniStat
-            titre="Commandes"
-            valeur={String(commandes)}
-            icone={ShoppingBag}
-            couleur="bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400"
-          />
+          <MiniStat titre="Bénéfice" valeur={formatEur(benefice)} icone={Wallet} />
+          <MiniStat titre="Marge" valeur={`${margePct.toFixed(1)}%`} icone={Percent} />
+          <MiniStat titre="Commandes" valeur={String(commandes)} icone={ShoppingBag} />
         </div>
       </div>
     </Card>

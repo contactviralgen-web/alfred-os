@@ -114,12 +114,6 @@ export default async function TableauDeBordPage({
           croissancePct={kpis?.croissancePct}
         />
 
-        <DecisionCenter
-          problemes={centreDecisions.problemes}
-          opportunites={centreDecisions.opportunites}
-          actions={centreDecisions.actions}
-        />
-
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <RevenueChart
@@ -131,6 +125,12 @@ export default async function TableauDeBordPage({
           </div>
           <ChannelBreakdown donnees={repartitionCanaux} />
         </div>
+
+        <DecisionCenter
+          problemes={centreDecisions.problemes}
+          opportunites={centreDecisions.opportunites}
+          actions={centreDecisions.actions}
+        />
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <TopProductsTable produits={topProduits} />
