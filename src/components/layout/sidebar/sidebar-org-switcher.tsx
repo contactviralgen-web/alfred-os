@@ -33,7 +33,7 @@ export function SidebarOrgSwitcher({
             type="button"
             className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm text-sidebar-foreground hover:bg-sidebar-accent/60"
           >
-            <span className="flex size-6 items-center justify-center rounded-md bg-gradient-to-br from-primary to-violet-600 text-[11px] font-semibold text-white shadow-[0_0_12px_-2px_var(--primary)]">
+            <span className="flex size-6 items-center justify-center rounded-md bg-gradient-to-br from-primary to-blue-700 text-[11px] font-semibold text-white shadow-[0_0_12px_-2px_var(--primary)]">
               {active?.nom.slice(0, 1).toUpperCase() ?? "?"}
             </span>
             <span className="flex-1 truncate font-medium">{active?.nom ?? "Organisation"}</span>

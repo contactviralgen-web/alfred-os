@@ -38,7 +38,7 @@ export function TopbarUserMenu({
         render={
           <button type="button" className="rounded-full outline-none">
             <Avatar className="size-8">
-              <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-violet-600 text-xs font-medium text-white">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-blue-700 text-xs font-medium text-white">
                 {initiale}
               </AvatarFallback>
             </Avatar>

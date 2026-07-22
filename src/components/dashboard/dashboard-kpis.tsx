@@ -33,14 +33,12 @@ export function DashboardKpis({
         formatValeur={formatEur}
         variationPct={croissancePct}
         icone={Receipt}
-        couleur="bleu"
       />
       <KpiCard
         titre={`Bénéfice (${suffixePeriode})`}
         valeur={benefice}
         formatValeur={formatEur}
         icone={Wallet}
-        couleur="emeraude"
       />
       <KpiCard
         titre="Marge"
@@ -48,13 +46,11 @@ export function DashboardKpis({
         formatValeur={(v) => `${v.toFixed(1)}`}
         suffixe="%"
         icone={Percent}
-        couleur="violet"
       />
       <KpiCard
         titre={`Commandes (${suffixePeriode})`}
         valeur={commandes}
         icone={ShoppingBag}
-        couleur="ambre"
       />
     </KpiGrid>
   )

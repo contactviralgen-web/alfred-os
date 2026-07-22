@@ -34,7 +34,7 @@ export function MembersTable({ membres }: { membres: MembreLigne[] }) {
             <TableCell>
               <div className="flex items-center gap-2.5">
                 <Avatar className="size-7">
-                  <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-violet-600 text-[11px] font-medium text-white">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-blue-700 text-[11px] font-medium text-white">
                     {(membre.profiles?.nom_complet ?? membre.profiles?.email ?? "?")
                       .slice(0, 1)
                       .toUpperCase()}
