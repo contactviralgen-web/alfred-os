@@ -26,12 +26,7 @@ import type {
 import { LIBELLE_PERIODE } from "@/modules/dashboard/services/revenue-chart.types"
 import type { InsightIA } from "@/modules/agents/services/insights.service"
 
-const formateurCompact = new Intl.NumberFormat("fr-FR", {
-  style: "currency",
-  currency: "EUR",
-  notation: "compact",
-  maximumFractionDigits: 1,
-})
+const formateurAxe = new Intl.NumberFormat("fr-FR", { notation: "compact", maximumFractionDigits: 1 })
 const formateurExact = new Intl.NumberFormat("fr-FR", {
   style: "currency",
   currency: "EUR",
@@ -88,24 +83,24 @@ export function RevenueChart({
           prévision reste une ligne, cohérente avec le fait que c'est une
           projection et non une valeur réalisée. */}
       <ChartContainer config={config(metrique)} className="mt-4 aspect-auto h-72 w-full">
-        <ComposedChart data={donnees} margin={{ left: 0, right: 8, top: 8 }}>
-          <CartesianGrid vertical={false} strokeOpacity={0.35} />
+        <ComposedChart data={donnees} margin={{ left: 0, right: 8, top: 8 }} barCategoryGap="20%">
+          <CartesianGrid vertical={false} strokeOpacity={0.25} />
           <XAxis
             dataKey="date"
             tickLine={false}
             axisLine={false}
-            tickMargin={8}
+            tickMargin={10}
             interval="preserveStartEnd"
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: 11 }}
             tickFormatter={(value: string) => formaterAxeDate(periode, value)}
           />
           <YAxis
             tickLine={false}
             axisLine={false}
             tickMargin={8}
-            width={56}
+            width={44}
             tick={{ fontSize: 12 }}
-            tickFormatter={(value: number) => formateurCompact.format(value)}
+            tickFormatter={(value: number) => formateurAxe.format(value)}
           />
           <ChartTooltip
             content={
@@ -119,7 +114,7 @@ export function RevenueChart({
               />
             }
           />
-          <Bar dataKey="valeur" fill="var(--color-valeur)" radius={[3, 3, 0, 0]} maxBarSize={28} />
+          <Bar dataKey="valeur" fill="var(--color-valeur)" radius={[2, 2, 0, 0]} maxBarSize={36} />
           {afficherPrevision ? (
             <Line
               dataKey="valeurPrevue"

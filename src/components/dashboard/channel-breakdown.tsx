@@ -6,10 +6,13 @@ const LIBELLES: Record<string, string> = {
   manuel: "Manuel",
 }
 
-const COULEURS: Record<string, string> = {
-  site_web: "bg-indigo-500",
-  amazon: "bg-amber-500",
-  manuel: "bg-zinc-500",
+// Un point bleu (marque) pour le canal dominant, gris neutre pour les
+// autres — distinction nécessaire entre canaux réels sans multiplier les
+// teintes de décoration.
+const POINT: Record<number, string> = {
+  0: "bg-primary",
+  1: "bg-zinc-400",
+  2: "bg-zinc-300",
 }
 
 export function ChannelBreakdown({
@@ -21,30 +24,24 @@ export function ChannelBreakdown({
   const trie = [...donnees].sort((a, b) => b.montant - a.montant)
 
   return (
-    <Card className="p-4">
-      <p className="text-sm font-medium">Ventes par canal</p>
+    <Card className="border border-border/60 p-4 shadow-none ring-0">
+      <p className="text-sm font-bold tracking-tight">Ventes par canal</p>
       <p className="text-xs text-muted-foreground">30 derniers jours</p>
-      <div className="mt-4 space-y-3">
-        {trie.map((ligne) => {
+      <div className="mt-5 space-y-4">
+        {trie.map((ligne, i) => {
           const pct = total > 0 ? (ligne.montant / total) * 100 : 0
           return (
-            <div key={ligne.canal}>
-              <div className="mb-1 flex items-center justify-between text-sm">
-                <span>{LIBELLES[ligne.canal] ?? ligne.canal}</span>
-                <span className="text-muted-foreground">
-                  {ligne.montant.toLocaleString("fr-FR", {
-                    style: "currency",
-                    currency: "EUR",
-                    maximumFractionDigits: 0,
-                  })}
-                </span>
-              </div>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                <div
-                  className={`h-full rounded-full ${COULEURS[ligne.canal] ?? "bg-zinc-500"}`}
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
+            <div key={ligne.canal} className="flex items-center gap-2.5">
+              <span className={`size-2.5 shrink-0 rounded-full ${POINT[i] ?? "bg-zinc-300"}`} />
+              <span className="flex-1 text-sm">{LIBELLES[ligne.canal] ?? ligne.canal}</span>
+              <span className="text-xs font-medium text-muted-foreground">{pct.toFixed(1)}%</span>
+              <span className="w-20 text-right text-sm font-bold tabular-nums">
+                {ligne.montant.toLocaleString("fr-FR", {
+                  style: "currency",
+                  currency: "EUR",
+                  maximumFractionDigits: 0,
+                })}
+              </span>
             </div>
           )
         })}
