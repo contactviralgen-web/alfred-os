@@ -28,36 +28,25 @@ export function genererInsightRevenu(points: PointGraphique[], metrique: Metriqu
   const fin = valeurs.slice(moitie).reduce((s, v) => s + v, 0)
   const variationPct = ((fin - debut) / debut) * 100
 
-  const indexPic = valeurs.indexOf(Math.max(...valeurs))
-  const pic = points[indexPic]
-  const libelleMetrique = metrique === "ca" ? "chiffre d'affaires" : "bénéfice net réel"
-
-  const tendance =
-    variationPct > 5
-      ? `en accélération (+${variationPct.toFixed(0)}% en deuxième moitié de période)`
-      : variationPct < -5
-        ? `en ralentissement (${variationPct.toFixed(0)}% en deuxième moitié de période)`
-        : "globalement stable"
-
-  const constat = `Sur la période, le ${libelleMetrique} total est de ${formaterEuros(total)}, ${tendance}. Le point le plus haut est le ${pic.libelle} (${formaterEuros(pic.valeur)}).`
+  const libelleMetrique = metrique === "ca" ? "Chiffre d'affaires" : "Bénéfice net réel"
 
   const conclusion =
     metrique === "benefice" && total < 0
-      ? "La rentabilité réelle est négative sur cette période une fois les charges déduites — l'activité vend, mais ne dégage pas de marge nette pour l'instant."
+      ? `Bénéfice net négatif sur la période (${formaterEuros(total)}).`
       : variationPct > 5
-        ? "La dynamique est positive, la croissance s'accélère en fin de période."
+        ? `${libelleMetrique} en accélération : ${formaterEuros(total)} (+${variationPct.toFixed(0)}%).`
         : variationPct < -5
-          ? "Le repli en fin de période mérite une vérification (rupture de stock, baisse de trafic, saisonnalité)."
-          : "L'activité est régulière sans signal d'alerte particulier."
+          ? `${libelleMetrique} en repli : ${formaterEuros(total)} (${variationPct.toFixed(0)}%).`
+          : `${libelleMetrique} stable à ${formaterEuros(total)}.`
 
   const suggestion =
     metrique === "benefice" && total < 0
-      ? "Ouvrez le module Rentabilité pour identifier les produits qui plombent la marge et ajuster leurs charges ou leur prix."
+      ? "Ouvrez le module Rentabilité pour ajuster les produits qui plombent la marge."
       : variationPct < -5
-        ? "Vérifiez les alertes de stock et les commandes bloquées : elles expliquent souvent un repli de courte durée."
-        : "Maintenez le rythme actuel et surveillez les alertes de stock pour ne pas casser la dynamique."
+        ? "Vérifiez les alertes de stock et les commandes bloquées."
+        : "Maintenez le rythme et surveillez les alertes de stock."
 
-  return { constat, conclusion, suggestion }
+  return { constat: conclusion, conclusion, suggestion }
 }
 
 export function construireCentreDecisions(donnees: {
@@ -72,34 +61,26 @@ export function construireCentreDecisions(donnees: {
   const opportunites: string[] = []
   const actions: string[] = []
 
-  for (const alerte of donnees.alertesStock.slice(0, 3)) {
-    problemes.push(
-      `${alerte.products?.nom ?? "Un produit"} est ${alerte.type === "rupture" ? "en rupture de stock" : "en stock bas"}.`
-    )
+  for (const alerte of donnees.alertesStock.slice(0, 2)) {
+    problemes.push(`${alerte.products?.nom ?? "Un produit"} — ${alerte.type === "rupture" ? "rupture" : "stock bas"}.`)
   }
-  for (const commande of donnees.commandesBloquees.slice(0, 2)) {
-    problemes.push(
-      `Commande ${commande.numero_commande} bloquée (${formaterEuros(commande.montant_total)}) — nécessite une action.`
-    )
+  for (const commande of donnees.commandesBloquees.slice(0, 1)) {
+    problemes.push(`Commande ${commande.numero_commande} bloquée (${formaterEuros(commande.montant_total)}).`)
   }
-  for (const produit of donnees.produitsMargeNegative.slice(0, 2)) {
-    problemes.push(
-      `"${produit.nom}" est déficitaire (${formaterEuros(produit.margeNette)}) une fois les charges réelles comptées.`
-    )
+  for (const produit of donnees.produitsMargeNegative.slice(0, 1)) {
+    problemes.push(`"${produit.nom}" déficitaire (${formaterEuros(produit.margeNette)}).`)
   }
 
   if (donnees.meilleurProduit) {
     opportunites.push(
-      `"${donnees.meilleurProduit.nom}" est votre produit le plus rentable actuellement (${donnees.meilleurProduit.margePct.toFixed(0)}% de marge nette).`
+      `"${donnees.meilleurProduit.nom}" : produit le plus rentable (${donnees.meilleurProduit.margePct.toFixed(0)}%).`
     )
   }
   if (donnees.meilleurFournisseur) {
-    opportunites.push(
-      `${donnees.meilleurFournisseur.nom} est le fournisseur le plus fiable en ce moment — à privilégier pour vos prochaines commandes.`
-    )
+    opportunites.push(`${donnees.meilleurFournisseur.nom} : fournisseur le plus fiable.`)
   }
 
-  for (const tache of donnees.tachesPrioritaires.slice(0, 3)) {
+  for (const tache of donnees.tachesPrioritaires.slice(0, 2)) {
     actions.push(tache.titre)
   }
 
@@ -121,21 +102,15 @@ export function genererInsightMarge(
   const pire = margesParProduit[margesParProduit.length - 1]
   const negatifs = margesParProduit.filter((p) => p.margeNette < 0)
 
-  const constat = `"${meilleur.nom}" dégage la meilleure marge nette réelle (${formaterEuros(meilleur.margeNette)}, ${meilleur.margePct.toFixed(0)}%)${
-    negatifs.length > 0
-      ? `, tandis que ${negatifs.length} produit(s) sont déficitaires une fois les charges réelles comptées, dont "${pire.nom}" (${formaterEuros(pire.margeNette)}).`
-      : "."
-  }`
-
   const conclusion =
     negatifs.length > 0
-      ? "Certains produits qui semblent bien se vendre coûtent en réalité plus cher qu'ils ne rapportent (frais Amazon, transport, retours)."
-      : "L'ensemble du catalogue reste rentable une fois les charges réelles déduites."
+      ? `${negatifs.length} produit(s) déficitaire(s), dont "${pire.nom}" (${formaterEuros(pire.margeNette)}).`
+      : `"${meilleur.nom}" en tête avec ${meilleur.margePct.toFixed(0)}% de marge nette.`
 
   const suggestion =
     negatifs.length > 0
-      ? `Revoyez le prix de vente ou les charges de "${pire.nom}" en priorité, ou envisagez d'arrêter ce produit s'il reste déficitaire.`
-      : `Concentrez le budget publicitaire et le réassort sur "${meilleur.nom}", votre produit le plus rentable actuellement.`
+      ? `Revoyez le prix ou les charges de "${pire.nom}" en priorité.`
+      : `Priorisez le réassort sur "${meilleur.nom}".`
 
-  return { constat, conclusion, suggestion }
+  return { constat: conclusion, conclusion, suggestion }
 }

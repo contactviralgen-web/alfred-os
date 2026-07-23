@@ -82,9 +82,9 @@ export function RevenueChart({
           et gère naturellement les valeurs négatives en mode Bénéfice. La
           prévision reste une ligne, cohérente avec le fait que c'est une
           projection et non une valeur réalisée. */}
-      <ChartContainer config={config(metrique)} className="mt-4 aspect-auto h-72 w-full">
-        <ComposedChart data={donnees} margin={{ left: 0, right: 8, top: 8 }} barCategoryGap="20%">
-          <CartesianGrid vertical={false} strokeOpacity={0.25} />
+      <ChartContainer config={config(metrique)} className="mt-4 aspect-auto h-80 w-full">
+        <ComposedChart data={donnees} margin={{ left: 0, right: 8, top: 8 }} barCategoryGap="8%">
+          <CartesianGrid vertical={false} strokeDasharray="3 3" strokeOpacity={0.5} />
           <XAxis
             dataKey="date"
             tickLine={false}
@@ -114,7 +114,7 @@ export function RevenueChart({
               />
             }
           />
-          <Bar dataKey="valeur" fill="var(--color-valeur)" radius={[2, 2, 0, 0]} maxBarSize={36} />
+          <Bar dataKey="valeur" fill="var(--color-valeur)" radius={[4, 4, 0, 0]} maxBarSize={64} />
           {afficherPrevision ? (
             <Line
               dataKey="valeurPrevue"

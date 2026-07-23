@@ -34,7 +34,7 @@ function MiniStat({
         <Icone className="size-4.5" strokeWidth={2} />
       </span>
       <div>
-        <p className="text-lg font-bold tracking-tight tabular-nums">{valeur}</p>
+        <p className="text-2xl font-bold tracking-tight tabular-nums">{valeur}</p>
         <p className="text-xs text-muted-foreground">{titre}</p>
       </div>
     </div>
@@ -66,24 +66,24 @@ export function DashboardKpis({
         Résumé — {suffixePeriode}
       </p>
       <div className="flex flex-col gap-6 md:flex-row md:items-center">
-        <div className="flex items-center gap-3 md:border-r md:border-border md:pr-6">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-foreground text-background">
-            <Wallet className="size-5" strokeWidth={2} />
+        <div className="flex items-center gap-4 md:border-r md:border-border md:pr-8">
+          <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-foreground text-background">
+            <Wallet className="size-6" strokeWidth={2} />
           </span>
           <div>
             <p className="text-xs text-muted-foreground">Chiffre d&apos;affaires</p>
             <div className="flex items-baseline gap-2">
-              <p className="text-2xl font-bold tracking-tight tabular-nums whitespace-nowrap">
+              <p className="text-4xl font-extrabold tracking-tight tabular-nums whitespace-nowrap">
                 {formatEur(caAnime)}
               </p>
               {croissancePct !== undefined ? (
                 <span
                   className={
-                    "flex items-center gap-0.5 text-xs font-semibold " +
-                    (positif ? "text-foreground" : "text-muted-foreground")
+                    "flex items-center gap-0.5 text-sm font-bold " +
+                    (positif ? "text-primary" : "text-muted-foreground")
                   }
                 >
-                  {positif ? <ArrowUpRight className="size-3" /> : <ArrowDownRight className="size-3" />}
+                  {positif ? <ArrowUpRight className="size-4" /> : <ArrowDownRight className="size-4" />}
                   {Math.abs(croissancePct).toFixed(1)}%
                 </span>
               ) : null}

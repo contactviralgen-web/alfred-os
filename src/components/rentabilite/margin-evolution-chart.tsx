@@ -52,9 +52,9 @@ export function MarginEvolutionChart({
           implicites se marchaient dessus et masquaient les ticks, cause du
           bug de lisibilité) — masqué visuellement mais toujours dimensionné
           correctement grâce à cette séparation. */}
-      <ChartContainer config={config} className="mt-4 aspect-auto h-64 w-full">
-        <ComposedChart data={donnees} margin={{ left: 0, right: 8, top: 8 }}>
-          <CartesianGrid vertical={false} strokeOpacity={0.35} />
+      <ChartContainer config={config} className="mt-4 aspect-auto h-80 w-full">
+        <ComposedChart data={donnees} margin={{ left: 0, right: 8, top: 8 }} barCategoryGap="15%">
+          <CartesianGrid vertical={false} strokeDasharray="3 3" strokeOpacity={0.5} />
           <XAxis
             dataKey="date"
             tickLine={false}
@@ -107,8 +107,8 @@ export function MarginEvolutionChart({
             yAxisId="marge"
             dataKey="margeNette"
             fill="var(--color-margeNette)"
-            radius={[3, 3, 0, 0]}
-            maxBarSize={40}
+            radius={[4, 4, 0, 0]}
+            maxBarSize={70}
           />
         </ComposedChart>
       </ChartContainer>
