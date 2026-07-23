@@ -61,6 +61,7 @@ begin
   delete from public.stock_levels where workspace_id = v_workspace_id;
   delete from public.stock_movements where workspace_id = v_workspace_id;
   delete from public.amazon_connections where workspace_id = v_workspace_id;
+  delete from public.reimbursement_claims where workspace_id = v_workspace_id;
   delete from public.automation_rules where workspace_id = v_workspace_id;
   delete from public.workspace_cost_settings where workspace_id = v_workspace_id;
   delete from public.supplier_invoices where organization_id = v_org_id;
@@ -379,6 +380,44 @@ begin
     (array['defectueux', 'ne_correspond_pas', 'taille_couleur', 'change_avis', 'autre'])[1 + floor(random() * 5)::int]::public.motif_retour_amazon,
     now() - (random() * interval '25 days')
   from generate_series(1, 9);
+
+  -- Récupération de fonds Amazon : écarts détectés (une fois le SP-API
+  -- connecté, la détection viendrait du rapport GET_FBA_REIMBURSEMENTS_DATA +
+  -- des rapports d'inventaire). Statuts variés pour ne pas démarrer sur une
+  -- page vide : un dossier déjà rédigé par l'IA, un soumis à Amazon, un
+  -- récupéré, et plusieurs juste détectés.
+  insert into public.reimbursement_claims (organization_id, workspace_id, product_id, type_incident, quantite, montant_estime, statut, dossier_texte, cree_le)
+  select v_org_id, v_workspace_id, p.id, 'stock_perdu', 6, 252.00, 'dossier_pret',
+    'Objet : Demande de remboursement — Stock perdu en entrepôt' || chr(10) || chr(10) ||
+    'Produit concerné : ' || p.nom || ' (SKU ' || p.sku || ')' || chr(10) ||
+    'Quantité concernée : 6 unité(s)' || chr(10) ||
+    'Montant réclamé : 252,00 €' || chr(10) || chr(10) ||
+    'Bonjour,' || chr(10) || chr(10) ||
+    'Nous constatons un écart d''inventaire constaté entre les unités expédiées vers l''entrepôt Amazon et les unités effectivement enregistrées en stock disponible sur le produit référencé ci-dessus. Conformément à la politique de remboursement FBA d''Amazon, nous sollicitons la compensation de l''écart constaté.' || chr(10) || chr(10) ||
+    'Nous restons à votre disposition pour tout document complémentaire (rapport de stock, historique des mouvements, preuve d''expédition) nécessaire à l''instruction de ce dossier.' || chr(10) || chr(10) ||
+    'Cordialement,' || chr(10) || 'L''équipe vendeur',
+    now() - interval '9 days'
+  from public.products p where p.workspace_id = v_workspace_id and p.sku = 'ELEC-001';
+
+  insert into public.reimbursement_claims (organization_id, workspace_id, product_id, type_incident, quantite, montant_estime, statut, cree_le)
+  select v_org_id, v_workspace_id, p.id, 'stock_endommage', 3, 27.00, 'soumis', now() - interval '18 days'
+  from public.products p where p.workspace_id = v_workspace_id and p.sku = 'MAIS-003';
+
+  insert into public.reimbursement_claims (organization_id, workspace_id, product_id, type_incident, quantite, montant_estime, statut, cree_le)
+  select v_org_id, v_workspace_id, p.id, 'remboursement_manquant', 2, 44.00, 'recupere', now() - interval '32 days'
+  from public.products p where p.workspace_id = v_workspace_id and p.sku = 'SPOR-002';
+
+  insert into public.reimbursement_claims (organization_id, workspace_id, product_id, type_incident, quantite, montant_estime, statut, cree_le)
+  select v_org_id, v_workspace_id, p.id, 'frais_errone', 1, 18.50, 'detecte', now() - interval '3 days'
+  from public.products p where p.workspace_id = v_workspace_id and p.sku = 'ELEC-003';
+
+  insert into public.reimbursement_claims (organization_id, workspace_id, product_id, type_incident, quantite, montant_estime, statut, cree_le)
+  select v_org_id, v_workspace_id, p.id, 'stock_perdu', 4, 72.00, 'detecte', now() - interval '2 days'
+  from public.products p where p.workspace_id = v_workspace_id and p.sku = 'BEAU-002';
+
+  insert into public.reimbursement_claims (organization_id, workspace_id, product_id, type_incident, quantite, montant_estime, statut, cree_le)
+  select v_org_id, v_workspace_id, p.id, 'stock_endommage', 2, 30.00, 'detecte', now() - interval '1 days'
+  from public.products p where p.workspace_id = v_workspace_id and p.sku = 'SPOR-005';
 
   -- Automatisations : deux règles actives (stock bas, commande bloquée) plus
   -- une inactive, avec un historique d'exécution antérieur pour ne pas

@@ -5,6 +5,7 @@ import { AmazonKpis } from "@/components/amazon/amazon-kpis"
 import { AmazonConnectionCard } from "@/components/amazon/amazon-connection-card"
 import { AmazonProductsTable } from "@/components/amazon/amazon-products-table"
 import { ReturnsPanel } from "@/components/amazon/returns-panel"
+import { ReimbursementsPanel } from "@/components/amazon/reimbursements-panel"
 import { exigerContexteWorkspace } from "@/lib/auth/guards"
 import {
   obtenirConnexion,
@@ -13,6 +14,11 @@ import {
   obtenirVentesAmazon,
   listerRetours,
 } from "@/modules/amazon/services/amazon.service"
+import {
+  listerReclamations,
+  obtenirMontantRecuperable,
+  obtenirMontantRecupere,
+} from "@/modules/amazon/services/reimbursements.service"
 import { listerStock } from "@/modules/stock/services/stock.service"
 import { listerProduitsSimple } from "@/modules/rentabilite/services/products.service"
 
@@ -32,16 +38,29 @@ export default async function AmazonPage({
     fin: maintenant.toISOString(),
   }
 
-  const [connexion, indicateurs, ventes, produitsStock, produitsSimples, retours, motifsFrequents] =
-    await Promise.all([
-      obtenirConnexion(workspace.id),
-      obtenirIndicateursCompte(workspace.id),
-      obtenirVentesAmazon(workspace.id, periode30j),
-      listerStock(workspace.id),
-      listerProduitsSimple(workspace.id),
-      listerRetours(workspace.id),
-      obtenirMotifsFrequents(workspace.id),
-    ])
+  const [
+    connexion,
+    indicateurs,
+    ventes,
+    produitsStock,
+    produitsSimples,
+    retours,
+    motifsFrequents,
+    reclamations,
+    montantRecuperable,
+    montantRecupere,
+  ] = await Promise.all([
+    obtenirConnexion(workspace.id),
+    obtenirIndicateursCompte(workspace.id),
+    obtenirVentesAmazon(workspace.id, periode30j),
+    listerStock(workspace.id),
+    listerProduitsSimple(workspace.id),
+    listerRetours(workspace.id),
+    obtenirMotifsFrequents(workspace.id),
+    listerReclamations(workspace.id),
+    obtenirMontantRecuperable(workspace.id),
+    obtenirMontantRecupere(workspace.id),
+  ])
 
   return (
     <>
@@ -70,6 +89,14 @@ export default async function AmazonPage({
               retours={retours}
               motifsFrequents={motifsFrequents}
               produitsInitiaux={produitsSimples}
+              orgSlug={orgSlug}
+              workspaceSlug={workspaceSlug}
+            />
+
+            <ReimbursementsPanel
+              reclamations={reclamations}
+              montantRecuperable={montantRecuperable}
+              montantRecupere={montantRecupere}
               orgSlug={orgSlug}
               workspaceSlug={workspaceSlug}
             />

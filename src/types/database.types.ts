@@ -1051,6 +1051,77 @@ export type Database = {
           },
         ]
       }
+      reimbursement_claims: {
+        Row: {
+          cree_le: string
+          dossier_texte: string | null
+          id: string
+          modifie_le: string
+          montant_estime: number
+          organization_id: string
+          product_id: string
+          quantite: number
+          statut: Database["public"]["Enums"]["statut_reclamation"]
+          type_incident: Database["public"]["Enums"]["type_incident_remboursement"]
+          workspace_id: string
+        }
+        Insert: {
+          cree_le?: string
+          dossier_texte?: string | null
+          id?: string
+          modifie_le?: string
+          montant_estime?: number
+          organization_id: string
+          product_id: string
+          quantite?: number
+          statut?: Database["public"]["Enums"]["statut_reclamation"]
+          type_incident: Database["public"]["Enums"]["type_incident_remboursement"]
+          workspace_id: string
+        }
+        Update: {
+          cree_le?: string
+          dossier_texte?: string | null
+          id?: string
+          modifie_le?: string
+          montant_estime?: number
+          organization_id?: string
+          product_id?: string
+          quantite?: number
+          statut?: Database["public"]["Enums"]["statut_reclamation"]
+          type_incident?: Database["public"]["Enums"]["type_incident_remboursement"]
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reimbursement_claims_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reimbursement_claims_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reimbursement_claims_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "v_product_margins"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "reimbursement_claims_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       revenue_forecasts: {
         Row: {
           chiffre_affaires_prevu: number
@@ -2175,10 +2246,21 @@ export type Database = {
       statut_fournisseur: "actif" | "inactif"
       statut_invitation: "en_attente" | "acceptee" | "expiree" | "revoquee"
       statut_membre: "actif" | "invite" | "suspendu"
+      statut_reclamation:
+        | "detecte"
+        | "dossier_pret"
+        | "soumis"
+        | "recupere"
+        | "rejete"
       statut_tache: "a_faire" | "en_cours" | "terminee"
       type_activite_crm: "note" | "appel" | "email" | "rdv"
       type_alerte_stock: "rupture" | "stock_bas" | "surstock"
       type_evenement_calendrier: "reunion" | "echeance" | "rappel"
+      type_incident_remboursement:
+        | "stock_perdu"
+        | "stock_endommage"
+        | "remboursement_manquant"
+        | "frais_errone"
       type_mouvement_stock: "entree" | "sortie" | "ajustement"
     }
     CompositeTypes: {
@@ -2349,10 +2431,23 @@ export const Constants = {
       statut_fournisseur: ["actif", "inactif"],
       statut_invitation: ["en_attente", "acceptee", "expiree", "revoquee"],
       statut_membre: ["actif", "invite", "suspendu"],
+      statut_reclamation: [
+        "detecte",
+        "dossier_pret",
+        "soumis",
+        "recupere",
+        "rejete",
+      ],
       statut_tache: ["a_faire", "en_cours", "terminee"],
       type_activite_crm: ["note", "appel", "email", "rdv"],
       type_alerte_stock: ["rupture", "stock_bas", "surstock"],
       type_evenement_calendrier: ["reunion", "echeance", "rappel"],
+      type_incident_remboursement: [
+        "stock_perdu",
+        "stock_endommage",
+        "remboursement_manquant",
+        "frais_errone",
+      ],
       type_mouvement_stock: ["entree", "sortie", "ajustement"],
     },
   },
