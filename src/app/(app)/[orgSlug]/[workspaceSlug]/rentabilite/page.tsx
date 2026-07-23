@@ -75,6 +75,7 @@ export default async function RentabilitePage({
           </div>
           <ProductCostsTable
             produits={coutsProduits}
+            tauxTvaPct={reglages.tauxTvaPct}
             orgSlug={orgSlug}
             workspaceSlug={workspaceSlug}
           />

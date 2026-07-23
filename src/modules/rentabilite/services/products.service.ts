@@ -36,12 +36,14 @@ export type DonneesNouveauProduit = {
   categorie?: string | null
   prixAchat: number
   prixVente: number
+  margePlancherPct: number
 }
 
 // sku/nom/prix de vente sont conceptuellement des champs qu'Amazon SP-API
 // synchroniserait automatiquement une fois connecté (catalogue produit) ;
-// prix d'achat et catégorie restent toujours saisis manuellement (Amazon ne
-// connaît jamais le coût fournisseur).
+// prix d'achat, catégorie et marge plancher restent toujours saisis
+// manuellement (Amazon ne connaît jamais le coût fournisseur ni le seuil de
+// marge minimum souhaité par le vendeur).
 export async function creerProduit(
   organizationId: string,
   workspaceId: string,
@@ -68,6 +70,14 @@ export async function creerProduit(
     }
     throw new Error("Impossible de créer le produit.")
   }
+
+  // Le trigger `creer_product_cost_settings_apres_produit` vient de créer une
+  // ligne de charges par défaut pour ce produit — on y applique la marge
+  // plancher choisie à la création.
+  await supabase
+    .from("product_cost_settings")
+    .update({ marge_plancher_pct: donnees.margePlancherPct })
+    .eq("product_id", data.id)
 
   return {
     id: data.id,

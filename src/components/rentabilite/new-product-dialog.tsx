@@ -20,7 +20,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
-const VALEURS_INITIALES = { sku: "", nom: "", categorie: "", prix_achat: "", prix_vente: "" }
+const VALEURS_INITIALES = {
+  sku: "",
+  nom: "",
+  categorie: "",
+  prix_achat: "",
+  prix_vente: "",
+  marge_plancher_pct: "15",
+}
 
 export function NewProductDialog({
   orgSlug,
@@ -134,6 +141,23 @@ export function NewProductDialog({
                 required
               />
             </div>
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Marge nette plancher (%)</Label>
+            <Input
+              type="number"
+              min={0}
+              max={90}
+              step={1}
+              value={valeurs.marge_plancher_pct}
+              onChange={(e) => setValeurs((v) => ({ ...v, marge_plancher_pct: e.target.value }))}
+              required
+            />
+            <p className="text-xs text-muted-foreground">
+              Seuil de marge nette (après achat, transport, douane, frais Amazon/FBA et TVA) sous
+              lequel le prix ne devra jamais descendre — garde-fou pour le futur repricing
+              automatique.
+            </p>
           </div>
           <DialogFooter>
             <Button

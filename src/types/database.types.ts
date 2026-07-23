@@ -824,6 +824,7 @@ export type Database = {
           frais_fba_flat: number
           frais_stockage_unitaire_flat: number
           id: string
+          marge_plancher_pct: number
           modifie_le: string
           organization_id: string
           product_id: string
@@ -839,6 +840,7 @@ export type Database = {
           frais_fba_flat?: number
           frais_stockage_unitaire_flat?: number
           id?: string
+          marge_plancher_pct?: number
           modifie_le?: string
           organization_id: string
           product_id: string
@@ -854,6 +856,7 @@ export type Database = {
           frais_fba_flat?: number
           frais_stockage_unitaire_flat?: number
           id?: string
+          marge_plancher_pct?: number
           modifie_le?: string
           organization_id?: string
           product_id?: string

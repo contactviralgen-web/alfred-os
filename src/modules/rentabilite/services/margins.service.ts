@@ -1,6 +1,10 @@
 import "server-only"
 
 import { createClient } from "@/lib/supabase/server"
+import { calculerPrixPlancher, type ReglagesCoutsProduit } from "@/modules/rentabilite/services/margins.pure"
+
+export { calculerPrixPlancher }
+export type { ReglagesCoutsProduit }
 
 export type ReglagesWorkspace = {
   tauxTvaPct: number
@@ -39,22 +43,6 @@ export async function mettreAJourReglagesWorkspace(
   if (error) throw new Error("Impossible de mettre à jour les réglages de TVA.")
 }
 
-export type ReglagesCoutsProduit = {
-  productId: string
-  sku: string
-  nom: string
-  categorie: string | null
-  prixAchat: number
-  prixVente: number
-  coutTransportFlat: number
-  coutDouaneFlat: number
-  fraisAmazonPct: number
-  fraisFbaFlat: number
-  fraisStockageUnitaireFlat: number
-  tauxRetourPct: number
-  coutDiversFlat: number
-}
-
 export async function obtenirReglagesCoutsProduits(
   workspaceId: string
 ): Promise<ReglagesCoutsProduit[]> {
@@ -62,7 +50,7 @@ export async function obtenirReglagesCoutsProduits(
   const { data } = await supabase
     .from("products")
     .select(
-      "id, sku, nom, categorie, prix_achat, prix_vente, product_cost_settings(cout_transport_flat, cout_douane_flat, frais_amazon_pct, frais_fba_flat, frais_stockage_unitaire_flat, taux_retour_pct, cout_divers_flat)"
+      "id, sku, nom, categorie, prix_achat, prix_vente, product_cost_settings(cout_transport_flat, cout_douane_flat, frais_amazon_pct, frais_fba_flat, frais_stockage_unitaire_flat, taux_retour_pct, cout_divers_flat, marge_plancher_pct)"
     )
     .eq("workspace_id", workspaceId)
     .eq("actif", true)
@@ -86,6 +74,7 @@ export async function obtenirReglagesCoutsProduits(
       fraisStockageUnitaireFlat: Number(couts?.frais_stockage_unitaire_flat ?? 0),
       tauxRetourPct: Number(couts?.taux_retour_pct ?? 0),
       coutDiversFlat: Number(couts?.cout_divers_flat ?? 0),
+      margePlancherPct: Number(couts?.marge_plancher_pct ?? 15),
     }
   })
 }
@@ -112,6 +101,7 @@ export async function mettreAJourCoutsProduit(
       frais_stockage_unitaire_flat: donnees.fraisStockageUnitaireFlat,
       taux_retour_pct: donnees.tauxRetourPct,
       cout_divers_flat: donnees.coutDiversFlat,
+      marge_plancher_pct: donnees.margePlancherPct,
     },
     { onConflict: "product_id" }
   )

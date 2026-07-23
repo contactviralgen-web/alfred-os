@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import type { ReglagesCoutsProduit } from "@/modules/rentabilite/services/margins.service"
+import { calculerPrixPlancher, type ReglagesCoutsProduit } from "@/modules/rentabilite/services/margins.pure"
 
 type Champ = Exclude<
   keyof ReglagesCoutsProduit,
@@ -29,19 +29,40 @@ const COLONNES: { champ: Champ; label: string; suffixe: string }[] = [
   { champ: "fraisStockageUnitaireFlat", label: "Stockage", suffixe: "€/unité" },
   { champ: "tauxRetourPct", label: "Taux retour", suffixe: "%" },
   { champ: "coutDiversFlat", label: "Coûts divers", suffixe: "€/unité" },
+  { champ: "margePlancherPct", label: "Marge plancher", suffixe: "%" },
 ]
+
+function formatEur(valeur: number) {
+  if (!Number.isFinite(valeur)) return "—"
+  return valeur.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })
+}
 
 function LigneProduit({
   produit,
+  tauxTvaPct,
   orgSlug,
   workspaceSlug,
 }: {
   produit: ReglagesCoutsProduit
+  tauxTvaPct: number
   orgSlug: string
   workspaceSlug: string
 }) {
   const [valeurs, setValeurs] = useState(produit)
   const [isPending, startTransition] = useTransition()
+
+  const prixPlancher = calculerPrixPlancher({
+    prixAchat: valeurs.prixAchat,
+    coutTransportFlat: valeurs.coutTransportFlat,
+    coutDouaneFlat: valeurs.coutDouaneFlat,
+    fraisFbaFlat: valeurs.fraisFbaFlat,
+    fraisStockageUnitaireFlat: valeurs.fraisStockageUnitaireFlat,
+    coutDiversFlat: valeurs.coutDiversFlat,
+    fraisAmazonPct: valeurs.fraisAmazonPct,
+    tauxRetourPct: valeurs.tauxRetourPct,
+    margePlancherPct: valeurs.margePlancherPct,
+    tauxTvaPct,
+  })
 
   function onSave() {
     startTransition(async () => {
@@ -53,6 +74,7 @@ function LigneProduit({
         frais_stockage_unitaire_flat: valeurs.fraisStockageUnitaireFlat,
         taux_retour_pct: valeurs.tauxRetourPct,
         cout_divers_flat: valeurs.coutDiversFlat,
+        marge_plancher_pct: valeurs.margePlancherPct,
       })
       if (!resultat.succes) {
         toast.error(resultat.message)
@@ -82,6 +104,9 @@ function LigneProduit({
           />
         </TableCell>
       ))}
+      <TableCell className="text-sm font-medium text-primary whitespace-nowrap">
+        {formatEur(prixPlancher)}
+      </TableCell>
       <TableCell>
         <Button size="sm" variant="outline" disabled={isPending} onClick={onSave}>
           {isPending ? "..." : "Enregistrer"}
@@ -93,10 +118,12 @@ function LigneProduit({
 
 export function ProductCostsTable({
   produits,
+  tauxTvaPct,
   orgSlug,
   workspaceSlug,
 }: {
   produits: ReglagesCoutsProduit[]
+  tauxTvaPct: number
   orgSlug: string
   workspaceSlug: string
 }) {
@@ -111,6 +138,7 @@ export function ProductCostsTable({
                 {label} <span className="text-muted-foreground">({suffixe})</span>
               </TableHead>
             ))}
+            <TableHead className="whitespace-nowrap">Prix plancher</TableHead>
             <TableHead />
           </TableRow>
         </TableHeader>
@@ -119,12 +147,17 @@ export function ProductCostsTable({
             <LigneProduit
               key={produit.productId}
               produit={produit}
+              tauxTvaPct={tauxTvaPct}
               orgSlug={orgSlug}
               workspaceSlug={workspaceSlug}
             />
           ))}
         </TableBody>
       </Table>
+      <p className="mt-2 text-xs text-muted-foreground">
+        Prix plancher = prix minimum en dessous duquel la marge nette tomberait sous le seuil
+        choisi — garde-fou prévu pour le futur repricing automatique (Buy Box).
+      </p>
     </div>
   )
 }

@@ -29,6 +29,7 @@ export async function creerProduitAction(
       categorie: analyse.data.categorie || null,
       prixAchat: analyse.data.prix_achat,
       prixVente: analyse.data.prix_vente,
+      margePlancherPct: analyse.data.marge_plancher_pct,
     })
     revalidatePath(`/${orgSlug}/${wsSlug}/rentabilite`)
     revalidatePath(`/${orgSlug}/${wsSlug}/fournisseurs`)

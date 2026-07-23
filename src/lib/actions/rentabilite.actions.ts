@@ -61,6 +61,7 @@ export async function mettreAJourCoutsProduitAction(
       fraisStockageUnitaireFlat: analyse.data.frais_stockage_unitaire_flat,
       tauxRetourPct: analyse.data.taux_retour_pct,
       coutDiversFlat: analyse.data.cout_divers_flat,
+      margePlancherPct: analyse.data.marge_plancher_pct,
     })
   } catch (erreur) {
     return {
