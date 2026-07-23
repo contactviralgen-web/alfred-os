@@ -26,7 +26,7 @@ const VALEURS_INITIALES = {
   categorie: "",
   prix_achat: "",
   prix_vente: "",
-  marge_plancher_pct: "15",
+  marge_plancher_pct: "20",
 }
 
 export function NewProductDialog({
@@ -146,7 +146,7 @@ export function NewProductDialog({
             <Label className="text-xs text-muted-foreground">Marge nette plancher (%)</Label>
             <Input
               type="number"
-              min={0}
+              min={20}
               max={90}
               step={1}
               value={valeurs.marge_plancher_pct}
@@ -154,9 +154,8 @@ export function NewProductDialog({
               required
             />
             <p className="text-xs text-muted-foreground">
-              Seuil de marge nette (après achat, transport, douane, frais Amazon/FBA et TVA) sous
-              lequel le prix ne devra jamais descendre — garde-fou pour le futur repricing
-              automatique.
+              Seuil de marge nette minimum (après achat, transport, douane, frais Amazon/FBA et
+              TVA) — jamais inférieur à 20%. Garde-fou pour le futur repricing automatique.
             </p>
           </div>
           <DialogFooter>

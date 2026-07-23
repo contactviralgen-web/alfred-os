@@ -1,10 +1,6 @@
 import "server-only"
 
 import { createClient } from "@/lib/supabase/server"
-import { calculerPrixPlancher, type ReglagesCoutsProduit } from "@/modules/rentabilite/services/margins.pure"
-
-export { calculerPrixPlancher }
-export type { ReglagesCoutsProduit }
 
 export type ReglagesWorkspace = {
   tauxTvaPct: number
@@ -41,6 +37,23 @@ export async function mettreAJourReglagesWorkspace(
     { onConflict: "workspace_id" }
   )
   if (error) throw new Error("Impossible de mettre à jour les réglages de TVA.")
+}
+
+export type ReglagesCoutsProduit = {
+  productId: string
+  sku: string
+  nom: string
+  categorie: string | null
+  prixAchat: number
+  prixVente: number
+  coutTransportFlat: number
+  coutDouaneFlat: number
+  fraisAmazonPct: number
+  fraisFbaFlat: number
+  fraisStockageUnitaireFlat: number
+  tauxRetourPct: number
+  coutDiversFlat: number
+  margePlancherPct: number
 }
 
 export async function obtenirReglagesCoutsProduits(

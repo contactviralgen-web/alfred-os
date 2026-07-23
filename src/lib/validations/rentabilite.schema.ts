@@ -13,5 +13,5 @@ export const schemaCoutsProduit = z.object({
   frais_stockage_unitaire_flat: z.coerce.number().min(0),
   taux_retour_pct: z.coerce.number().min(0).max(100),
   cout_divers_flat: z.coerce.number().min(0),
-  marge_plancher_pct: z.coerce.number().min(0).max(90),
+  marge_plancher_pct: z.coerce.number().min(20, "La marge plancher doit être d'au moins 20%").max(90),
 })

@@ -143,9 +143,9 @@ begin
         when 'Électronique' then 0.50 when 'Maison' then 0.40 when 'Sport' then 0.35 else 0.20
       end as divers,
       -- Marge plancher : seuil de marge nette minimum souhaité par catégorie
-      -- (garde-fou du futur repricing automatique).
+      -- (garde-fou du futur repricing automatique) — jamais sous 20%.
       case p.categorie
-        when 'Électronique' then 12.00 when 'Maison' then 15.00 when 'Sport' then 15.00 else 18.00
+        when 'Électronique' then 20.00 when 'Maison' then 22.00 when 'Sport' then 22.00 else 25.00
       end as marge_plancher
   ) as cat on true
   where pcs.product_id = p.id and p.workspace_id = v_workspace_id;
