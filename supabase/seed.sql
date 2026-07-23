@@ -116,26 +116,30 @@ begin
   from public.products p
   join lateral (
     select
+      -- Charges flat recalibrées par rapport au prix moyen réel du
+      -- catalogue (12-90€) — les valeurs initiales représentaient jusqu'à
+      -- 30-40% du prix de vente à elles seules, ce qui écrasait toute
+      -- rentabilité même sur un catalogue par ailleurs sain.
       case p.categorie
-        when 'Électronique' then 2.50 when 'Maison' then 3.00 when 'Sport' then 2.50 else 0.80
+        when 'Électronique' then 0.90 when 'Maison' then 1.00 when 'Sport' then 0.90 else 0.35
       end as transport,
       case p.categorie
-        when 'Électronique' then 1.80 when 'Maison' then 1.20 when 'Sport' then 1.00 else 0.50
+        when 'Électronique' then 0.60 when 'Maison' then 0.40 when 'Sport' then 0.35 else 0.20
       end as douane,
       case p.categorie
-        when 'Électronique' then 15.00 when 'Maison' then 14.00 when 'Sport' then 14.00 else 10.00
+        when 'Électronique' then 10.00 when 'Maison' then 11.00 when 'Sport' then 11.00 else 8.00
       end as amazon_pct,
       case p.categorie
-        when 'Électronique' then 3.50 when 'Maison' then 4.50 when 'Sport' then 4.00 else 1.50
+        when 'Électronique' then 1.80 when 'Maison' then 2.00 when 'Sport' then 1.80 else 0.70
       end as fba,
       case p.categorie
-        when 'Électronique' then 1.20 when 'Maison' then 1.50 when 'Sport' then 1.20 else 0.60
+        when 'Électronique' then 0.50 when 'Maison' then 0.60 when 'Sport' then 0.50 else 0.25
       end as stockage,
       case p.categorie
-        when 'Électronique' then 6.00 when 'Maison' then 3.00 when 'Sport' then 4.00 else 2.00
+        when 'Électronique' then 4.00 when 'Maison' then 2.00 when 'Sport' then 2.50 else 1.50
       end as retour_pct,
       case p.categorie
-        when 'Électronique' then 1.50 when 'Maison' then 1.00 when 'Sport' then 1.00 else 0.50
+        when 'Électronique' then 0.50 when 'Maison' then 0.40 when 'Sport' then 0.35 else 0.20
       end as divers
   ) as cat on true
   where pcs.product_id = p.id and p.workspace_id = v_workspace_id;
@@ -161,8 +165,10 @@ begin
   -- 90 jours d'historique de commandes avec tendance de croissance.
   for v_offset in reverse 89..0 loop
     v_jour := current_date - v_offset;
-    -- Plus on se rapproche d'aujourd'hui, plus le volume moyen augmente (croissance).
-    v_nb_commandes := greatest(1, floor(random() * (2 + (89 - v_offset)::numeric / 18))::int);
+    -- Plus on se rapproche d'aujourd'hui, plus le volume moyen augmente
+    -- (croissance) — volume x4 par rapport à la V1 pour une démo qui projette
+    -- une entreprise qui tourne déjà à un bon rythme.
+    v_nb_commandes := greatest(1, floor(random() * (2 + (89 - v_offset)::numeric / 18) * 4)::int);
 
     for v_i in 1..v_nb_commandes loop
       v_canal := (array['site_web', 'site_web', 'amazon', 'amazon', 'manuel'])[1 + floor(random() * 5)::int];
@@ -195,7 +201,7 @@ begin
         select prix_achat, prix_vente into v_prix_achat, v_prix_vente from public.products where id = v_product_id;
 
         insert into public.order_items (order_id, product_id, quantite, prix_unitaire, marge_unitaire)
-        values (v_order_id, v_product_id, 1 + floor(random() * 2)::int, v_prix_vente, v_prix_vente - v_prix_achat);
+        values (v_order_id, v_product_id, 2 + floor(random() * 5)::int, v_prix_vente, v_prix_vente - v_prix_achat);
       end loop;
 
       update public.orders o set
