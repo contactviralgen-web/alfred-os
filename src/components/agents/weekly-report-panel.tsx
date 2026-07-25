@@ -63,7 +63,7 @@ export function WeeklyReportPanel({
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="m-4 mb-0"
     >
-      <Card className="gap-3 border border-border/60 p-4 shadow-none ring-0">
+      <Card className="gap-3 border border-border/60 p-4">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
             <span

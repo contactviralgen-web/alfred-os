@@ -71,7 +71,7 @@ export function NotificationsFeed({
               className="flex items-start gap-3 px-4 py-3 text-sm hover:bg-accent/40"
             >
               {!notification.lue ? (
-                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-indigo-500" />
+                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
               ) : (
                 <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-transparent" />
               )}

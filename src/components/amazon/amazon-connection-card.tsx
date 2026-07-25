@@ -60,7 +60,7 @@ export function AmazonConnectionCard({
 
   if (connexion.statut === "connecte") {
     return (
-      <Card className="flex-row items-center gap-4 border border-border/60 p-4 shadow-none ring-0 transition-colors duration-200 hover:border-primary/30">
+      <Card className="flex-row items-center gap-4 border border-border/60 p-4 transition-colors duration-200 hover:border-primary/30">
         <span className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
           <ShoppingCart className="size-5" />
         </span>
@@ -81,7 +81,7 @@ export function AmazonConnectionCard({
   }
 
   return (
-    <Card className="flex-row items-center gap-4 border border-border/60 p-4 shadow-none ring-0 transition-colors duration-200 hover:border-primary/30">
+    <Card className="flex-row items-center gap-4 border border-border/60 p-4 transition-colors duration-200 hover:border-primary/30">
       <span className="flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
         <ShoppingCart className="size-5" />
       </span>

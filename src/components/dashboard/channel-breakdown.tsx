@@ -24,7 +24,7 @@ export function ChannelBreakdown({
   const trie = [...donnees].sort((a, b) => b.montant - a.montant)
 
   return (
-    <Card className="border border-border/60 p-4 shadow-none ring-0">
+    <Card className="border border-border/60 p-4">
       <p className="text-sm font-bold tracking-tight">Ventes par canal</p>
       <p className="text-xs text-muted-foreground">30 derniers jours</p>
       <div className="mt-5 space-y-4">

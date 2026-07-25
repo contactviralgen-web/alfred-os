@@ -31,7 +31,7 @@ export function TopProductsTable({ produits }: { produits: TopProduitLigne[] }) 
                     {produit.categorie} · {produit.quantite_vendue} vendus
                   </span>
                 </div>
-                <span className="font-medium text-emerald-600 dark:text-emerald-400">
+                <span className="font-medium text-primary">
                   +{(produit.marge_totale ?? 0).toLocaleString("fr-FR", {
                     style: "currency",
                     currency: "EUR",
@@ -41,7 +41,7 @@ export function TopProductsTable({ produits }: { produits: TopProduitLigne[] }) 
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div
-                  className="h-full rounded-full bg-emerald-500"
+                  className="h-full rounded-full bg-primary"
                   style={{ width: `${((produit.marge_totale ?? 0) / maxMarge) * 100}%` }}
                 />
               </div>

@@ -37,12 +37,16 @@ export function MarginEvolutionChart({
   donnees: PointEvolutionMarge[]
   insight: InsightIA
 }) {
+  const moisEnCours = new Date().toISOString().slice(0, 7)
+  const dernierMoisEstPartiel = donnees.at(-1)?.date.slice(0, 7) === moisEnCours
+
   return (
-    <Card className="border border-border/60 p-4 shadow-none ring-0 transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/5">
+    <Card className="border border-border/60 p-4 transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/5">
       <div className="px-2">
         <p className="text-base font-bold tracking-tight">Évolution de la marge nette</p>
         <p className="text-xs text-muted-foreground">
           6 derniers mois — CA (ligne de référence) vs marge réelle après charges (barres)
+          {dernierMoisEstPartiel ? " — le dernier mois est en cours, encore partiel" : ""}
         </p>
       </div>
       {/* Marge nette en barres sur l'axe principal gauche (échelle adaptée à
@@ -83,9 +87,14 @@ export function MarginEvolutionChart({
           <ChartTooltip
             content={
               <ChartTooltipContent
-                labelFormatter={(value) =>
-                  new Date(value).toLocaleDateString("fr-FR", { month: "long", year: "numeric" })
-                }
+                labelFormatter={(value) => {
+                  const libelle = new Date(value).toLocaleDateString("fr-FR", {
+                    month: "long",
+                    year: "numeric",
+                  })
+                  const estMoisEnCours = String(value).slice(0, 7) === new Date().toISOString().slice(0, 7)
+                  return estMoisEnCours ? `${libelle} (en cours)` : libelle
+                }}
                 formatter={(value, name) => [
                   formateurExact.format(Number(value)),
                   name === "chiffreAffaires" ? "CA" : "Marge nette réelle",

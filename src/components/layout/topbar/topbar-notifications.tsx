@@ -44,7 +44,7 @@ export function TopbarNotifications({
           >
             <Bell className="size-4" />
             {nonLues > 0 ? (
-              <span className="absolute top-1 right-1 flex size-2 rounded-full bg-indigo-500" />
+              <span className="absolute top-1 right-1 flex size-2 rounded-full bg-primary" />
             ) : null}
           </button>
         }
@@ -68,7 +68,7 @@ export function TopbarNotifications({
                   className="flex flex-col gap-0.5 border-b border-border/40 px-3 py-2.5 text-sm last:border-b-0 hover:bg-accent/50"
                 >
                   <div className="flex items-center gap-2">
-                    {!n.lue ? <span className="size-1.5 rounded-full bg-indigo-500" /> : null}
+                    {!n.lue ? <span className="size-1.5 rounded-full bg-primary" /> : null}
                     <span className="font-medium">{n.titre}</span>
                   </div>
                   {n.message ? (

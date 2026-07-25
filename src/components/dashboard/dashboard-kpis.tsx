@@ -61,8 +61,8 @@ export function DashboardKpis({
   const positif = (croissancePct ?? 0) >= 0
 
   return (
-    <Card className="border border-border/60 p-5 shadow-none ring-0">
-      <p className="mb-4 text-sm font-semibold text-muted-foreground">
+    <Card className="p-6">
+      <p className="mb-5 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
         Résumé — {suffixePeriode}
       </p>
       <div className="flex flex-col gap-6 md:flex-row md:items-center">

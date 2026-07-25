@@ -104,7 +104,7 @@ export default async function TableauDeBordPage({
         description={`Vue d'ensemble de ${organisation.nom} — ${workspace.nom}`}
         actions={<DashboardControls periode={periode} metrique={metrique} />}
       />
-      <div className="space-y-6 p-6">
+      <div className="space-y-8 px-6 pb-8">
         <DashboardKpis
           periode={periode}
           ca={kpis?.ca ?? 0}

@@ -18,7 +18,7 @@ export default function VerifierEmailPage() {
       }
     >
       <div className="flex flex-col items-center gap-4 py-4 text-center">
-        <span className="flex size-12 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+        <span className="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
           <MailCheck className="size-6" />
         </span>
         <p className="text-sm text-muted-foreground">

@@ -61,7 +61,7 @@ export function DirecteurChat({
       <div className="flex-1 space-y-4 overflow-y-auto p-6">
         {messages.length === 0 ? (
           <div className="mx-auto max-w-lg space-y-4 pt-12 text-center">
-            <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+            <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Sparkles className="size-6" />
             </span>
             <div>
@@ -92,7 +92,7 @@ export function DirecteurChat({
               <Card
                 className={
                   message.role === "user"
-                    ? "max-w-lg bg-foreground p-3 text-sm text-background shadow-none ring-0"
+                    ? "max-w-lg bg-foreground p-3 text-sm text-background"
                     : "max-w-lg p-3 text-sm whitespace-pre-wrap shadow-none"
                 }
               >

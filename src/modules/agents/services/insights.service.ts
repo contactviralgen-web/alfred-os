@@ -13,7 +13,14 @@ function formaterEuros(valeur: number) {
 }
 
 export function genererInsightRevenu(points: PointGraphique[], metrique: MetriqueGraphique): InsightIA {
-  const valeurs = points.map((p) => p.valeur)
+  // Le graphique CA fusionne l'historique réel avec des points de prévision
+  // future (valeur à 0 tant que le jour n'est pas passé, `valeurPrevue`
+  // rempli à la place) pour dessiner la ligne pointillée de prévision. Sans
+  // ce filtre, ces jours futurs à 0€ s'ajoutaient à la tendance et
+  // fabriquaient une fausse chute alors que le CA réel est en hausse.
+  const aujourdhui = new Date().toISOString().slice(0, 10)
+  const pointsPasses = points.filter((p) => !p.date.includes("-") || p.date <= aujourdhui)
+  const valeurs = pointsPasses.map((p) => p.valeur)
   if (valeurs.length === 0 || valeurs.every((v) => v === 0)) {
     return {
       constat: "Pas encore assez de données sur cette période pour dégager une tendance.",

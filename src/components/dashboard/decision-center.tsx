@@ -1,7 +1,5 @@
 import { AlertTriangle, CircleCheck, ListChecks } from "lucide-react"
 
-import { Card } from "@/components/ui/card"
-
 export function DecisionColumn({
   titre,
   icone: Icone,
@@ -44,8 +42,10 @@ export function DecisionCenter({
   actions: string[]
 }) {
   return (
-    <Card className="border border-border/60 p-4 shadow-none ring-0">
-      <p className="mb-3 text-base font-bold tracking-tight">Centre de décisions</p>
+    <div className="border-t border-border/70 pt-6">
+      <p className="mb-4 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+        Centre de décisions
+      </p>
       <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
         <DecisionColumn
           titre="Problèmes"
@@ -66,6 +66,6 @@ export function DecisionCenter({
           messageVide="Rien de prioritaire aujourd'hui."
         />
       </div>
-    </Card>
+    </div>
   )
 }

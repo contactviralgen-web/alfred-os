@@ -51,7 +51,7 @@ export function RecommendationsList({ recommandations }: { recommandations: Reco
             key={r.id}
             variants={{ hidden: { opacity: 0, y: 6 }, visible: { opacity: 1, y: 0 } }}
           >
-            <Card className="flex-row items-start gap-3 border border-border/60 p-4 shadow-none ring-0 transition-colors duration-200 hover:border-primary/30">
+            <Card className="flex-row items-start gap-3 border border-border/60 p-4 transition-colors duration-200 hover:border-primary/30">
               <span
                 className={cn(
                   "flex size-8 shrink-0 items-center justify-center rounded-full",

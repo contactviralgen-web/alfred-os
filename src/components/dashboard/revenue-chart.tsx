@@ -66,7 +66,7 @@ export function RevenueChart({
   const afficherPrevision = metrique === "ca" && (periode === "7j" || periode === "mois")
 
   return (
-    <Card className="border border-border/60 p-4 shadow-none ring-0 transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/5">
+    <Card className="border border-border/60 p-4 transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/5">
       <div className="flex flex-wrap items-center justify-between gap-3 px-2">
         <div>
           <p className="text-base font-bold tracking-tight">

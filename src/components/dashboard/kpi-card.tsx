@@ -43,7 +43,7 @@ export function KpiCard({
   const positif = (variationPct ?? 0) >= 0
 
   return (
-    <Card className="gap-2 border border-border/60 p-4 shadow-none ring-0 transition-colors duration-200 hover:border-primary/30">
+    <Card className="gap-2 border border-transparent p-4 transition-colors duration-200 hover:border-primary/25">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">{titre}</p>
         {Icone ? (

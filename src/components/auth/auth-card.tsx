@@ -37,7 +37,7 @@ export function AuthCard({
           </Link>
         </div>
 
-        <Card className="border border-border/60 shadow-none ring-0">
+        <Card className="border border-border/60">
           <CardHeader>
             <CardTitle className="text-xl">{titre}</CardTitle>
             <CardDescription>{description}</CardDescription>
