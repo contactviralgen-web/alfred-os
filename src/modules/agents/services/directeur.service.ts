@@ -1,6 +1,6 @@
 import "server-only"
 
-import { creerClientIA, estErreurCreditsEpuises, messageErreurIA, MODELE_IA } from "@/lib/ai/client"
+import { obtenirProviderIA } from "@/lib/ai/client"
 import {
   obtenirRepartitionCanaux,
   obtenirResumeKpis,
@@ -97,37 +97,22 @@ export async function poserQuestionDirecteur(
   question: string
 ): Promise<{ succes: true; reponse: string } | { succes: false; message: string }> {
   const donnees = await collecterDonneesEntreprise(workspaceId)
+  const contexte = formaterContextePrompt(organisationNom, donnees)
+  const provider = obtenirProviderIA()
 
-  try {
-    const contexte = formaterContextePrompt(organisationNom, donnees)
-    const client = creerClientIA()
+  const resultat = await provider.repondre({
+    system: contexte,
+    messages: [...historique, { role: "user", content: question }],
+  })
 
-    const response = await client.messages.create({
-      model: MODELE_IA,
-      max_tokens: 1536,
-      thinking: { type: "adaptive" },
-      system: contexte,
-      messages: [
-        ...historique.map((m) => ({ role: m.role, content: m.content })),
-        { role: "user" as const, content: question },
-      ],
-    })
-
-    const texte = response.content.find((b) => b.type === "text")
-    if (response.stop_reason === "refusal" || !texte) {
-      return {
-        succes: false,
-        message: "Le Directeur IA n'a pas pu répondre à cette question.",
-      }
-    }
-
-    return { succes: true, reponse: texte.text }
-  } catch (erreur) {
-    if (estErreurCreditsEpuises(erreur)) {
+  if (!resultat.succes) {
+    if (resultat.erreurCreditsEpuises) {
       return { succes: true, reponse: genererReponseSimulee(question, donnees) }
     }
-    return { succes: false, message: messageErreurIA(erreur) }
+    return { succes: false, message: resultat.message }
   }
+
+  return { succes: true, reponse: resultat.reponse }
 }
 
 export async function genererResumeMatinal(

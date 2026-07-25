@@ -61,6 +61,9 @@ begin
   delete from public.stock_levels where workspace_id = v_workspace_id;
   delete from public.stock_movements where workspace_id = v_workspace_id;
   delete from public.amazon_connections where workspace_id = v_workspace_id;
+  delete from public.advertising_campaigns where workspace_id = v_workspace_id;
+  delete from public.ads_connections where workspace_id = v_workspace_id;
+  delete from public.recommendations where workspace_id = v_workspace_id;
   delete from public.reimbursement_claims where workspace_id = v_workspace_id;
   delete from public.automation_rules where workspace_id = v_workspace_id;
   delete from public.workspace_cost_settings where workspace_id = v_workspace_id;
@@ -423,6 +426,31 @@ begin
   insert into public.reimbursement_claims (organization_id, workspace_id, product_id, type_incident, quantite, montant_estime, statut, cree_le)
   select v_org_id, v_workspace_id, p.id, 'stock_endommage', 2, 30.00, 'detecte', now() - interval '1 days'
   from public.products p where p.workspace_id = v_workspace_id and p.sku = 'SPOR-005';
+
+  -- Publicité : connexion Amazon Ads simulée (démo), Meta Ads laissée
+  -- déconnectée pour montrer les deux états. Campagnes avec des ACOS/ROAS
+  -- volontairement variés (une qui gaspille, une performante, une neutre)
+  -- pour que l'Agent Publicité ait quelque chose à détecter.
+  insert into public.ads_connections (organization_id, workspace_id, plateforme, statut, compte_id, connecte_le)
+  values (v_org_id, v_workspace_id, 'amazon_ads', 'connecte', 'ADV-4471902583', now() - interval '20 days');
+
+  insert into public.advertising_campaigns (organization_id, workspace_id, plateforme, nom, statut, depense, impressions, clics, conversions, chiffre_affaires_genere, cree_le)
+  values
+    (v_org_id, v_workspace_id, 'amazon_ads', 'Casque audio Pro — Mots-clés larges', 'active', 620.00, 42000, 980, 38, 640.00, now() - interval '25 days'),
+    (v_org_id, v_workspace_id, 'amazon_ads', 'Enceinte Bluetooth — Marque', 'active', 180.00, 15000, 410, 52, 1340.00, now() - interval '22 days'),
+    (v_org_id, v_workspace_id, 'amazon_ads', 'Câble USB-C — Catégorie', 'active', 95.00, 9000, 210, 18, 260.00, now() - interval '18 days'),
+    (v_org_id, v_workspace_id, 'amazon_ads', 'Souris ergonomique — Test saisonnier', 'terminee', 140.00, 11000, 260, 9, 150.00, now() - interval '40 days');
+
+  -- Recommendation : quelques exemples déjà en base pour ne pas démarrer sur
+  -- une page vide avant le premier clic sur "Analyser les campagnes".
+  insert into public.recommendations (organization_id, workspace_id, agent, probleme_detecte, analyse_ia, recommandation, impact_estime_eur, cree_le)
+  values
+    (v_org_id, v_workspace_id, 'publicite', 'Campagne "Casque audio Pro — Mots-clés larges" (Amazon Ads) — ACOS de 97%.',
+     'Cette campagne dépense 620€ pour 640€ de chiffre d''affaires généré, un ACOS supérieur au seuil de 40%.',
+     'Réduire le budget ou revoir le ciblage de "Casque audio Pro — Mots-clés larges".', -20.00, now() - interval '2 days'),
+    (v_org_id, v_workspace_id, 'publicite', 'Campagne "Enceinte Bluetooth — Marque" (Amazon Ads) — ROAS de 7.4.',
+     'Cette campagne génère 1340€ pour 180€ dépensés, bien au-dessus du seuil de 4.',
+     'Augmenter le budget de "Enceinte Bluetooth — Marque" tant que le ROAS se maintient.', 1160.00, now() - interval '2 days');
 
   -- Automatisations : deux règles actives (stock bas, commande bloquée) plus
   -- une inactive, avec un historique d'exécution antérieur pour ne pas

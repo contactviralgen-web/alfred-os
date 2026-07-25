@@ -97,6 +97,117 @@ export type Database = {
           },
         ]
       }
+      ads_connections: {
+        Row: {
+          compte_id: string | null
+          connecte_le: string | null
+          id: string
+          modifie_le: string
+          organization_id: string
+          plateforme: Database["public"]["Enums"]["plateforme_pub"]
+          statut: Database["public"]["Enums"]["statut_connexion_pub"]
+          workspace_id: string
+        }
+        Insert: {
+          compte_id?: string | null
+          connecte_le?: string | null
+          id?: string
+          modifie_le?: string
+          organization_id: string
+          plateforme: Database["public"]["Enums"]["plateforme_pub"]
+          statut?: Database["public"]["Enums"]["statut_connexion_pub"]
+          workspace_id: string
+        }
+        Update: {
+          compte_id?: string | null
+          connecte_le?: string | null
+          id?: string
+          modifie_le?: string
+          organization_id?: string
+          plateforme?: Database["public"]["Enums"]["plateforme_pub"]
+          statut?: Database["public"]["Enums"]["statut_connexion_pub"]
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ads_connections_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ads_connections_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      advertising_campaigns: {
+        Row: {
+          chiffre_affaires_genere: number
+          clics: number
+          conversions: number
+          cree_le: string
+          depense: number
+          id: string
+          impressions: number
+          modifie_le: string
+          nom: string
+          organization_id: string
+          plateforme: Database["public"]["Enums"]["plateforme_pub"]
+          statut: Database["public"]["Enums"]["statut_campagne_pub"]
+          workspace_id: string
+        }
+        Insert: {
+          chiffre_affaires_genere?: number
+          clics?: number
+          conversions?: number
+          cree_le?: string
+          depense?: number
+          id?: string
+          impressions?: number
+          modifie_le?: string
+          nom: string
+          organization_id: string
+          plateforme: Database["public"]["Enums"]["plateforme_pub"]
+          statut?: Database["public"]["Enums"]["statut_campagne_pub"]
+          workspace_id: string
+        }
+        Update: {
+          chiffre_affaires_genere?: number
+          clics?: number
+          conversions?: number
+          cree_le?: string
+          depense?: number
+          id?: string
+          impressions?: number
+          modifie_le?: string
+          nom?: string
+          organization_id?: string
+          plateforme?: Database["public"]["Enums"]["plateforme_pub"]
+          statut?: Database["public"]["Enums"]["statut_campagne_pub"]
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advertising_campaigns_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advertising_campaigns_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       amazon_connections: {
         Row: {
           connecte_le: string | null
@@ -444,6 +555,63 @@ export type Database = {
           },
           {
             foreignKeyName: "crm_contacts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      executive_weekly_reports: {
+        Row: {
+          actions_recommandees: string[]
+          cree_le: string
+          id: string
+          organization_id: string
+          periode_debut: string
+          periode_fin: string
+          sante_business: Database["public"]["Enums"]["sante_business"]
+          sante_libelle: string
+          top_opportunites: string[]
+          top_problemes: string[]
+          workspace_id: string
+        }
+        Insert: {
+          actions_recommandees?: string[]
+          cree_le?: string
+          id?: string
+          organization_id: string
+          periode_debut: string
+          periode_fin: string
+          sante_business: Database["public"]["Enums"]["sante_business"]
+          sante_libelle: string
+          top_opportunites?: string[]
+          top_problemes?: string[]
+          workspace_id: string
+        }
+        Update: {
+          actions_recommandees?: string[]
+          cree_le?: string
+          id?: string
+          organization_id?: string
+          periode_debut?: string
+          periode_fin?: string
+          sante_business?: Database["public"]["Enums"]["sante_business"]
+          sante_libelle?: string
+          top_opportunites?: string[]
+          top_problemes?: string[]
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "executive_weekly_reports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "executive_weekly_reports_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
@@ -1050,6 +1218,63 @@ export type Database = {
             columns: ["derniere_organisation_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recommendations: {
+        Row: {
+          agent: Database["public"]["Enums"]["type_agent_ia"]
+          analyse_ia: string
+          cree_le: string
+          id: string
+          impact_estime_eur: number | null
+          modifie_le: string
+          organization_id: string
+          probleme_detecte: string
+          recommandation: string
+          statut: Database["public"]["Enums"]["statut_recommandation"]
+          workspace_id: string
+        }
+        Insert: {
+          agent: Database["public"]["Enums"]["type_agent_ia"]
+          analyse_ia: string
+          cree_le?: string
+          id?: string
+          impact_estime_eur?: number | null
+          modifie_le?: string
+          organization_id: string
+          probleme_detecte: string
+          recommandation: string
+          statut?: Database["public"]["Enums"]["statut_recommandation"]
+          workspace_id: string
+        }
+        Update: {
+          agent?: Database["public"]["Enums"]["type_agent_ia"]
+          analyse_ia?: string
+          cree_le?: string
+          id?: string
+          impact_estime_eur?: number | null
+          modifie_le?: string
+          organization_id?: string
+          probleme_detecte?: string
+          recommandation?: string
+          statut?: Database["public"]["Enums"]["statut_recommandation"]
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recommendations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recommendations_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -2007,6 +2232,75 @@ export type Database = {
       }
     }
     Views: {
+      v_ad_performance: {
+        Row: {
+          acos_pct: number | null
+          chiffre_affaires_genere: number | null
+          clics: number | null
+          conversions: number | null
+          cree_le: string | null
+          depense: number | null
+          id: string | null
+          impressions: number | null
+          modifie_le: string | null
+          nom: string | null
+          organization_id: string | null
+          plateforme: Database["public"]["Enums"]["plateforme_pub"] | null
+          roas: number | null
+          statut: Database["public"]["Enums"]["statut_campagne_pub"] | null
+          workspace_id: string | null
+        }
+        Insert: {
+          acos_pct?: never
+          chiffre_affaires_genere?: number | null
+          clics?: number | null
+          conversions?: number | null
+          cree_le?: string | null
+          depense?: number | null
+          id?: string | null
+          impressions?: number | null
+          modifie_le?: string | null
+          nom?: string | null
+          organization_id?: string | null
+          plateforme?: Database["public"]["Enums"]["plateforme_pub"] | null
+          roas?: never
+          statut?: Database["public"]["Enums"]["statut_campagne_pub"] | null
+          workspace_id?: string | null
+        }
+        Update: {
+          acos_pct?: never
+          chiffre_affaires_genere?: number | null
+          clics?: number | null
+          conversions?: number | null
+          cree_le?: string | null
+          depense?: number | null
+          id?: string | null
+          impressions?: number | null
+          modifie_le?: string | null
+          nom?: string | null
+          organization_id?: string | null
+          plateforme?: Database["public"]["Enums"]["plateforme_pub"] | null
+          roas?: never
+          statut?: Database["public"]["Enums"]["statut_campagne_pub"] | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advertising_campaigns_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advertising_campaigns_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       v_crm_contact_summary: {
         Row: {
           contact_id: string | null
@@ -2227,8 +2521,11 @@ export type Database = {
         | "change_avis"
         | "autre"
       plan_organisation: "essai" | "starter" | "pro" | "entreprise"
+      plateforme_pub: "amazon_ads" | "meta_ads"
       priorite_tache: "basse" | "normale" | "haute"
+      sante_business: "bonne" | "a_surveiller" | "critique"
       statut_alerte_stock: "ouverte" | "resolue"
+      statut_campagne_pub: "active" | "en_pause" | "terminee"
       statut_commande:
         | "en_attente"
         | "confirmee"
@@ -2244,6 +2541,7 @@ export type Database = {
         | "livree"
         | "annulee"
       statut_connexion_amazon: "connecte" | "deconnecte"
+      statut_connexion_pub: "connecte" | "deconnecte"
       statut_contact_crm: "prospect" | "client" | "perdu"
       statut_facture_fournisseur: "en_attente" | "payee" | "en_retard"
       statut_fournisseur: "actif" | "inactif"
@@ -2255,8 +2553,10 @@ export type Database = {
         | "soumis"
         | "recupere"
         | "rejete"
+      statut_recommandation: "nouvelle" | "vue" | "appliquee" | "ignoree"
       statut_tache: "a_faire" | "en_cours" | "terminee"
       type_activite_crm: "note" | "appel" | "email" | "rdv"
+      type_agent_ia: "rentabilite" | "publicite" | "stock" | "directeur"
       type_alerte_stock: "rupture" | "stock_bas" | "surstock"
       type_evenement_calendrier: "reunion" | "echeance" | "rappel"
       type_incident_remboursement:
@@ -2410,8 +2710,11 @@ export const Constants = {
         "autre",
       ],
       plan_organisation: ["essai", "starter", "pro", "entreprise"],
+      plateforme_pub: ["amazon_ads", "meta_ads"],
       priorite_tache: ["basse", "normale", "haute"],
+      sante_business: ["bonne", "a_surveiller", "critique"],
       statut_alerte_stock: ["ouverte", "resolue"],
+      statut_campagne_pub: ["active", "en_pause", "terminee"],
       statut_commande: [
         "en_attente",
         "confirmee",
@@ -2429,6 +2732,7 @@ export const Constants = {
         "annulee",
       ],
       statut_connexion_amazon: ["connecte", "deconnecte"],
+      statut_connexion_pub: ["connecte", "deconnecte"],
       statut_contact_crm: ["prospect", "client", "perdu"],
       statut_facture_fournisseur: ["en_attente", "payee", "en_retard"],
       statut_fournisseur: ["actif", "inactif"],
@@ -2441,8 +2745,10 @@ export const Constants = {
         "recupere",
         "rejete",
       ],
+      statut_recommandation: ["nouvelle", "vue", "appliquee", "ignoree"],
       statut_tache: ["a_faire", "en_cours", "terminee"],
       type_activite_crm: ["note", "appel", "email", "rdv"],
+      type_agent_ia: ["rentabilite", "publicite", "stock", "directeur"],
       type_alerte_stock: ["rupture", "stock_bas", "surstock"],
       type_evenement_calendrier: ["reunion", "echeance", "rappel"],
       type_incident_remboursement: [

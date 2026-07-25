@@ -2,7 +2,7 @@ import { AlertTriangle, CircleCheck, ListChecks } from "lucide-react"
 
 import { Card } from "@/components/ui/card"
 
-function Colonne({
+export function DecisionColumn({
   titre,
   icone: Icone,
   elements,
@@ -47,19 +47,19 @@ export function DecisionCenter({
     <Card className="border border-border/60 p-4 shadow-none ring-0">
       <p className="mb-3 text-base font-bold tracking-tight">Centre de décisions</p>
       <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-        <Colonne
+        <DecisionColumn
           titre="Problèmes"
           icone={AlertTriangle}
           elements={problemes}
           messageVide="Aucun problème détecté actuellement."
         />
-        <Colonne
+        <DecisionColumn
           titre="Opportunités"
           icone={CircleCheck}
           elements={opportunites}
           messageVide="Pas encore assez de données pour une recommandation."
         />
-        <Colonne
+        <DecisionColumn
           titre="Actions du jour"
           icone={ListChecks}
           elements={actions}

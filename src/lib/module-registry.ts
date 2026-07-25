@@ -7,6 +7,7 @@ import {
   Gauge,
   Layers,
   ListChecks,
+  Megaphone,
   ShoppingCart,
   TrendingUp,
   Truck,
@@ -56,6 +57,10 @@ export const REGISTRE_MODULES: ConfigurationModule[] = [
   {
     id: "amazon",
     nav: [{ titre: "Amazon", segment: "amazon", icone: ShoppingCart }],
+  },
+  {
+    id: "publicite",
+    nav: [{ titre: "Publicité", segment: "publicite", icone: Megaphone }],
   },
   {
     id: "stock",

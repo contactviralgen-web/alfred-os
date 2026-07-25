@@ -2,8 +2,8 @@ import "server-only"
 
 import type { ContexteEntreprise } from "@/modules/agents/services/directeur.service"
 
-// Repli invisible utilisé uniquement quand l'appel Anthropic réel échoue par
-// manque de crédits (voir estErreurCreditsEpuises dans directeur.service.ts).
+// Repli invisible utilisé uniquement quand le provider LLM signale un manque
+// de crédits (voir erreurCreditsEpuises dans src/lib/ai/provider.ts).
 // Construit à partir des MÊMES données réelles que le prompt du Directeur IA
 // — jamais de mention d'IA/crédits/simulation, le texte doit se lire comme
 // une vraie réponse.
