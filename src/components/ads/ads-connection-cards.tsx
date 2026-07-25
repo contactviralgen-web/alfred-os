@@ -9,8 +9,8 @@ import { connecterPubAction, deconnecterPubAction } from "@/lib/actions/ads.acti
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import type { ConnexionPub } from "@/modules/ads/services/ads.service"
-import { LABEL_PLATEFORME, type PlateformePub } from "@/modules/ads/ads.constants"
+import type { ConnexionPub } from "@/connectors/ads/ads.service"
+import { LABEL_PLATEFORME, type PlateformePub } from "@/connectors/ads/ads.constants"
 
 export function AdsConnectionCards({
   connexions,

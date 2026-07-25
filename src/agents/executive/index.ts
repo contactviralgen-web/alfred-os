@@ -2,9 +2,20 @@ import "server-only"
 
 import { createClient } from "@/lib/supabase/server"
 import { obtenirResumeKpis } from "@/modules/dashboard/services/revenue-metrics.service"
-import { obtenirAlertesStock } from "@/modules/dashboard/services/stock-alerts.service"
 import { obtenirCommandesBloquees } from "@/modules/dashboard/services/orders-metrics.service"
 import { listerRecommandationsActives } from "@/modules/agents/services/recommendations.service"
+import { analyserRentabilite } from "@/agents/profit"
+import { analyserCampagnes } from "@/agents/ads"
+import { analyserStock } from "@/agents/inventory"
+
+// AGENT 4 — Executive Agent (document). Objectif : synthétiser les 3 autres
+// agents en "Voici les 5 décisions prioritaires" chaque semaine. Contrairement
+// aux autres agents qui ne lisent que leurs propres données, l'Executive
+// Agent commence par déclencher Profit/Ads/Stock pour rafraîchir leurs
+// recommandations, puis les agrège — c'est la seule vraie synthèse
+// transverse de la plateforme.
+export const objectifAgentExecutif = "Synthétiser les recommandations des autres agents en décisions prioritaires."
+export const sourcesDonneesAgentExecutif = ["Agent Profit", "Agent Publicité", "Agent Stock", "revenue_metrics"]
 
 export type SanteBusiness = "bonne" | "a_surveiller" | "critique"
 
@@ -56,12 +67,6 @@ function determinerSante(margePct: number, croissancePct: number): { sante: Sant
   return { sante: "bonne", libelle: "Marge et croissance dans les seuils attendus." }
 }
 
-// Executive Agent : agrège les recommandations actives des autres agents
-// (Publicité aujourd'hui, Rentabilité/Stock à venir au même endroit une fois
-// qu'ils écriront aussi dans `recommendations`) avec les alertes stock et
-// commandes bloquées déjà suivies au tableau de bord, en un rapport figé
-// dans le temps — contrairement au Centre de décisions du tableau de bord
-// qui se recalcule à chaque chargement de page.
 export async function genererRapportHebdomadaire(
   organizationId: string,
   workspaceId: string
@@ -69,10 +74,18 @@ export async function genererRapportHebdomadaire(
   const fin = new Date()
   const debut = new Date(fin.getTime() - 7 * 86400000)
 
-  const [kpis, recommandations, alertesStock, commandesBloquees] = await Promise.all([
+  // 1. Rafraîchit les recommandations des 3 agents déterministes avant de
+  // synthétiser — sans ça le rapport agrégerait des recommandations
+  // potentiellement périmées.
+  await Promise.all([
+    analyserRentabilite(organizationId, workspaceId),
+    analyserCampagnes(organizationId, workspaceId),
+    analyserStock(organizationId, workspaceId),
+  ])
+
+  const [kpis, recommandations, commandesBloquees] = await Promise.all([
     obtenirResumeKpis(workspaceId, "7j"),
     listerRecommandationsActives(workspaceId),
-    obtenirAlertesStock(workspaceId),
     obtenirCommandesBloquees(workspaceId),
   ])
 
@@ -87,14 +100,11 @@ export async function genererRapportHebdomadaire(
 
   const topProblemes = [
     ...problemesRecommandations,
-    ...alertesStock.map(
-      (a) => `${a.products?.nom ?? "Un produit"} — ${a.type === "rupture" ? "rupture de stock" : "stock bas"}.`
-    ),
     ...commandesBloquees.map((c) => `Commande ${c.numero_commande} bloquée (${c.montant_total}€).`),
-  ].slice(0, 3)
+  ].slice(0, 5)
 
   const topOpportunites = opportunitesRecommandations.slice(0, 3)
-  const actionsRecommandees = recommandations.slice(0, 3).map((r) => r.recommandation)
+  const actionsRecommandees = recommandations.slice(0, 5).map((r) => r.recommandation)
 
   const supabase = await createClient()
   const { data, error } = await supabase

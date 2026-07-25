@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache"
 
 import type { ResultatAction } from "@/lib/actions/auth.actions"
 import { exigerContexteWorkspace } from "@/lib/auth/guards"
-import { genererDossier, mettreAJourStatutReclamation } from "@/modules/amazon/services/reimbursements.service"
+import { genererDossier, mettreAJourStatutReclamation } from "@/connectors/amazon/reimbursements.service"
 
 export async function genererDossierAction(
   orgSlug: string,

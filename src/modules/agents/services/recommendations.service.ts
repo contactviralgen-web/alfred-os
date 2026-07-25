@@ -92,3 +92,19 @@ export async function marquerStatutRecommandation(id: string, statut: StatutReco
   const { error } = await supabase.from("recommendations").update({ statut }).eq("id", id)
   if (error) throw new Error("Impossible de mettre à jour le statut de la recommandation.")
 }
+
+// Chaque analyse d'agent produit un instantané frais : les recommandations
+// "nouvelle" (jamais vues/traitées) du même agent sont marquées "ignoree"
+// avant d'en écrire de nouvelles, pour ne pas empiler les mêmes constats à
+// chaque clic sur "Analyser". Les recommandations déjà "vue"/"appliquee" par
+// un utilisateur ne sont pas touchées — c'est un engagement à préserver.
+export async function remplacerRecommandationsAgent(workspaceId: string, agent: TypeAgentIA) {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from("recommendations")
+    .update({ statut: "ignoree" })
+    .eq("workspace_id", workspaceId)
+    .eq("agent", agent)
+    .eq("statut", "nouvelle")
+  if (error) throw new Error("Impossible de rafraîchir les recommandations de l'agent.")
+}

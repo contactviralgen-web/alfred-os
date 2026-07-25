@@ -7,7 +7,7 @@ import { CampaignsTable } from "@/components/ads/campaigns-table"
 import { AnalyserCampagnesButton } from "@/components/ads/analyser-campagnes-button"
 import { RecommendationsList } from "@/components/agents/recommendations-list"
 import { exigerContexteWorkspace } from "@/lib/auth/guards"
-import { obtenirConnexionsPub, obtenirKpisPub, listerCampagnes } from "@/modules/ads/services/ads.service"
+import { obtenirConnexionsPub, obtenirKpisPub, listerCampagnes } from "@/connectors/ads/ads.service"
 import { listerRecommandationsActives } from "@/modules/agents/services/recommendations.service"
 
 export const metadata: Metadata = { title: "Publicité — Pilot" }

@@ -1,11 +1,8 @@
 import "server-only"
 
 import { createClient } from "@/lib/supabase/server"
-import {
-  calculerMargeLigne,
-  obtenirEvolutionMarge,
-  obtenirLignesMarges,
-} from "@/modules/rentabilite/services/margins.service"
+import { obtenirEvolutionMarge, obtenirLignesMarges } from "@/modules/rentabilite/services/margins.service"
+import { calculerMargeLigne } from "@/engine/profitability"
 
 export {
   plageDatesPeriode,

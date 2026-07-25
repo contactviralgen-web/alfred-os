@@ -6,6 +6,8 @@ import { ProductCostsTable } from "@/components/rentabilite/product-costs-table"
 import { MarginEvolutionChart } from "@/components/rentabilite/margin-evolution-chart"
 import { ProductMarginsTable } from "@/components/rentabilite/product-margins-table"
 import { NewProductDialog } from "@/components/rentabilite/new-product-dialog"
+import { AnalyserRentabiliteButton } from "@/components/rentabilite/analyser-rentabilite-button"
+import { RecommendationsList } from "@/components/agents/recommendations-list"
 import { exigerContexteWorkspace } from "@/lib/auth/guards"
 import {
   obtenirEvolutionMarge,
@@ -15,6 +17,7 @@ import {
   obtenirReglagesWorkspace,
 } from "@/modules/rentabilite/services/margins.service"
 import { genererInsightMarge } from "@/modules/agents/services/insights.service"
+import { listerRecommandationsActives } from "@/modules/agents/services/recommendations.service"
 
 export const metadata: Metadata = { title: "Rentabilité — Pilot" }
 
@@ -36,13 +39,14 @@ export default async function RentabilitePage({
     fin: maintenant.toISOString(),
   }
 
-  const [reglages, coutsProduits, margesParProduit, margesParCategorie, evolutionMarge] =
+  const [reglages, coutsProduits, margesParProduit, margesParCategorie, evolutionMarge, recommandations] =
     await Promise.all([
       obtenirReglagesWorkspace(workspace.id),
       obtenirReglagesCoutsProduits(workspace.id),
       obtenirMargesParProduit(workspace.id, periode30j),
       obtenirMargesParCategorie(workspace.id, periode30j),
       obtenirEvolutionMarge(workspace.id, "mois", periode6mois),
+      listerRecommandationsActives(workspace.id, "rentabilite"),
     ])
 
   return (
@@ -50,8 +54,13 @@ export default async function RentabilitePage({
       <PageHeader
         titre="Rentabilité"
         description="Marge nette réelle par produit — combine vos commandes avec la TVA et les charges Amazon/logistique saisies ci-dessous"
+        actions={<AnalyserRentabiliteButton orgSlug={orgSlug} workspaceSlug={workspaceSlug} />}
       />
       <div className="space-y-6 p-6">
+        <div className="space-y-2">
+          <p className="text-sm font-medium">Recommandations de l&apos;Agent Rentabilité</p>
+          <RecommendationsList recommandations={recommandations} />
+        </div>
         <WorkspaceTvaForm
           orgSlug={orgSlug}
           workspaceSlug={workspaceSlug}

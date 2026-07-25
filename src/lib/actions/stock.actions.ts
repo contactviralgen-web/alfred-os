@@ -6,6 +6,7 @@ import type { ResultatAction } from "@/lib/actions/auth.actions"
 import { exigerContexteWorkspace } from "@/lib/auth/guards"
 import { ajusterStock, mettreAJourSeuilAlerte } from "@/modules/stock/services/stock.service"
 import { schemaAjustementStock, schemaSeuilAlerte } from "@/lib/validations/stock.schema"
+import { analyserStock } from "@/agents/inventory"
 
 export async function ajusterStockAction(
   orgSlug: string,
@@ -58,4 +59,25 @@ export async function mettreAJourSeuilAlerteAction(
 
   revalidatePath(`/${orgSlug}/${wsSlug}/stock`)
   return { succes: true, message: "Seuil d'alerte mis à jour." }
+}
+
+export async function analyserStockAction(orgSlug: string, wsSlug: string): Promise<ResultatAction> {
+  const { organisation, workspace } = await exigerContexteWorkspace(orgSlug, wsSlug)
+
+  try {
+    const { produitsAnalyses, recommandationsCreees } = await analyserStock(organisation.id, workspace.id)
+    revalidatePath(`/${orgSlug}/${wsSlug}/stock`)
+    return {
+      succes: true,
+      message:
+        recommandationsCreees > 0
+          ? `${recommandationsCreees} recommandation(s) générée(s) sur ${produitsAnalyses} produit(s) analysé(s).`
+          : `${produitsAnalyses} produit(s) analysé(s), aucun risque de rupture détecté.`,
+    }
+  } catch (erreur) {
+    return {
+      succes: false,
+      message: erreur instanceof Error ? erreur.message : "Une erreur est survenue.",
+    }
+  }
 }

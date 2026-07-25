@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/shared/page-header"
 import { DirecteurChat } from "@/components/agents/directeur-chat"
 import { WeeklyReportPanel } from "@/components/agents/weekly-report-panel"
 import { exigerContexteWorkspace } from "@/lib/auth/guards"
-import { obtenirDernierRapport } from "@/modules/agents/services/weekly-report.service"
+import { obtenirDernierRapport } from "@/agents/executive"
 
 export const metadata: Metadata = { title: "Directeur IA — Pilot" }
 

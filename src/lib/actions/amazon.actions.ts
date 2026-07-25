@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache"
 
 import type { ResultatAction } from "@/lib/actions/auth.actions"
 import { exigerContexteWorkspace } from "@/lib/auth/guards"
-import { ajouterRetour, connecterAmazon, deconnecterAmazon } from "@/modules/amazon/services/amazon.service"
+import { ajouterRetour, connecterAmazon, deconnecterAmazon } from "@/connectors/amazon/amazon.service"
 import { schemaRetour } from "@/lib/validations/amazon.schema"
 
 export async function connecterAmazonAction(orgSlug: string, wsSlug: string): Promise<ResultatAction> {

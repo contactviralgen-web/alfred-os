@@ -4,8 +4,9 @@ import { revalidatePath } from "next/cache"
 
 import type { ResultatAction } from "@/lib/actions/auth.actions"
 import { exigerContexteWorkspace } from "@/lib/auth/guards"
-import { analyserCampagnes, connecterPlateformePub, deconnecterPlateformePub } from "@/modules/ads/services/ads.service"
-import { LABEL_PLATEFORME, type PlateformePub } from "@/modules/ads/ads.constants"
+import { connecterPlateformePub, deconnecterPlateformePub } from "@/connectors/ads/ads.service"
+import { LABEL_PLATEFORME, type PlateformePub } from "@/connectors/ads/ads.constants"
+import { analyserCampagnes } from "@/agents/ads"
 
 export async function connecterPubAction(
   orgSlug: string,

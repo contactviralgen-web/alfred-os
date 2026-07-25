@@ -6,7 +6,7 @@ import {
   poserQuestionDirecteur,
   type MessageChat,
 } from "@/modules/agents/services/directeur.service"
-import { genererRapportHebdomadaire } from "@/modules/agents/services/weekly-report.service"
+import { genererRapportHebdomadaire } from "@/agents/executive"
 import { exigerContexteWorkspace } from "@/lib/auth/guards"
 import type { ResultatAction } from "@/lib/actions/auth.actions"
 

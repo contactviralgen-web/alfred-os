@@ -18,7 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import type { ConnexionAmazon } from "@/modules/amazon/services/amazon.service"
+import type { ConnexionAmazon } from "@/connectors/amazon/amazon.service"
 
 export function AmazonConnectionCard({
   connexion,

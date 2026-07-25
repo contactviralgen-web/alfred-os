@@ -13,12 +13,12 @@ import {
   obtenirMotifsFrequents,
   obtenirVentesAmazon,
   listerRetours,
-} from "@/modules/amazon/services/amazon.service"
+} from "@/connectors/amazon/amazon.service"
 import {
   listerReclamations,
   obtenirMontantRecuperable,
   obtenirMontantRecupere,
-} from "@/modules/amazon/services/reimbursements.service"
+} from "@/connectors/amazon/reimbursements.service"
 import { listerStock } from "@/modules/stock/services/stock.service"
 import { listerProduitsSimple } from "@/modules/rentabilite/services/products.service"
 

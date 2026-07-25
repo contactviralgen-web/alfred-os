@@ -1124,6 +1124,7 @@ export type Database = {
       products: {
         Row: {
           actif: boolean
+          asin: string | null
           categorie: string | null
           cree_le: string
           id: string
@@ -1138,6 +1139,7 @@ export type Database = {
         }
         Insert: {
           actif?: boolean
+          asin?: string | null
           categorie?: string | null
           cree_le?: string
           id?: string
@@ -1152,6 +1154,7 @@ export type Database = {
         }
         Update: {
           actif?: boolean
+          asin?: string | null
           categorie?: string | null
           cree_le?: string
           id?: string

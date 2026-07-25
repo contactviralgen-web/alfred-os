@@ -9,6 +9,7 @@ import {
   mettreAJourReglagesWorkspace,
 } from "@/modules/rentabilite/services/margins.service"
 import { schemaCoutsProduit, schemaReglagesWorkspace } from "@/lib/validations/rentabilite.schema"
+import { analyserRentabilite } from "@/agents/profit"
 
 export async function mettreAJourReglagesWorkspaceAction(
   orgSlug: string,
@@ -73,4 +74,25 @@ export async function mettreAJourCoutsProduitAction(
   revalidatePath(`/${orgSlug}/${wsSlug}/rentabilite`)
   revalidatePath(`/${orgSlug}/${wsSlug}/tableau-de-bord`)
   return { succes: true, message: "Charges du produit mises à jour." }
+}
+
+export async function analyserRentabiliteAction(orgSlug: string, wsSlug: string): Promise<ResultatAction> {
+  const { organisation, workspace } = await exigerContexteWorkspace(orgSlug, wsSlug)
+
+  try {
+    const { produitsAnalyses, recommandationsCreees } = await analyserRentabilite(organisation.id, workspace.id)
+    revalidatePath(`/${orgSlug}/${wsSlug}/rentabilite`)
+    return {
+      succes: true,
+      message:
+        recommandationsCreees > 0
+          ? `${recommandationsCreees} recommandation(s) générée(s) sur ${produitsAnalyses} produit(s) analysé(s).`
+          : `${produitsAnalyses} produit(s) analysé(s), aucune anomalie détectée.`,
+    }
+  } catch (erreur) {
+    return {
+      succes: false,
+      message: erreur instanceof Error ? erreur.message : "Une erreur est survenue.",
+    }
+  }
 }

@@ -7,8 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import type { Campagne } from "@/modules/ads/services/ads.service"
-import { LABEL_PLATEFORME } from "@/modules/ads/ads.constants"
+import type { Campagne } from "@/connectors/ads/ads.service"
+import { LABEL_PLATEFORME } from "@/connectors/ads/ads.constants"
 
 const VARIANT_STATUT = { active: "outline", en_pause: "secondary", terminee: "outline" } as const
 const LABEL_STATUT = { active: "Active", en_pause: "En pause", terminee: "Terminée" } as const

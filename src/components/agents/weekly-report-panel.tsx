@@ -12,7 +12,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { DecisionColumn } from "@/components/dashboard/decision-center"
 import { cn } from "@/lib/utils"
-import type { RapportHebdomadaire, SanteBusiness } from "@/modules/agents/services/weekly-report.service"
+import type { RapportHebdomadaire, SanteBusiness } from "@/agents/executive"
 
 const LABEL_SANTE: Record<SanteBusiness, string> = {
   bonne: "Bonne santé",

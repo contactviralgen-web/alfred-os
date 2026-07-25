@@ -1,6 +1,7 @@
 import "server-only"
 
 import { createClient } from "@/lib/supabase/server"
+import { calculerMargeLigne, type LigneRentabilite } from "@/engine/profitability"
 
 export type ReglagesWorkspace = {
   tauxTvaPct: number
@@ -121,43 +122,9 @@ export async function mettreAJourCoutsProduit(
   if (error) throw new Error("Impossible de mettre à jour les charges du produit.")
 }
 
-type LigneVProductMargins = {
-  chiffre_affaires: number
-  quantite: number
-  cout_transport_flat: number
-  cout_douane_flat: number
-  frais_amazon_pct: number
-  frais_fba_flat: number
-  frais_stockage_unitaire_flat: number
-  taux_retour_pct: number
-  cout_divers_flat: number
-  taux_tva_pct: number
-  prix_achat: number
-}
-
-// Marge nette = CA - coût fournisseur - charges récurrentes par unité - TVA
-// (déduite du prix TTC). Fonction pure, réutilisable en tests.
-export function calculerMargeLigne(ligne: LigneVProductMargins) {
-  const tva = (ligne.chiffre_affaires / (1 + ligne.taux_tva_pct / 100)) * (ligne.taux_tva_pct / 100)
-  const chargesUnitaires =
-    (ligne.prix_achat +
-      ligne.cout_transport_flat +
-      ligne.cout_douane_flat +
-      ligne.frais_fba_flat +
-      ligne.frais_stockage_unitaire_flat +
-      ligne.cout_divers_flat) *
-    ligne.quantite
-  const chargesProportionnelles =
-    ligne.chiffre_affaires * ((ligne.frais_amazon_pct + ligne.taux_retour_pct) / 100)
-  const chargesTotal = chargesUnitaires + chargesProportionnelles + tva
-  const margeNette = ligne.chiffre_affaires - chargesTotal
-  const margePct = ligne.chiffre_affaires > 0 ? (margeNette / ligne.chiffre_affaires) * 100 : 0
-  return { chargesTotal, tva, margeNette, margePct }
-}
-
 type Periode = { debut: string; fin: string }
 
-type LigneMargeNormalisee = LigneVProductMargins & {
+type LigneMargeNormalisee = LigneRentabilite & {
   product_id: string
   produit_nom: string
   categorie: string | null
