@@ -1,30 +1,24 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { PageHeader } from "@/components/layout/page-header"
-import { HeroMetric } from "@/components/dashboard/hero-metric"
-import { KpiCard } from "@/components/dashboard/kpi-card"
+import { OverviewPanel } from "@/components/dashboard/overview-panel"
 import { RecommendationsList } from "@/components/dashboard/recommendations-list"
 import { getCurrentUserAndOrganization } from "@/lib/organizations/current"
-import { demoKpis, demoRecommendations, demoTopProduits, demoTendance } from "@/lib/demo/dashboard-data"
+import { demoRecommendations, demoTopProduits } from "@/lib/demo/dashboard-data"
+import { demoRapportHebdo } from "@/lib/demo/directeur-ia-data"
 import { cn } from "@/lib/utils"
 
 export default async function DashboardPage() {
   const { organization } = await getCurrentUserAndOrganization()
-  const [heroKpi, ...secondaryKpis] = demoKpis
 
   return (
     <>
       <PageHeader
         title="Tableau de bord"
         description={`Santé business de ${organization?.name ?? "votre entreprise"} — données de démonstration.`}
+        status={`Santé business : ${demoRapportHebdo.sante.split(",")[0]}`}
       />
 
-      <HeroMetric kpi={heroKpi} tendance={demoTendance} />
-
-      <div className="grid gap-4 sm:grid-cols-3">
-        {secondaryKpis.map((kpi) => (
-          <KpiCard key={kpi.label} {...kpi} />
-        ))}
-      </div>
+      <OverviewPanel />
 
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">

@@ -24,3 +24,15 @@ export const demoStockAvecCouverture = demoStockProduits.map((p) => ({
   ...p,
   joursDeCouverture: joursDeCouverture(p),
 }))
+
+const aRisque = demoStockAvecCouverture.filter((p) => p.statut !== "ok")
+
+export const demoStockResume = {
+  total: demoStockAvecCouverture.length,
+  aRisque: aRisque.length,
+  ruptureLaPlusProche: Math.min(...aRisque.map((p) => p.joursDeCouverture)),
+  couvertureMoyenne: Math.round(
+    demoStockAvecCouverture.reduce((s, p) => s + p.joursDeCouverture, 0) /
+      demoStockAvecCouverture.length
+  ),
+}

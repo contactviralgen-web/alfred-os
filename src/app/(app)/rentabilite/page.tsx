@@ -9,18 +9,24 @@ import {
 } from "@/components/ui/table"
 import { PageHeader } from "@/components/layout/page-header"
 import { KpiCard } from "@/components/dashboard/kpi-card"
+import { AgentHighlight } from "@/components/agents/agent-highlight"
 import { cn } from "@/lib/utils"
 import { demoRentabiliteProduits, demoRentabiliteResume } from "@/lib/demo/rentabilite-data"
+import { demoRecommendations } from "@/lib/demo/dashboard-data"
 
 const eur = (n: number) => `${n.toLocaleString("fr-FR")} €`
 
 export default function RentabilitePage() {
+  const highlight = demoRecommendations.find((r) => r.agent === "Agent Profit")
+
   return (
     <>
       <PageHeader
         title="Rentabilité"
         description="Profit réel par produit — Agent Profit. Revenue - coût produit - frais plateforme - publicité - logistique - retours."
       />
+
+      {highlight && <AgentHighlight item={highlight} />}
 
       <div className="grid gap-4 sm:grid-cols-3">
         <KpiCard

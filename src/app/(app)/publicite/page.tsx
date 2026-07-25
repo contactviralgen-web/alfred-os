@@ -10,8 +10,10 @@ import {
 } from "@/components/ui/table"
 import { PageHeader } from "@/components/layout/page-header"
 import { KpiCard } from "@/components/dashboard/kpi-card"
+import { AgentHighlight } from "@/components/agents/agent-highlight"
 import { cn } from "@/lib/utils"
 import { demoCampagnes, demoPubliciteResume, type Campagne } from "@/lib/demo/publicite-data"
+import { demoRecommendations } from "@/lib/demo/dashboard-data"
 
 const eur = (n: number) => `${n.toLocaleString("fr-FR")} €`
 
@@ -30,12 +32,16 @@ const RECO_CLASS: Record<Campagne["recommandation"], string> = {
 }
 
 export default function PublicitePage() {
+  const highlight = demoRecommendations.find((r) => r.agent === "Agent Publicité")
+
   return (
     <>
       <PageHeader
         title="Publicité"
         description="Performance Amazon Ads et Meta Ads — Agent Publicité. Où investir ou réduire le budget."
       />
+
+      {highlight && <AgentHighlight item={highlight} />}
 
       <div className="grid gap-4 sm:grid-cols-3">
         <KpiCard

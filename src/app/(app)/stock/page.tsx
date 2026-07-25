@@ -9,8 +9,11 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { PageHeader } from "@/components/layout/page-header"
+import { KpiCard } from "@/components/dashboard/kpi-card"
+import { AgentHighlight } from "@/components/agents/agent-highlight"
 import { cn } from "@/lib/utils"
-import { demoStockAvecCouverture, type StockProduit } from "@/lib/demo/stock-data"
+import { demoStockAvecCouverture, demoStockResume, type StockProduit } from "@/lib/demo/stock-data"
+import { demoRecommendations } from "@/lib/demo/dashboard-data"
 
 const STATUT_LABEL: Record<StockProduit["statut"], string> = {
   ok: "OK",
@@ -25,7 +28,7 @@ const STATUT_CLASS: Record<StockProduit["statut"], string> = {
 }
 
 export default function StockPage() {
-  const aRisque = demoStockAvecCouverture.filter((p) => p.statut !== "ok").length
+  const highlight = demoRecommendations.find((r) => r.agent === "Agent Stock")
 
   return (
     <>
@@ -34,10 +37,40 @@ export default function StockPage() {
         description="Vélocité de vente et délais fournisseurs — Agent Stock. Quand commander pour éviter la rupture."
       />
 
+      {highlight && <AgentHighlight item={highlight} />}
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <KpiCard
+          label="Produits à surveiller"
+          value={`${demoStockResume.aRisque} / ${demoStockResume.total}`}
+          trend={demoStockResume.aRisque > 0 ? "up" : "down"}
+          trendLabel={
+            demoStockResume.aRisque > 0
+              ? "nécessitent une action"
+              : "tout est sous contrôle"
+          }
+          positiveIsUp={false}
+        />
+        <KpiCard
+          label="Rupture la plus proche"
+          value={`${demoStockResume.ruptureLaPlusProche} j`}
+          trend="down"
+          trendLabel="avant rupture de stock"
+          positiveIsUp={false}
+        />
+        <KpiCard
+          label="Couverture moyenne"
+          value={`${demoStockResume.couvertureMoyenne} j`}
+          trend="up"
+          trendLabel="tous produits confondus"
+          positiveIsUp
+        />
+      </div>
+
       <Card>
         <CardHeader>
           <p className="text-sm text-muted-foreground">
-            {aRisque} produit{aRisque > 1 ? "s" : ""} à surveiller sur {demoStockAvecCouverture.length}
+            {demoStockAvecCouverture.length} produits actifs
           </p>
         </CardHeader>
         <CardContent>
