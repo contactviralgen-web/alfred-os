@@ -1,13 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { PageHeader } from "@/components/layout/page-header"
+import { HeroMetric } from "@/components/dashboard/hero-metric"
 import { KpiCard } from "@/components/dashboard/kpi-card"
 import { RecommendationsList } from "@/components/dashboard/recommendations-list"
 import { getCurrentUserAndOrganization } from "@/lib/organizations/current"
-import { demoKpis, demoRecommendations, demoTopProduits } from "@/lib/demo/dashboard-data"
+import { demoKpis, demoRecommendations, demoTopProduits, demoTendance } from "@/lib/demo/dashboard-data"
 import { cn } from "@/lib/utils"
 
 export default async function DashboardPage() {
   const { organization } = await getCurrentUserAndOrganization()
+  const [heroKpi, ...secondaryKpis] = demoKpis
 
   return (
     <>
@@ -16,8 +18,10 @@ export default async function DashboardPage() {
         description={`Santé business de ${organization?.name ?? "votre entreprise"} — données de démonstration.`}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {demoKpis.map((kpi) => (
+      <HeroMetric kpi={heroKpi} tendance={demoTendance} />
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        {secondaryKpis.map((kpi) => (
           <KpiCard key={kpi.label} {...kpi} />
         ))}
       </div>

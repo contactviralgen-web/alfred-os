@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, LogOut } from "lucide-react"
+import { LayoutDashboard, LogOut, Megaphone, Package, Sparkles, TrendingUp } from "lucide-react"
 
 import {
   Sidebar,
@@ -32,6 +32,10 @@ import type { CurrentOrganization, CurrentUser } from "@/lib/organizations/curre
 
 const NAV_ITEMS = [
   { href: "/", label: "Tableau de bord", icon: LayoutDashboard },
+  { href: "/rentabilite", label: "Rentabilité", icon: TrendingUp },
+  { href: "/publicite", label: "Publicité", icon: Megaphone },
+  { href: "/stock", label: "Stock", icon: Package },
+  { href: "/directeur-ia", label: "Directeur IA", icon: Sparkles },
 ]
 
 function initials(label: string) {

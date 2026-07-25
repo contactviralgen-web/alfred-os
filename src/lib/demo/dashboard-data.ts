@@ -74,6 +74,23 @@ export const demoRecommendations: Recommendation[] = [
   },
 ]
 
+export type TrendPoint = {
+  semaine: string
+  ca: number
+  profit: number
+}
+
+export const demoTendance: TrendPoint[] = [
+  { semaine: "S1", ca: 19200, profit: 3100 },
+  { semaine: "S2", ca: 20800, profit: 3450 },
+  { semaine: "S3", ca: 21100, profit: 3300 },
+  { semaine: "S4", ca: 22400, profit: 3900 },
+  { semaine: "S5", ca: 23050, profit: 4050 },
+  { semaine: "S6", ca: 22700, profit: 3700 },
+  { semaine: "S7", ca: 24300, profit: 4200 },
+  { semaine: "S8", ca: 25100, profit: 4620 },
+]
+
 export type TopProduct = {
   nom: string
   ca: string
