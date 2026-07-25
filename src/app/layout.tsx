@@ -1,11 +1,13 @@
 import type { Metadata } from "next"
-import { Inter, Geist_Mono } from "next/font/google"
+import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 
 import { ThemeProvider } from "@/components/shared/theme-provider"
 import { AppToaster } from "@/components/shared/app-toaster"
 
-const inter = Inter({
+// Geist plutôt qu'Inter : même variable CSS --font-inter conservée (utilisée
+// dans globals.css) pour ne rien casser côté tokens, seule la police change.
+const inter = Geist({
   variable: "--font-inter",
   subsets: ["latin"],
 })

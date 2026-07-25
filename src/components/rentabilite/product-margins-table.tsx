@@ -59,14 +59,14 @@ export function ProductMarginsTable({
               {parProduit.map((p) => (
                 <TableRow key={p.productId}>
                   <TableCell className="text-sm font-medium">{p.nom}</TableCell>
-                  <TableCell className="text-sm">{p.unitesVendues}</TableCell>
-                  <TableCell className="text-sm">{formaterEuros(p.chiffreAffaires)}</TableCell>
+                  <TableCell className="text-sm tabular-nums">{p.unitesVendues}</TableCell>
+                  <TableCell className="text-sm tabular-nums">{formaterEuros(p.chiffreAffaires)}</TableCell>
                   <TableCell
-                    className={`text-sm font-medium ${p.margeNette < 0 ? "text-destructive" : ""}`}
+                    className={`text-sm font-medium tabular-nums ${p.margeNette < 0 ? "text-destructive" : ""}`}
                   >
                     {formaterEuros(p.margeNette)}
                   </TableCell>
-                  <TableCell className="text-sm">{p.margePct.toFixed(1)}%</TableCell>
+                  <TableCell className="text-sm tabular-nums">{p.margePct.toFixed(1)}%</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -86,13 +86,13 @@ export function ProductMarginsTable({
               {parCategorie.map((c) => (
                 <TableRow key={c.categorie}>
                   <TableCell className="text-sm font-medium">{c.categorie}</TableCell>
-                  <TableCell className="text-sm">{formaterEuros(c.chiffreAffaires)}</TableCell>
+                  <TableCell className="text-sm tabular-nums">{formaterEuros(c.chiffreAffaires)}</TableCell>
                   <TableCell
-                    className={`text-sm font-medium ${c.margeNette < 0 ? "text-destructive" : ""}`}
+                    className={`text-sm font-medium tabular-nums ${c.margeNette < 0 ? "text-destructive" : ""}`}
                   >
                     {formaterEuros(c.margeNette)}
                   </TableCell>
-                  <TableCell className="text-sm">{c.margePct.toFixed(1)}%</TableCell>
+                  <TableCell className="text-sm tabular-nums">{c.margePct.toFixed(1)}%</TableCell>
                 </TableRow>
               ))}
             </TableBody>

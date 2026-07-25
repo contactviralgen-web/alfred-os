@@ -99,8 +99,8 @@ export function StockTable({
             <TableCell>
               <Badge variant={VARIANT_STATUT[produit.statut]}>{LABEL_STATUT[produit.statut]}</Badge>
             </TableCell>
-            <TableCell className="text-sm font-medium">{produit.quantiteDisponible}</TableCell>
-            <TableCell className="text-sm text-muted-foreground">{produit.quantiteReservee}</TableCell>
+            <TableCell className="text-sm font-medium tabular-nums">{produit.quantiteDisponible}</TableCell>
+            <TableCell className="text-sm text-muted-foreground tabular-nums">{produit.quantiteReservee}</TableCell>
             <TableCell>
               <SeuilInput
                 productId={produit.productId}

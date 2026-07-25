@@ -28,7 +28,7 @@ export function AmazonProductsTable({ produits }: { produits: LigneStock[] }) {
             <TableRow key={p.productId}>
               <TableCell className="text-sm font-medium">{p.nom}</TableCell>
               <TableCell className="text-sm text-muted-foreground">{p.sku}</TableCell>
-              <TableCell className="text-sm">{p.quantiteDisponible}</TableCell>
+              <TableCell className="text-sm tabular-nums">{p.quantiteDisponible}</TableCell>
               <TableCell>
                 <Badge variant={VARIANT_STATUT[p.statut]}>
                   {p.statut === "rupture" ? "En rupture" : "Synchronisé"}
