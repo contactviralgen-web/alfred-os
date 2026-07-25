@@ -4,7 +4,13 @@ export default function VerifiezVosEmailsPage() {
   return (
     <div className="flex flex-1 items-center justify-center px-4 py-16">
       <div className="flex w-full max-w-sm flex-col items-center gap-3 text-center">
-        <Image src="/logo-mark.png" alt="Profytt" width={48} height={48} />
+        <Image
+          src="/logo-wordmark.png"
+          alt="Profytt"
+          width={220}
+          height={40}
+          className="h-9 w-auto"
+        />
         <h1 className="text-xl font-semibold tracking-tight">
           Vérifiez votre boîte mail
         </h1>

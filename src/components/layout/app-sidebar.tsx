@@ -55,11 +55,21 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-1.5">
-          <Image src="/logo-mark.png" alt="Profytt" width={24} height={24} />
-          <span className="text-sm font-semibold tracking-tight group-data-[collapsible=icon]:hidden">
-            Profytt
-          </span>
+        <div className="flex items-center px-2 py-1.5">
+          <Image
+            src="/logo-wordmark.png"
+            alt="Profytt"
+            width={110}
+            height={20}
+            className="h-5 w-auto group-data-[collapsible=icon]:hidden"
+          />
+          <Image
+            src="/logo-mark.png"
+            alt="Profytt"
+            width={24}
+            height={24}
+            className="hidden group-data-[collapsible=icon]:block"
+          />
         </div>
       </SidebarHeader>
       <SidebarContent>

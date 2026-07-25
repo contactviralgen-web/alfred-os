@@ -23,5 +23,5 @@ export async function signUp(formData: FormData) {
     redirect("/inscription/verifiez-vos-emails")
   }
 
-  redirect("/onboarding")
+  redirect("/")
 }

@@ -16,7 +16,7 @@ export default async function AppLayout({
   }
 
   if (!organization) {
-    redirect("/onboarding")
+    redirect("/connexion")
   }
 
   return (

@@ -16,10 +16,15 @@ export default async function ConnexionPage({
     <div className="flex flex-1 items-center justify-center px-4 py-16">
       <div className="w-full max-w-sm space-y-8">
         <div className="flex flex-col items-center gap-3 text-center">
-          <Image src="/logo-mark.png" alt="Profytt" width={48} height={48} />
-          <h1 className="text-xl font-semibold tracking-tight">
-            Connexion à Profytt
-          </h1>
+          <Image
+            src="/logo-wordmark.png"
+            alt="Profytt"
+            width={220}
+            height={40}
+            className="h-9 w-auto"
+            priority
+          />
+          <h1 className="text-xl font-semibold tracking-tight">Connexion</h1>
           <p className="text-sm text-muted-foreground">
             Votre analyste IA e-commerce.
           </p>
