@@ -12,7 +12,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Third-party skill scripts (npx skills add), not project source.
+    // Claude Code skills tooling, not app code.
     ".agents/**",
     ".claude/**",
   ]),

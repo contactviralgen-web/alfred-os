@@ -1,50 +1,38 @@
-import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import "./globals.css"
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import "./globals.css";
 
-import { ThemeProvider } from "@/components/shared/theme-provider"
-import { AppToaster } from "@/components/shared/app-toaster"
-
-// Geist plutôt qu'Inter : même variable CSS --font-inter conservée (utilisée
-// dans globals.css) pour ne rien casser côté tokens, seule la police change.
-const inter = Geist({
-  variable: "--font-inter",
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-})
+});
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-})
+});
 
 export const metadata: Metadata = {
-  title: "Pilot — Le copilote IA de votre entreprise",
-  description:
-    "Pilot centralise votre CRM, vos stocks, Amazon, vos fournisseurs et vos documents, et vous aide à décider grâce à l'IA.",
-}
+  title: "Profytt",
+  description: "Votre analyste IA qui comprend votre entreprise e-commerce et vous indique chaque semaine les décisions qui améliorent votre profit.",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html
       lang="fr"
-      suppressHydrationWarning
-      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
-          {children}
-          <AppToaster />
-        </ThemeProvider>
+      <body className="min-h-full flex flex-col">
+        <TooltipProvider>{children}</TooltipProvider>
+        <Toaster />
       </body>
     </html>
-  )
+  );
 }

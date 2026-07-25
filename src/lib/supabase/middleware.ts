@@ -1,36 +1,12 @@
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 
-import type { Database } from "@/types/database.types"
+const PUBLIC_PATHS = ["/connexion", "/inscription", "/auth"]
 
-const ROUTES_PUBLIQUES = [
-  "/connexion",
-  "/inscription",
-  "/mot-de-passe-oublie",
-  "/reinitialiser-mot-de-passe",
-  "/verifier-email",
-  "/invitation",
-]
-
-// Sous-ensemble des routes publiques réservées aux visiteurs non connectés :
-// un utilisateur déjà authentifié en est redirigé vers l'onboarding. Les autres
-// routes publiques (verifier-email, invitation) restent accessibles une fois
-// connecté (ex: accepter une invitation depuis une session déjà ouverte).
-const ROUTES_VISITEUR_UNIQUEMENT = [
-  "/connexion",
-  "/inscription",
-  "/mot-de-passe-oublie",
-  "/reinitialiser-mot-de-passe",
-]
-
-// Rafraîchit la session Supabase sur chaque requête et protège les routes de
-// l'application. Appelé depuis proxy.ts (le nom "middleware.ts" est déprécié
-// depuis Next.js 16 au profit de "proxy.ts", mais la logique elle-même reste
-// un utilitaire réutilisable, d'où sa place dans lib/supabase).
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request })
 
-  const supabase = createServerClient<Database>(
+  const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -51,32 +27,23 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // getClaims() vérifie le JWT localement (clé de signature asymétrique du
-  // projet) au lieu d'appeler le serveur Auth à chaque requête comme getUser() :
-  // le proxy s'exécutant sur littéralement chaque navigation, c'est le point
-  // le plus rentable pour éviter cet aller-retour réseau supplémentaire.
-  const { data: claimsData } = await supabase.auth.getClaims()
-  const user = claimsData?.claims ?? null
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  const { pathname } = request.nextUrl
-  const estRoutePublique = ROUTES_PUBLIQUES.some((route) =>
-    pathname.startsWith(route)
+  const isPublicPath = PUBLIC_PATHS.some((path) =>
+    request.nextUrl.pathname.startsWith(path)
   )
 
-  if (!user && !estRoutePublique) {
+  if (!user && !isPublicPath) {
     const url = request.nextUrl.clone()
     url.pathname = "/connexion"
-    url.searchParams.set("redirect", pathname)
     return NextResponse.redirect(url)
   }
 
-  const estRouteVisiteurUniquement = ROUTES_VISITEUR_UNIQUEMENT.some((route) =>
-    pathname.startsWith(route)
-  )
-
-  if (user && estRouteVisiteurUniquement) {
+  if (user && isPublicPath && !request.nextUrl.pathname.startsWith("/auth")) {
     const url = request.nextUrl.clone()
-    url.pathname = "/bienvenue"
+    url.pathname = "/"
     return NextResponse.redirect(url)
   }
 
