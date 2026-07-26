@@ -3,7 +3,15 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, LogOut, Megaphone, Package, Sparkles, TrendingUp } from "lucide-react"
+import {
+  LayoutDashboard,
+  LogOut,
+  Megaphone,
+  Package,
+  Settings,
+  Sparkles,
+  TrendingUp,
+} from "lucide-react"
 
 import {
   Sidebar,
@@ -126,6 +134,15 @@ export function AppSidebar({
             <DropdownMenuGroup>
               <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
             </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              render={
+                <Link href="/parametres" className="flex w-full items-center gap-2">
+                  <Settings className="size-4" />
+                  Paramètres
+                </Link>
+              }
+            />
             <DropdownMenuSeparator />
             <DropdownMenuItem
               render={
