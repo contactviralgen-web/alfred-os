@@ -22,9 +22,9 @@ const STATUT_LABEL: Record<StockProduit["statut"], string> = {
 }
 
 const STATUT_CLASS: Record<StockProduit["statut"], string> = {
-  ok: "border-positive/40 text-positive bg-positive/10",
+  ok: "border-border text-muted-foreground",
   "a-commander": "border-primary/40 text-primary bg-primary/10",
-  "rupture-imminente": "border-negative/40 text-negative bg-negative/10",
+  "rupture-imminente": "border-transparent bg-primary text-primary-foreground",
 }
 
 export default function StockPage() {
@@ -97,7 +97,7 @@ export default function StockPage() {
                     className={cn(
                       "text-right tabular-nums font-medium",
                       p.joursDeCouverture <= p.delaiFournisseurJours
-                        ? "text-negative"
+                        ? "text-primary"
                         : "text-foreground"
                     )}
                   >

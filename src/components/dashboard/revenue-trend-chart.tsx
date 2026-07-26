@@ -1,13 +1,6 @@
 "use client"
 
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-} from "recharts"
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts"
 
 export type ChartPoint = {
   label: string
@@ -28,9 +21,9 @@ function TrendTooltip({
   if (!active || !payload?.length) return null
 
   return (
-    <div className="rounded-lg border border-border bg-popover px-3 py-2 text-sm shadow-lg">
+    <div className="rounded-lg border border-white/10 bg-popover px-3 py-2 text-sm shadow-lg backdrop-blur-xl">
       <p className="font-medium">{label}</p>
-      <p className="text-foreground tabular-nums">{format(payload[0].value)}</p>
+      <p className="text-primary tabular-nums">{format(payload[0].value)}</p>
     </div>
   )
 }
@@ -44,29 +37,26 @@ export function RevenueTrendChart({
 }) {
   return (
     <ResponsiveContainer width="100%" height={200}>
-      <AreaChart data={data} margin={{ top: 8, right: 8, left: 8, bottom: 0 }}>
+      <BarChart data={data} margin={{ top: 8, right: 8, left: 8, bottom: 0 }} barCategoryGap="28%">
         <defs>
           <linearGradient id="metricFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ff9f0a" stopOpacity={0.35} />
-            <stop offset="100%" stopColor="#ff9f0a" stopOpacity={0} />
+            <stop offset="0%" stopColor="#ff9f0a" stopOpacity={1} />
+            <stop offset="100%" stopColor="#ff9f0a" stopOpacity={0.45} />
           </linearGradient>
         </defs>
-        <CartesianGrid vertical={false} stroke="#30363d" strokeDasharray="3 3" />
+        <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.08)" strokeDasharray="3 3" />
         <XAxis
           dataKey="label"
           axisLine={false}
           tickLine={false}
-          tick={{ fill: "#8b949e", fontSize: 12 }}
+          tick={{ fill: "#9aa1ab", fontSize: 12 }}
         />
-        <Tooltip content={<TrendTooltip format={format} />} cursor={{ stroke: "#30363d" }} />
-        <Area
-          type="monotone"
-          dataKey="value"
-          stroke="#ff9f0a"
-          strokeWidth={2}
-          fill="url(#metricFill)"
+        <Tooltip
+          content={<TrendTooltip format={format} />}
+          cursor={{ fill: "rgba(255,255,255,0.04)" }}
         />
-      </AreaChart>
+        <Bar dataKey="value" fill="url(#metricFill)" radius={[6, 6, 0, 0]} maxBarSize={40} />
+      </BarChart>
     </ResponsiveContainer>
   )
 }

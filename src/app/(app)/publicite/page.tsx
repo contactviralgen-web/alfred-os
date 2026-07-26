@@ -25,10 +25,10 @@ const RECO_LABEL: Record<Campagne["recommandation"], string> = {
 }
 
 const RECO_CLASS: Record<Campagne["recommandation"], string> = {
-  augmenter: "border-positive/40 text-positive bg-positive/10",
+  augmenter: "border-primary/40 text-primary bg-primary/10",
   maintenir: "border-border text-muted-foreground",
-  reduire: "border-negative/40 text-negative bg-negative/10",
-  couper: "border-negative/40 text-negative bg-negative/10",
+  reduire: "border-primary/40 text-primary bg-primary/10",
+  couper: "border-transparent bg-primary text-primary-foreground",
 }
 
 export default function PublicitePage() {

@@ -7,8 +7,8 @@ export default function VerifiezVosEmailsPage() {
         <Image
           src="/logo-wordmark.png"
           alt="Profytt"
-          width={220}
-          height={40}
+          width={166}
+          height={50}
           className="h-9 w-auto"
         />
         <h1 className="text-xl font-semibold tracking-tight">

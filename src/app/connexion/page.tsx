@@ -19,8 +19,8 @@ export default async function ConnexionPage({
           <Image
             src="/logo-wordmark.png"
             alt="Profytt"
-            width={220}
-            height={40}
+            width={166}
+            height={50}
             className="h-9 w-auto"
             priority
           />

@@ -50,76 +50,79 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Un seul accent (orange) pour toute l'app : pas de vert/rouge. "positive" = mise en
+   avant (opportunité, bonne tendance), "negative" = neutre/blanc (pas d'alarme colorée).
+   Cards/popovers/bordures en blanc translucide (glass) plutôt qu'en gris plein. */
 :root {
   --background: #000000;
   --foreground: #ffffff;
-  --card: #161b22;
+  --card: rgba(255, 255, 255, 0.045);
   --card-foreground: #ffffff;
-  --popover: #161b22;
+  --popover: rgba(20, 20, 20, 0.85);
   --popover-foreground: #ffffff;
   --primary: #ff9f0a;
-  --primary-foreground: #0d1117;
-  --secondary: #21262d;
+  --primary-foreground: #1a1103;
+  --secondary: rgba(255, 255, 255, 0.06);
   --secondary-foreground: #ffffff;
-  --muted: #21262d;
-  --muted-foreground: #8b949e;
-  --accent: #21262d;
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: #9aa1ab;
+  --accent: rgba(255, 255, 255, 0.07);
   --accent-foreground: #ffffff;
-  --destructive: #f85149;
-  --border: #30363d;
-  --input: #30363d;
+  --destructive: #ff9f0a;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.1);
   --ring: #ff9f0a;
-  --positive: #3fb950;
-  --negative: #f85149;
+  --positive: #ff9f0a;
+  --negative: #ffffff;
   --chart-1: #ff9f0a;
-  --chart-2: #3fb950;
-  --chart-3: #f85149;
-  --chart-4: #8b949e;
-  --chart-5: #58a6ff;
+  --chart-2: #ffffff;
+  --chart-3: #c98a3a;
+  --chart-4: #9aa1ab;
+  --chart-5: #5b6068;
   --radius: 0.625rem;
   --sidebar: #000000;
   --sidebar-foreground: #ffffff;
   --sidebar-primary: #ff9f0a;
-  --sidebar-primary-foreground: #0d1117;
-  --sidebar-accent: #161b22;
+  --sidebar-primary-foreground: #1a1103;
+  --sidebar-accent: rgba(255, 255, 255, 0.06);
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #30363d;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
   --sidebar-ring: #ff9f0a;
 }
 
 .dark {
   --background: #000000;
   --foreground: #ffffff;
-  --card: #161b22;
+  --card: rgba(255, 255, 255, 0.045);
   --card-foreground: #ffffff;
-  --popover: #161b22;
+  --popover: rgba(20, 20, 20, 0.85);
   --popover-foreground: #ffffff;
   --primary: #ff9f0a;
-  --primary-foreground: #0d1117;
-  --secondary: #21262d;
+  --primary-foreground: #1a1103;
+  --secondary: rgba(255, 255, 255, 0.06);
   --secondary-foreground: #ffffff;
-  --muted: #21262d;
-  --muted-foreground: #8b949e;
-  --accent: #21262d;
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: #9aa1ab;
+  --accent: rgba(255, 255, 255, 0.07);
   --accent-foreground: #ffffff;
-  --destructive: #f85149;
-  --border: #30363d;
-  --input: #30363d;
+  --destructive: #ff9f0a;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.1);
   --ring: #ff9f0a;
-  --positive: #3fb950;
-  --negative: #f85149;
+  --positive: #ff9f0a;
+  --negative: #ffffff;
   --chart-1: #ff9f0a;
-  --chart-2: #3fb950;
-  --chart-3: #f85149;
-  --chart-4: #8b949e;
-  --chart-5: #58a6ff;
+  --chart-2: #ffffff;
+  --chart-3: #c98a3a;
+  --chart-4: #9aa1ab;
+  --chart-5: #5b6068;
   --sidebar: #000000;
   --sidebar-foreground: #ffffff;
   --sidebar-primary: #ff9f0a;
-  --sidebar-primary-foreground: #0d1117;
-  --sidebar-accent: #161b22;
+  --sidebar-primary-foreground: #1a1103;
+  --sidebar-accent: rgba(255, 255, 255, 0.06);
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #30363d;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
   --sidebar-ring: #ff9f0a;
 }
 
@@ -129,6 +132,11 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(1100px circle at 12% -8%, rgba(255, 159, 10, 0.16), transparent 60%),
+      radial-gradient(900px circle at 100% 0%, rgba(255, 159, 10, 0.08), transparent 55%),
+      radial-gradient(1000px circle at 60% 110%, rgba(255, 255, 255, 0.05), transparent 60%);
+    background-attachment: fixed;
   }
   html {
     @apply font-sans;

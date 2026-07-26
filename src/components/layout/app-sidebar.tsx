@@ -63,16 +63,16 @@ export function AppSidebar({
           <Image
             src="/logo-wordmark.png"
             alt="Profytt"
-            width={110}
-            height={20}
+            width={166}
+            height={50}
             className="h-5 w-auto group-data-[collapsible=icon]:hidden"
           />
           <Image
             src="/logo-mark.png"
             alt="Profytt"
             width={24}
-            height={24}
-            className="hidden group-data-[collapsible=icon]:block"
+            height={38}
+            className="hidden h-6 w-auto group-data-[collapsible=icon]:block"
           />
         </div>
       </SidebarHeader>
