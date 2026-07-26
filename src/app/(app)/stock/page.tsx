@@ -11,8 +11,15 @@ import {
 import { PageHeader } from "@/components/layout/page-header"
 import { KpiCard } from "@/components/dashboard/kpi-card"
 import { AgentHighlight } from "@/components/agents/agent-highlight"
+import { AgentChatCard } from "@/components/agents/agent-chat-card"
+import { AgentProfileCard } from "@/components/agents/agent-profile-card"
 import { cn } from "@/lib/utils"
-import { demoStockAvecCouverture, demoStockResume, type StockProduit } from "@/lib/demo/stock-data"
+import {
+  demoAgentLogistiqueChat,
+  demoStockAvecCouverture,
+  demoStockResume,
+  type StockProduit,
+} from "@/lib/demo/stock-data"
 import { demoRecommendations } from "@/lib/demo/dashboard-data"
 
 const STATUT_LABEL: Record<StockProduit["statut"], string> = {
@@ -28,13 +35,13 @@ const STATUT_CLASS: Record<StockProduit["statut"], string> = {
 }
 
 export default function StockPage() {
-  const highlight = demoRecommendations.find((r) => r.agent === "Agent Stock")
+  const highlight = demoRecommendations.find((r) => r.agent === "Agent Logistique")
 
   return (
     <>
       <PageHeader
-        title="Stock"
-        description="Vélocité de vente et délais fournisseurs — Agent Stock. Quand commander pour éviter la rupture."
+        title="Agent Logistique"
+        description="Léa surveille vos stocks et vos délais fournisseurs pour anticiper toute rupture."
       />
 
       {highlight && <AgentHighlight item={highlight} />}
@@ -117,6 +124,23 @@ export default function StockPage() {
           </Table>
         </CardContent>
       </Card>
+
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <AgentChatCard
+            avatarSrc="/agents/logistique.png"
+            name="Léa"
+            role="Agent Logistique"
+            initialMessages={demoAgentLogistiqueChat}
+          />
+        </div>
+        <AgentProfileCard
+          avatarSrc="/agents/logistique.png"
+          name="Léa"
+          role="Agent Logistique"
+          tagline="Surveille vos stocks et anticipe les ruptures avant qu'elles n'arrivent."
+        />
+      </div>
     </>
   )
 }

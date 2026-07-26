@@ -10,20 +10,26 @@ import {
 import { PageHeader } from "@/components/layout/page-header"
 import { KpiCard } from "@/components/dashboard/kpi-card"
 import { AgentHighlight } from "@/components/agents/agent-highlight"
+import { AgentChatCard } from "@/components/agents/agent-chat-card"
+import { AgentProfileCard } from "@/components/agents/agent-profile-card"
 import { cn } from "@/lib/utils"
-import { demoRentabiliteProduits, demoRentabiliteResume } from "@/lib/demo/rentabilite-data"
+import {
+  demoAgentFinancierChat,
+  demoRentabiliteProduits,
+  demoRentabiliteResume,
+} from "@/lib/demo/rentabilite-data"
 import { demoRecommendations } from "@/lib/demo/dashboard-data"
 
 const eur = (n: number) => `${n.toLocaleString("fr-FR")} €`
 
 export default function RentabilitePage() {
-  const highlight = demoRecommendations.find((r) => r.agent === "Agent Profit")
+  const highlight = demoRecommendations.find((r) => r.agent === "Agent Financier")
 
   return (
     <>
       <PageHeader
-        title="Rentabilité"
-        description="Profit réel par produit — Agent Profit. Revenue - coût produit - frais plateforme - publicité - logistique - retours."
+        title="Agent Financier"
+        description="Marc analyse votre rentabilité réelle produit par produit — revenue - coût produit - frais plateforme - publicité - logistique - retours."
       />
 
       {highlight && <AgentHighlight item={highlight} />}
@@ -122,6 +128,23 @@ export default function RentabilitePage() {
           </Table>
         </CardContent>
       </Card>
+
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <AgentChatCard
+            avatarSrc="/agents/financier.png"
+            name="Marc"
+            role="Agent Financier"
+            initialMessages={demoAgentFinancierChat}
+          />
+        </div>
+        <AgentProfileCard
+          avatarSrc="/agents/financier.png"
+          name="Marc"
+          role="Agent Financier"
+          tagline="Analyse votre rentabilité produit par produit, 24h/24."
+        />
+      </div>
     </>
   )
 }

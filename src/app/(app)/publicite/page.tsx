@@ -11,8 +11,15 @@ import {
 import { PageHeader } from "@/components/layout/page-header"
 import { KpiCard } from "@/components/dashboard/kpi-card"
 import { AgentHighlight } from "@/components/agents/agent-highlight"
+import { AgentChatCard } from "@/components/agents/agent-chat-card"
+import { AgentProfileCard } from "@/components/agents/agent-profile-card"
 import { cn } from "@/lib/utils"
-import { demoCampagnes, demoPubliciteResume, type Campagne } from "@/lib/demo/publicite-data"
+import {
+  demoAgentMarketingChat,
+  demoCampagnes,
+  demoPubliciteResume,
+  type Campagne,
+} from "@/lib/demo/publicite-data"
 import { demoRecommendations } from "@/lib/demo/dashboard-data"
 
 const eur = (n: number) => `${n.toLocaleString("fr-FR")} €`
@@ -32,13 +39,13 @@ const RECO_CLASS: Record<Campagne["recommandation"], string> = {
 }
 
 export default function PublicitePage() {
-  const highlight = demoRecommendations.find((r) => r.agent === "Agent Publicité")
+  const highlight = demoRecommendations.find((r) => r.agent === "Agent Marketing")
 
   return (
     <>
       <PageHeader
-        title="Publicité"
-        description="Performance Amazon Ads et Meta Ads — Agent Publicité. Où investir ou réduire le budget."
+        title="Agent Marketing"
+        description="Julien pilote vos campagnes Amazon Ads et Meta Ads — où investir, où couper."
       />
 
       {highlight && <AgentHighlight item={highlight} />}
@@ -113,6 +120,23 @@ export default function PublicitePage() {
           </Table>
         </CardContent>
       </Card>
+
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <AgentChatCard
+            avatarSrc="/agents/marketing.png"
+            name="Julien"
+            role="Agent Marketing"
+            initialMessages={demoAgentMarketingChat}
+          />
+        </div>
+        <AgentProfileCard
+          avatarSrc="/agents/marketing.png"
+          name="Julien"
+          role="Agent Marketing"
+          tagline="Optimise vos campagnes Amazon Ads et Meta Ads en continu."
+        />
+      </div>
     </>
   )
 }

@@ -37,3 +37,17 @@ export const demoRentabiliteResume = {
     demoRentabiliteProduits.reduce((s, p) => s + p.margeNette / p.ca, 0) /
     demoRentabiliteProduits.length,
 }
+
+export type AgentFinancierChatMessage = {
+  role: "user" | "assistant"
+  content: string
+}
+
+export const demoAgentFinancierChat: AgentFinancierChatMessage[] = [
+  { role: "user", content: "Quel produit ne me rapporte plus rien ?" },
+  {
+    role: "assistant",
+    content:
+      "\"Set couteaux céramique\" génère 7 400 € de CA mais un profit réel de 0 € (marge 0,0 %) : la publicité (2 350 €) et les retours (610 €) absorbent toute la marge. Je recommande de couper la pub de moitié ou de revoir le prix de vente avant de continuer à le pousser.",
+  },
+]

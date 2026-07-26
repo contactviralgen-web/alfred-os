@@ -32,9 +32,9 @@ import type { CurrentOrganization, CurrentUser } from "@/lib/organizations/curre
 
 const NAV_ITEMS = [
   { href: "/", label: "Tableau de bord", icon: LayoutDashboard },
-  { href: "/rentabilite", label: "Rentabilité", icon: TrendingUp },
-  { href: "/publicite", label: "Publicité", icon: Megaphone },
-  { href: "/stock", label: "Stock", icon: Package },
+  { href: "/rentabilite", label: "Agent Financier", icon: TrendingUp },
+  { href: "/publicite", label: "Agent Marketing", icon: Megaphone },
+  { href: "/stock", label: "Agent Logistique", icon: Package },
   { href: "/directeur-ia", label: "Directeur IA", icon: Sparkles },
 ]
 
@@ -59,13 +59,20 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <div className="flex items-center px-2 py-1.5">
+        <div className="flex items-center justify-between px-2 py-2 group-data-[collapsible=icon]:justify-center">
           <Image
             src="/logo-wordmark.png"
             alt="Profytt"
             width={166}
             height={50}
             className="h-5 w-auto group-data-[collapsible=icon]:hidden"
+          />
+          <Image
+            src="/agents/trio.png"
+            alt="Votre équipe d'agents IA"
+            width={900}
+            height={392}
+            className="h-9 w-auto group-data-[collapsible=icon]:hidden"
           />
           <Image
             src="/logo-mark.png"

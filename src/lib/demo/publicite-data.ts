@@ -27,3 +27,17 @@ export const demoPubliciteResume = {
   roasMoyen: caAttribueTotal / depensesTotal,
   tacos: 0.087,
 }
+
+export type AgentMarketingChatMessage = {
+  role: "user" | "assistant"
+  content: string
+}
+
+export const demoAgentMarketingChat: AgentMarketingChatMessage[] = [
+  { role: "user", content: "Quelle campagne gaspille mon budget ?" },
+  {
+    role: "assistant",
+    content:
+      "\"Sponsored Products - Gourdes inox\" tourne à 61 % d'ACOS pour un ROAS de seulement 1,6x : vous dépensez 4 600 €/mois pour à peine rentrer dans vos frais. Je recommande de la couper immédiatement et de réallouer ce budget vers \"Retargeting - Organiseur tiroir\", qui tourne à 6,0x ROAS.",
+  },
+]

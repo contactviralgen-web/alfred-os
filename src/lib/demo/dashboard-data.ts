@@ -160,21 +160,21 @@ export type Recommendation = {
 
 export const demoRecommendations: Recommendation[] = [
   {
-    agent: "Agent Publicité",
+    agent: "Agent Marketing",
     titre: "Campagne \"Gourdes inox 750ml\" en ACOS 61 %",
     detail: "Budget publicitaire disproportionné par rapport à la marge produit. Réduire de 40 % ou couper.",
     impact: "+2 100 €/mois estimé",
     severite: "negative",
   },
   {
-    agent: "Agent Profit",
+    agent: "Agent Financier",
     titre: "\"Kit rangement cuisine\" sous-exploité",
     detail: "Marge nette de 34 % mais budget pub quasi nul. Fort potentiel de scale.",
     impact: "+3 400 €/mois estimé",
     severite: "positive",
   },
   {
-    agent: "Agent Stock",
+    agent: "Agent Logistique",
     titre: "Rupture prévue sous 12 jours",
     detail: "\"Thermos voyage 500ml\" — délai fournisseur de 21 jours. Commander maintenant.",
     impact: "Risque de rupture",

@@ -8,7 +8,7 @@ export function RecommendationsList({ items }: { items: Recommendation[] }) {
     <Card>
       <CardHeader>
         <CardTitle>Décisions prioritaires</CardTitle>
-        <CardDescription>Synthèse des agents Profit, Publicité et Stock.</CardDescription>
+        <CardDescription>Synthèse des agents Financier, Marketing et Logistique.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-1">
         {items.map((item) => (

@@ -36,3 +36,17 @@ export const demoStockResume = {
       demoStockAvecCouverture.length
   ),
 }
+
+export type AgentLogistiqueChatMessage = {
+  role: "user" | "assistant"
+  content: string
+}
+
+export const demoAgentLogistiqueChat: AgentLogistiqueChatMessage[] = [
+  { role: "user", content: "Qu'est-ce que je dois commander en priorité ?" },
+  {
+    role: "assistant",
+    content:
+      "\"Thermos voyage 500ml\" a une couverture de 9 jours mais un délai fournisseur de 21 jours : la rupture est inévitable si vous ne commandez pas aujourd'hui. Je recommande une commande immédiate d'au moins 230 unités (21 jours de couverture au rythme de vente actuel).",
+  },
+]
