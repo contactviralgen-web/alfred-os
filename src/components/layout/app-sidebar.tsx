@@ -59,7 +59,7 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <div className="flex items-center justify-between px-2 py-2 group-data-[collapsible=icon]:justify-center">
+        <div className="flex items-center justify-start gap-2 px-2 py-2 group-data-[collapsible=icon]:justify-center">
           <Image
             src="/logo-wordmark.png"
             alt="Profytt"
@@ -72,7 +72,7 @@ export function AppSidebar({
             alt="Votre équipe d'agents IA"
             width={900}
             height={392}
-            className="h-9 w-auto group-data-[collapsible=icon]:hidden"
+            className="h-12 w-auto group-data-[collapsible=icon]:hidden"
           />
           <Image
             src="/logo-mark.png"
